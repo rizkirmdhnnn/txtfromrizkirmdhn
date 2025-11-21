@@ -6,8 +6,17 @@
     <description>Recent content on txtfromrizkirmdhn</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>id</language>
-    <lastBuildDate>Fri, 21 Nov 2025 07:40:54 +0700</lastBuildDate>
+    <lastBuildDate>Fri, 21 Nov 2025 09:04:34 +0700</lastBuildDate>
     <atom:link href="https://txtfromrizkirmdhn.my.id/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My Second Post</title>
+      <link>https://txtfromrizkirmdhn.my.id/posts/my-second-post/</link>
+      <pubDate>Fri, 21 Nov 2025 09:04:34 +0700</pubDate>
+      <guid>https://txtfromrizkirmdhn.my.id/posts/my-second-post/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This is &lt;strong&gt;bold&lt;/strong&gt; text, and this is &lt;em&gt;emphasized&lt;/em&gt; text.&lt;/p&gt;
+&lt;p&gt;Visit the &lt;a href=&#34;https://gohugo.io&#34;&gt;Hugo&lt;/a&gt; website!&lt;/p&gt;</description>
+    </item>
     <item>
       <title>My First Post</title>
       <link>https://txtfromrizkirmdhn.my.id/posts/my-first-post/</link>
