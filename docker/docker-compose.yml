@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  app:
+    image: ghcr.io/rizkirmdhnnn/txtfromrizkirmdhn:latest
+    container_name: txtfromrizkirmdhn
+    restart: unless-stopped
+    ports:
+      - "8888:80"
