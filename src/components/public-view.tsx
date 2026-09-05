@@ -79,7 +79,7 @@ export function PublicView({
         className={className}
         to="/post/$slug"
         params={{ slug: e.slug }}
-        search={{ lang }}
+        search={{ lang: lang === "en" ? "en" : undefined }}
       >
         {children}
       </Link>

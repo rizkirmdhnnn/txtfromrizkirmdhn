@@ -4,9 +4,11 @@ import { PublicView } from "../components/public-view";
 import { api } from "../admin/client";
 import type { PublicData, Lang, Kind } from "../lib/cms";
 export const Route = createFileRoute("/preview")({
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (
+    s: Record<string, unknown>,
+  ): { slug?: string; embedded?: true } => ({
     slug: typeof s.slug === "string" ? s.slug : undefined,
-    embedded: s.embedded === "1",
+    embedded: s.embedded === true ? true : undefined,
   }),
   head: () => ({
     meta: [
@@ -44,7 +46,7 @@ function Preview() {
         <iframe
           className="mobile-preview-frame"
           title="Preview ukuran mobile"
-          src={`/preview?embedded=1${slug ? `&slug=${encodeURIComponent(slug)}` : ""}`}
+          src={`/preview?embedded=true${slug ? `&slug=${encodeURIComponent(slug)}` : ""}`}
         />
       ) : error ? (
         <p role="alert">{error}</p>

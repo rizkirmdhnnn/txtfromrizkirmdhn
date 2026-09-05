@@ -1,16 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { loadPublic } from "../lib/public-data";
-import { kinds, type Lang, type Kind } from "../lib/cms";
+import { kinds, type Kind } from "../lib/cms";
 import { PublicView } from "../components/public-view";
 export const Route = createFileRoute("/")({
-  validateSearch: (s: Record<string, unknown>): { lang: Lang; tab: Kind } => ({
-    lang: s.lang === "en" ? "en" : "id",
-    tab: kinds.includes(s.tab as Kind) ? (s.tab as Kind) : "projects",
+  // Nilai default sengaja tidak dimaterialkan: kanonikalisasi SSR akan
+  // meredirect setiap kunjungan ke bentuk lengkapnya kalau dikembalikan.
+  validateSearch: (
+    s: Record<string, unknown>,
+  ): { lang?: "en"; tab?: Kind } => ({
+    lang: s.lang === "en" ? "en" : undefined,
+    tab: kinds.includes(s.tab as Kind) ? (s.tab as Kind) : undefined,
   }),
-  loaderDeps: ({ search }) => search,
   loader: () => loadPublic(),
   head: ({ loaderData, match }) => {
-    const copy = loaderData?.site?.translations[match.search.lang];
+    const copy = loaderData?.site?.translations[match.search.lang ?? "id"];
     return {
       links: loaderData?.site?.icon
         ? [{ rel: "icon", href: loaderData.site.icon }]
@@ -28,19 +31,29 @@ export const Route = createFileRoute("/")({
 });
 function Home() {
   const data = Route.useLoaderData();
-  const { lang, tab } = Route.useSearch();
+  const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const lang = search.lang ?? "id";
+  const tab = search.tab ?? "projects";
+  const go = (next: Partial<typeof search>, replace = false) =>
+    navigate({ search: { ...search, ...next }, replace });
   return (
     <PublicView
       data={data}
       lang={lang}
       tab={tab}
-      onLanguage={(lang) => navigate({ search: { lang, tab }, replace: true })}
-      onTab={(tab) => navigate({ search: { lang, tab } })}
-      onPost={(slug) => {
-        window.location.href = `/post/${slug}?lang=${lang}`;
-      }}
-      onBack={() => navigate({ search: { lang, tab: "projects" } })}
+      onLanguage={(next) =>
+        go({ lang: next === "en" ? "en" : undefined }, true)
+      }
+      onTab={(next) => go({ tab: next === "projects" ? undefined : next })}
+      onPost={(slug) =>
+        navigate({
+          to: "/post/$slug",
+          params: { slug },
+          search: { lang: search.lang },
+        })
+      }
+      onBack={() => go({ tab: undefined })}
     />
   );
 }

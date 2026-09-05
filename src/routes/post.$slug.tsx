@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { loadPublic } from "../lib/public-data";
-import { contentLanguage, type Lang } from "../lib/cms";
+import { contentLanguage } from "../lib/cms";
 import { PublicView } from "../components/public-view";
 const findRedirect = createServerFn({ method: "GET" })
   .validator((slug: string) => slug)
@@ -15,11 +15,10 @@ const findRedirect = createServerFn({ method: "GET" })
     return row?.slug ?? null;
   });
 export const Route = createFileRoute("/post/$slug")({
-  validateSearch: (s: Record<string, unknown>): { lang: Lang } => ({
-    lang: s.lang === "en" ? "en" : "id",
+  validateSearch: (s: Record<string, unknown>): { lang?: "en" } => ({
+    lang: s.lang === "en" ? "en" : undefined,
   }),
-  loaderDeps: ({ search }) => search,
-  loader: async ({ params, deps }) => {
+  loader: async ({ params }) => {
     const data = await loadPublic();
     if (!data.entries.some((e) => e.slug === params.slug)) {
       const slug = await findRedirect({ data: params.slug });
@@ -27,7 +26,7 @@ export const Route = createFileRoute("/post/$slug")({
         throw redirect({
           to: "/post/$slug",
           params: { slug },
-          search: { lang: deps.lang },
+          search: (prev) => prev,
           statusCode: 301,
         });
       throw notFound();
@@ -36,7 +35,7 @@ export const Route = createFileRoute("/post/$slug")({
   },
   head: ({ loaderData, params, match }) => {
     const e = loaderData?.entries.find((e) => e.slug === params.slug);
-    const tr = e?.translations[contentLanguage(e, match.search.lang)];
+    const tr = e?.translations[contentLanguage(e, match.search.lang ?? "id")];
     return {
       meta: [
         {
@@ -55,26 +54,32 @@ export const Route = createFileRoute("/post/$slug")({
 });
 function Post() {
   const data = Route.useLoaderData();
-  const { lang } = Route.useSearch();
+  const search = Route.useSearch();
   const { slug } = Route.useParams();
   const navigate = Route.useNavigate();
+  const category = data.entries.find((e) => e.slug === slug)?.category;
   const back = () =>
     navigate({
       to: "/",
       search: {
-        lang,
-        tab: data.entries.find((e) => e.slug === slug)?.category ?? "projects",
+        lang: search.lang,
+        tab: category === "projects" ? undefined : category,
       },
     });
   return (
     <PublicView
       data={data}
-      lang={lang}
+      lang={search.lang ?? "id"}
       slug={slug}
-      onLanguage={(lang) => navigate({ search: { lang }, replace: true })}
+      onLanguage={(next) =>
+        navigate({
+          search: { lang: next === "en" ? "en" : undefined },
+          replace: true,
+        })
+      }
       onBack={back}
       onTab={back}
-      onPost={(slug) => navigate({ params: { slug }, search: { lang } })}
+      onPost={(next) => navigate({ params: { slug: next }, search })}
     />
   );
 }
