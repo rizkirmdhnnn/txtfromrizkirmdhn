@@ -48,8 +48,8 @@
         "ACCESS_TEAM_DOMAIN": "rizkirmdhn.cloudflareaccess.com",
         "ACCESS_AUD": "09d658c56c9a0a3b335624bb5eaf2be296a89c655c80ca5c129b0cb54673d0c0",
         "CF_ACCOUNT_ID": "4a273df5ad27c77f3a28a6d0bbcf770f",
-        "ANALYTICS_SITE_TAG": "",
-        "ANALYTICS_BEACON_TOKEN": "",
+        "ANALYTICS_SITE_TAG": "0540126c3fcd437493b69ef2746c9df8",
+        "ANALYTICS_BEACON_TOKEN": "3a30f1f363af4559b7af85eb66f0f9d1",
       },
       "d1_databases": [
         {

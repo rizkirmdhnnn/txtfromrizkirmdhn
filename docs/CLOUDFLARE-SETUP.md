@@ -37,11 +37,18 @@ Kunci provider disimpan terenkripsi di D1. Ekspor konten tidak menyertakan kunci
 
 ## 3. Statistik
 
-1. Aktifkan Cloudflare Web Analytics untuk hostname publik `txtfromrizkirmdhn.my.id`.
-2. Isi `ANALYTICS_SITE_TAG` dan `ANALYTICS_BEACON_TOKEN` di vars. Account ID sudah disiapkan.
-3. Buat API token khusus dengan izin baca Account Analytics pada akun tersebut. Simpan dengan `npx wrangler secret put CF_ANALYTICS_TOKEN`.
-4. Build dan deploy. Beacon hanya disisipkan pada HTML hostname publik; preview dan dashboard tidak dilacak.
-5. Dashboard menampilkan kunjungan, page views, dan halaman populer dari dataset RUM, cache 15 menit. Angka bukan pengunjung unik, dan dapat dipengaruhi pemblokir tracking. Jika token/dataset belum tersedia, tampilkan status belum tersedia tanpa data buatan.
+Site Web Analytics `txtfromrizkirmdhn.my.id` sudah ada (site tag `0540126c3fcd437493b69ef2746c9df8`). Pada 5 September 2026 modenya diubah dari injeksi otomatis ke **Enable with JS Snippet installation**, agar beacon disuntikkan Worker sendiri dan hanya pada hostname publik — dashboard tidak ikut terlacak. Konsekuensinya opsi bawaan "excluding visitor data in the EU" tidak lagi berlaku; pengunjung EU ikut terhitung. Untuk mengembalikannya, ubah mode di dashboard dan kosongkan `ANALYTICS_BEACON_TOKEN`.
+
+`ANALYTICS_SITE_TAG` dan `ANALYTICS_BEACON_TOKEN` sudah terisi pada vars produksi. Keduanya bukan secret: beacon token memang tampil di HTML setiap pengunjung.
+
+Yang masih kurang adalah **`CF_ANALYTICS_TOKEN`**, dipakai server untuk membaca GraphQL. Tanpa itu dashboard menampilkan "Statistik belum dikonfigurasi" dan tidak mengarang angka.
+
+1. Buat API token di https://dash.cloudflare.com/profile/api-tokens → Create Token → Create Custom Token.
+2. Permissions: **Account → Account Analytics → Read**. Account Resources: akun `Achmadrizkiramadhan0101@gmail.com's Account`. Tidak perlu izin zone.
+3. Simpan dengan `npx wrangler secret put CF_ANALYTICS_TOKEN --env production`, lalu tempel nilainya saat diminta.
+4. Deploy ulang tidak diperlukan; secret langsung aktif. Buka Dashboard → Ringkasan untuk memeriksa.
+
+Dashboard menampilkan kunjungan, page views, dan halaman populer dari dataset RUM, cache 15 menit. Angka bukan pengunjung unik, dan dapat dipengaruhi pemblokir tracking. Data baru muncul setelah ada kunjungan sejak beacon aktif.
 
 ## 4. Peluncuran produksi
 
