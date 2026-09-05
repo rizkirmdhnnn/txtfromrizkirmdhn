@@ -1,31 +1,5 @@
-import { useEffect } from "react";
-import { Check, Cloud, Folder, Globe2, Mail, Terminal } from "lucide-react";
+import { Check, Cloud, Folder, Mail, Terminal } from "lucide-react";
 import type { Lang } from "../lib/cms";
-
-export function Language({
-  lang,
-  onChange,
-}: {
-  lang: Lang;
-  onChange: (l: Lang) => void;
-}) {
-  useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
-  return (
-    <div
-      className="language"
-      aria-label={lang === "id" ? "Bahasa" : "Language"}
-    >
-      <Globe2 size={14} />
-      {(["id", "en"] as const).map((l) => (
-        <button key={l} aria-pressed={lang === l} onClick={() => onChange(l)}>
-          {l.toUpperCase()}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 export function Visual({ kind, lang }: { kind?: string; lang: Lang }) {
   if (kind === "mail")

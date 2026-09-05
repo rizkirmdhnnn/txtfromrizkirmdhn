@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import {
@@ -10,22 +10,29 @@ import {
   MapPin,
   Pin,
   X,
+  Globe2,
   Mail,
   MessageCircle,
   Download,
   Code2,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
-import { Visual, Language } from "./visual";
+import { Visual } from "./visual";
 import { defaultWords } from "../lib/default-words";
 import {
   contentLanguage,
+  langs,
   otherLang,
   type PublicData,
   type Lang,
   type EntryData,
   type Kind,
 } from "../lib/cms";
+export type PublicNav = {
+  tab: (kind: Kind, children: ReactNode, active: boolean) => ReactNode;
+  lang: (value: Lang, children: ReactNode, active: boolean) => ReactNode;
+};
+
 export function PublicView({
   data,
   lang,
@@ -35,6 +42,7 @@ export function PublicView({
   onTab,
   onPost,
   onBack,
+  nav,
 }: {
   data: PublicData;
   lang: Lang;
@@ -44,8 +52,25 @@ export function PublicView({
   onTab: (tab: Kind) => void;
   onPost: (slug: string) => void;
   onBack: () => void;
+  nav?: PublicNav;
 }) {
   const [modal, setModal] = useState<"contact" | "cv" | null>(null);
+  const link: PublicNav = nav ?? {
+    tab: (kind, children, active) => (
+      <button
+        className={active ? "active" : ""}
+        onClick={() => onTab(kind)}
+        aria-current={active ? "page" : undefined}
+      >
+        {children}
+      </button>
+    ),
+    lang: (value, children, active) => (
+      <button aria-pressed={active} onClick={() => onLanguage(value)}>
+        {children}
+      </button>
+    ),
+  };
   const site = data.site;
   const copy = site?.translations[lang];
   const t = { ...defaultWords[lang], ...copy?.words };
@@ -126,7 +151,17 @@ export function PublicView({
             (lang === "id" ? "Ruang personal" : "A personal space")}
         </span>
         <div className="header-tools">
-          <Language lang={lang} onChange={onLanguage} />
+          <div
+            className="language"
+            aria-label={lang === "id" ? "Bahasa" : "Language"}
+          >
+            <Globe2 size={14} />
+            {langs.map((l) => (
+              <Fragment key={l}>
+                {link.lang(l, l.toUpperCase(), lang === l)}
+              </Fragment>
+            ))}
+          </div>
           <ThemeToggle lang={lang} />
         </div>
       </header>
@@ -257,22 +292,23 @@ export function PublicView({
             }
           >
             {sections.map((s) => (
-              <button
-                className={selected === s.key ? "active" : ""}
-                key={s.key}
-                onClick={() => onTab(s.key)}
-                aria-current={selected === s.key ? "page" : undefined}
-              >
-                {t[s.key]}
-                {s.key === "projects" ? (
-                  <span>
-                    {
-                      data.entries.filter((e) => e.category === "projects")
-                        .length
-                    }
-                  </span>
-                ) : null}
-              </button>
+              <Fragment key={s.key}>
+                {link.tab(
+                  s.key,
+                  <>
+                    {t[s.key]}
+                    {s.key === "projects" ? (
+                      <span>
+                        {
+                          data.entries.filter((e) => e.category === "projects")
+                            .length
+                        }
+                      </span>
+                    ) : null}
+                  </>,
+                  selected === s.key,
+                )}
+              </Fragment>
             ))}
           </nav>
           {selected === "about" ? (

@@ -1,8 +1,14 @@
-import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  notFound,
+  redirect,
+} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { loadPublic } from "../lib/public-data";
 import { contentLanguage } from "../lib/cms";
-import { PublicView } from "../components/public-view";
+import { PublicView, type PublicNav } from "../components/public-view";
+import { tabPaths } from "../lib/tabs";
 const findRedirect = createServerFn({ method: "GET" })
   .validator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
@@ -66,11 +72,39 @@ function Post() {
         tab: category === "projects" ? undefined : category,
       },
     });
+  const nav: PublicNav = {
+    tab: (kind, children, active) => (
+      <Link
+        to={tabPaths[kind]}
+        search={search}
+        activeProps={{}}
+        activeOptions={{ exact: true }}
+        className={active ? "active" : ""}
+        aria-current={active ? "page" : undefined}
+      >
+        {children}
+      </Link>
+    ),
+    lang: (value, children, active) => (
+      <Link
+        to="/post/$slug"
+        params={{ slug }}
+        search={{ lang: value === "en" ? "en" : undefined }}
+        replace
+        activeProps={{}}
+        activeOptions={{ exact: true, includeSearch: true }}
+        className={active ? "selected" : ""}
+      >
+        {children}
+      </Link>
+    ),
+  };
   return (
     <PublicView
       data={data}
       lang={search.lang ?? "id"}
       slug={slug}
+      nav={nav}
       onLanguage={(next) =>
         navigate({
           search: { lang: next === "en" ? "en" : undefined },
