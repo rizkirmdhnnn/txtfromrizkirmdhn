@@ -24,7 +24,11 @@ export function MaintenancePanel() {
         body: JSON.stringify(value),
       });
       setSaved(result);
-      setDraft(current => preserveDraft && current ? { ...current, enabled: result.enabled } : result);
+      setDraft((current) =>
+        preserveDraft && current
+          ? { ...current, enabled: result.enabled }
+          : result,
+      );
       setMessage(
         result.enabled
           ? "Maintenance aktif. Pengunjung melihat pesan singkat."

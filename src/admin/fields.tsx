@@ -1,5 +1,5 @@
 import type { MediaItem } from "../lib/cms";
-import {useEffect,useRef,useState} from 'react';
+import { useEffect, useRef, useState } from "react";
 export function Field({
   label,
   value,
@@ -13,9 +13,11 @@ export function Field({
   multiline?: boolean;
   type?: string;
 }) {
-  const [typed,setTyped]=useState(value);
-  const focused=useRef(false);
-  useEffect(()=>{if(!focused.current)setTyped(value)},[value]);
+  const [typed, setTyped] = useState(value);
+  const focused = useRef(false);
+  useEffect(() => {
+    if (!focused.current) setTyped(value);
+  }, [value]);
   return (
     <label className="cms-field">
       <span>{label}</span>
@@ -25,9 +27,17 @@ export function Field({
         <input
           type={type}
           value={typed}
-          onFocus={()=>{focused.current=true}}
-          onBlur={()=>{focused.current=false;setTyped(value)}}
-          onChange={(e) => {setTyped(e.target.value);onChange(e.target.value)}}
+          onFocus={() => {
+            focused.current = true;
+          }}
+          onBlur={() => {
+            focused.current = false;
+            setTyped(value);
+          }}
+          onChange={(e) => {
+            setTyped(e.target.value);
+            onChange(e.target.value);
+          }}
         />
       )}
     </label>

@@ -31,7 +31,13 @@ async function asset(name: string, type: string) {
     headers: { "Content-Type": type, "X-File-Name": encodeURIComponent(name) },
     body: bytes,
   });
-  if (!uploaded || typeof uploaded !== 'object' || !('url' in uploaded) || typeof uploaded.url !== 'string') throw new Error('Invalid upload response');
+  if (
+    !uploaded ||
+    typeof uploaded !== "object" ||
+    !("url" in uploaded) ||
+    typeof uploaded.url !== "string"
+  )
+    throw new Error("Invalid upload response");
   return uploaded.url;
 }
 if (!docs.some((d) => d.id === "site")) {
