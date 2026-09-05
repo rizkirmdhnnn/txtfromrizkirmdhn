@@ -245,7 +245,6 @@ export async function handleApi(request: Request, env: Env) {
     return json(await readMaintenance(env));
   if (route === "maintenance" && request.method === "POST")
     return json(await saveMaintenance(env, await body(request)));
-  if (route === "session") return json({ email: env.OWNER_EMAIL });
   if (route === "preview" && request.method === "GET")
     return json(await publicData(env, true));
   if (route === "documents" && request.method === "GET") {

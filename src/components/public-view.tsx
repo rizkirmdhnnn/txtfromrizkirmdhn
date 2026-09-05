@@ -16,7 +16,7 @@ import {
   Code2,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
-import { Visual, Language } from "./portfolio";
+import { Visual, Language } from "./visual";
 import { defaultWords } from "../lib/default-words";
 import {
   contentLanguage,

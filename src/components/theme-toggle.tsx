@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-import type { Lang } from "../lib/content";
+import type { Lang } from "../lib/cms";
 
 type Theme = "system" | "light" | "dark";
 const key = "portfolio-theme";
