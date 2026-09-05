@@ -124,12 +124,10 @@ export async function documentAction(
   const mutation = crypto.randomUUID();
   if (action === "publish") {
     if (doc.kind === "site") {
-      if (!(doc.draft as SiteData).name.trim())
+      if (!doc.draft.name.trim())
         throw new Response("Nama wajib diisi", { status: 400 });
     } else if (
-      !Object.values((doc.draft as EntryData).translations).some((t) =>
-        t.title.trim(),
-      )
+      !Object.values(doc.draft.translations).some((t) => t.title.trim())
     )
       throw new Response("Isi judul minimal satu bahasa", { status: 400 });
     for (const mediaId of mediaIds(doc.draft))
@@ -140,7 +138,7 @@ export async function documentAction(
       )
         throw new Response("Media tidak ditemukan", { status: 400 });
     if (doc.kind !== "site") {
-      const slug = (doc.draft as EntryData).slug;
+      const slug = doc.draft.slug;
       const conflict = await env.DB.prepare(
         "SELECT id FROM documents WHERE slug=? AND id<>? UNION SELECT document_id AS id FROM redirects WHERE slug=? AND document_id<>?",
       )
@@ -163,7 +161,7 @@ export async function documentAction(
       env.DB.prepare(
         "UPDATE documents SET published=draft,slug=?,mutation=?,version=version+1 WHERE id=? AND version=?",
       ).bind(
-        doc.kind === "site" ? null : (doc.draft as EntryData).slug,
+        doc.kind === "site" ? null : doc.draft.slug,
         mutation,
         id,
         version,

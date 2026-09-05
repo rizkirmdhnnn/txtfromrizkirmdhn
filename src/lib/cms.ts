@@ -78,10 +78,18 @@ export type DocumentRow = {
   deleted: number;
   updated_at: string;
 };
-export type CmsDocument = Omit<DocumentRow, "draft" | "published"> & {
-  draft: EntryData | SiteData;
-  published: EntryData | SiteData | null;
-};
+type DocumentMeta = Omit<DocumentRow, "kind" | "draft" | "published">;
+export type CmsDocument =
+  | (DocumentMeta & {
+      kind: "site";
+      draft: SiteData;
+      published: SiteData | null;
+    })
+  | (DocumentMeta & {
+      kind: Kind;
+      draft: EntryData;
+      published: EntryData | null;
+    });
 export type MediaItem = {
   id: string;
   name: string;
@@ -101,7 +109,7 @@ export function parseDocument(row: DocumentRow): CmsDocument {
     ...row,
     draft: JSON.parse(row.draft),
     published: row.published ? JSON.parse(row.published) : null,
-  };
+  } as CmsDocument;
 }
 export function emptyEntry(category: Kind): EntryData {
   const blank = {

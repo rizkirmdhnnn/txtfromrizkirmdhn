@@ -1,10 +1,14 @@
-import type { CmsDocument, EntryData, MediaItem } from "../lib/cms";
+import type { CmsDocument, MediaItem } from "../lib/cms";
 import { AnalyticsPanel } from "./analytics-panel";
 
 export function documentTitle(doc: CmsDocument) {
   if (doc.kind === "site") return "Profil & website";
-  const { translations } = doc.draft as EntryData;
+  const { translations } = doc.draft;
   return translations.id.title || translations.en.title || "Tanpa judul";
+}
+
+export function documentSlug(doc: CmsDocument) {
+  return doc.kind === "site" ? "" : doc.draft.slug;
 }
 
 export function Overview({

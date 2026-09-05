@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
-import type { CmsDocument, EntryData, Kind } from "../lib/cms";
-import { documentTitle } from "./overview";
+import type { CmsDocument, Kind } from "../lib/cms";
+import { documentSlug, documentTitle } from "./overview";
 
 export function ContentList({
   documents,
@@ -19,7 +19,7 @@ export function ContentList({
   const needle = query.trim().toLowerCase();
   const visible = needle
     ? documents.filter((d) =>
-        [documentTitle(d), (d.draft as EntryData).slug]
+        [documentTitle(d), documentSlug(d)]
           .join(" ")
           .toLowerCase()
           .includes(needle),
@@ -40,7 +40,7 @@ export function ContentList({
             <>
               <div>
                 <strong>{documentTitle(d)}</strong>
-                <small>/{(d.draft as EntryData).slug}</small>
+                <small>/{documentSlug(d)}</small>
               </div>
               <span className="cms-status">
                 {d.published ? "Terbit" : "Draft"}
