@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { PublicPage } from "../../components/public-page";
-import { publicHead } from "../../lib/public-head";
+import { publicHead, publicLoaderData } from "../../lib/public-head";
 import { tabPaths } from "../../lib/tabs";
 import { kinds, type Kind } from "../../lib/cms";
 
@@ -16,7 +16,11 @@ export const Route = createFileRoute("/_public/")({
       statusCode: 301,
     });
   },
-  head: ({ loaderData, match }) =>
-    publicHead(loaderData, match.search.lang ?? "id"),
+  head: ({ matches, match }) =>
+    publicHead({
+      data: publicLoaderData(matches),
+      lang: match.search.lang ?? "id",
+      path: "/",
+    }),
   component: () => <PublicPage tab="projects" />,
 });

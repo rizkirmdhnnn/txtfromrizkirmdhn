@@ -1,5 +1,5 @@
 import type { MediaItem } from "../lib/cms";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 export function Field({
   label,
   value,
@@ -13,32 +13,34 @@ export function Field({
   multiline?: boolean;
   type?: string;
 }) {
+  // Nilai lokal menahan kursor supaya tidak melompat saat draft di atas
+  // dirender ulang sementara pengguna masih mengetik.
   const [typed, setTyped] = useState(value);
   const focused = useRef(false);
   useEffect(() => {
     if (!focused.current) setTyped(value);
   }, [value]);
+  const control = {
+    value: typed,
+    onFocus: () => {
+      focused.current = true;
+    },
+    onBlur: () => {
+      focused.current = false;
+      setTyped(value);
+    },
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setTyped(event.target.value);
+      onChange(event.target.value);
+    },
+  };
   return (
     <label className="cms-field">
       <span>{label}</span>
       {multiline ? (
-        <textarea value={value} onChange={(e) => onChange(e.target.value)} />
+        <textarea {...control} />
       ) : (
-        <input
-          type={type}
-          value={typed}
-          onFocus={() => {
-            focused.current = true;
-          }}
-          onBlur={() => {
-            focused.current = false;
-            setTyped(value);
-          }}
-          onChange={(e) => {
-            setTyped(e.target.value);
-            onChange(e.target.value);
-          }}
-        />
+        <input type={type} {...control} />
       )}
     </label>
   );

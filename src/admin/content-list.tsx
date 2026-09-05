@@ -19,7 +19,10 @@ export function ContentList({
   const needle = query.trim().toLowerCase();
   const visible = needle
     ? documents.filter((d) =>
-        JSON.stringify(d.draft).toLowerCase().includes(needle),
+        [documentTitle(d), (d.draft as EntryData).slug]
+          .join(" ")
+          .toLowerCase()
+          .includes(needle),
       )
     : documents;
   return (

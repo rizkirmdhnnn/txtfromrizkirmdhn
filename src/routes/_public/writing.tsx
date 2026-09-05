@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicPage } from "../../components/public-page";
-import { publicHead } from "../../lib/public-head";
+import { publicHead, publicLoaderData } from "../../lib/public-head";
 
 export const Route = createFileRoute("/_public/writing")({
-  head: ({ loaderData, match }) =>
-    publicHead(loaderData, match.search.lang ?? "id"),
+  head: ({ matches, match }) =>
+    publicHead({
+      data: publicLoaderData(matches),
+      lang: match.search.lang ?? "id",
+      path: "/writing",
+    }),
   component: () => <PublicPage tab="writing" />,
 });

@@ -6,6 +6,8 @@ import {
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { loadPublic } from "../lib/public-data";
+import { loadOrigin } from "../lib/public-origin";
+import { publicHead } from "../lib/public-head";
 import { contentLanguage } from "../lib/cms";
 import { PublicView, type PublicNav } from "../components/public-view";
 import { tabPaths } from "../lib/tabs";
@@ -25,7 +27,7 @@ export const Route = createFileRoute("/post/$slug")({
     lang: s.lang === "en" ? "en" : undefined,
   }),
   loader: async ({ params }) => {
-    const data = await loadPublic();
+    const [data, origin] = await Promise.all([loadPublic(), loadOrigin()]);
     if (!data.entries.some((e) => e.slug === params.slug)) {
       const slug = await findRedirect({ data: params.slug });
       if (slug)
@@ -37,24 +39,21 @@ export const Route = createFileRoute("/post/$slug")({
         });
       throw notFound();
     }
-    return data;
+    return { ...data, origin };
   },
   head: ({ loaderData, params, match }) => {
-    const e = loaderData?.entries.find((e) => e.slug === params.slug);
-    const tr = e?.translations[contentLanguage(e, match.search.lang ?? "id")];
-    return {
-      meta: [
-        {
-          title:
-            tr?.seoTitle ||
-            `${tr?.title ?? "Portfolio"} — ${loaderData?.site?.name ?? ""}`,
-        },
-        {
-          name: "description",
-          content: tr?.seoDescription || tr?.summary || "",
-        },
-      ],
-    };
+    const lang = match.search.lang ?? "id";
+    const entry = loaderData?.entries.find((e) => e.slug === params.slug);
+    const tr = entry?.translations[contentLanguage(entry, lang)];
+    return publicHead({
+      data: loaderData,
+      lang,
+      path: `/post/${params.slug}`,
+      title:
+        tr?.seoTitle ||
+        `${tr?.title ?? "Portfolio"} — ${loaderData?.site?.name ?? ""}`,
+      description: tr?.seoDescription || tr?.summary || "",
+    });
   },
   component: Post,
 });
