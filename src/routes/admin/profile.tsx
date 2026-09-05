@@ -5,15 +5,11 @@ import { useAdminData, useRefresh } from "../../admin/data";
 import { sectionLabel } from "../../admin/nav";
 
 export const Route = createFileRoute("/admin/profile")({
-  validateSearch: (s: Record<string, unknown>): { lang?: "en" } => ({
-    lang: s.lang === "en" ? "en" : undefined,
-  }),
   component: ProfilePage,
 });
 
 function ProfilePage() {
   const { documents, media } = useAdminData();
-  const { lang } = Route.useSearch();
   const navigate = Route.useNavigate();
   const refresh = useRefresh();
   const site = documents.find((d) => d.id === "site");
@@ -22,19 +18,18 @@ function ProfilePage() {
       <>
         <PageHeader
           title={sectionLabel("site")}
-          description="Atur kontenmu dengan tenang. Publikasikan saat sudah siap."
+          description="Manage your content. Publish when you are ready."
         />
-        <p>Profil belum diimpor. Jalankan impor awal untuk memulai.</p>
+        <p>
+          The profile has not been imported. Run the initial import to get
+          started.
+        </p>
       </>
     );
   return (
     <DocumentEditor
       document={site}
       media={media}
-      lang={lang ?? "id"}
-      onLang={(next) =>
-        navigate({ search: { lang: next === "en" ? "en" : undefined } })
-      }
       onSaved={() => refresh()}
       onBack={() => navigate({ to: "/admin" })}
     />

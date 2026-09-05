@@ -2,7 +2,12 @@ import { readFile, readdir } from "node:fs/promises";
 import { parse } from "yaml";
 import { defaultWords } from "../src/lib/default-words";
 import { profile } from "../src/lib/profile";
-import { emptyEntry, type EntryData, type SiteData } from "../src/lib/cms";
+import {
+  emptyEntry,
+  entrySchema,
+  type EntryData,
+  type SiteData,
+} from "../src/lib/cms";
 const origin = process.env.CMS_ORIGIN || "http://localhost:3000";
 const headers: Record<string, string> = { Origin: origin };
 if (process.env.CMS_ACCESS_TOKEN)
@@ -49,48 +54,26 @@ if (!docs.some((d) => d.id === "site")) {
     icon: "",
     avatar,
     skills: ["Fullstack development", "Cloud & DevOps", "AI-assisted building"],
-    cv: { id: cv, en: cv },
+    cv,
     sections: ["projects", "experience", "writing", "about"].map((key) => ({
       key: key as EntryData["category"],
       visible: true,
     })),
-    translations: {
-      id: {
-        headline: "Fullstack & cloud",
-        bio: defaultWords.id.bio,
-        note: defaultWords.id.note,
-        aboutTitle: "Halo, saya Rizki.",
-        aboutBody:
-          "Saya tertarik pada proses mengubah ide menjadi sesuatu yang dapat digunakan, dari antarmuka sampai infrastruktur di belakangnya.",
-        footer: defaultWords.id.built,
-        seoTitle: "Achmad Rizki Ramadhan — Fullstack & Cloud",
-        seoDescription: defaultWords.id.bio,
-        words: {
-          ...defaultWords.id,
-          space: "Ruang personal",
-          downloadPdf: "Unduh PDF",
-          liveDemo: "Lihat demo",
-          projectsLabel: "Open source",
-        },
-      },
-      en: {
-        headline: "Fullstack & cloud",
-        bio: defaultWords.en.bio,
-        note: defaultWords.en.note,
-        aboutTitle: "Hello, I’m Rizki.",
-        aboutBody:
-          "I’m interested in turning ideas into useful things, from the interface to the infrastructure behind it.",
-        footer: defaultWords.en.built,
-        seoTitle: "Achmad Rizki Ramadhan — Fullstack & Cloud",
-        seoDescription: defaultWords.en.bio,
-        words: {
-          ...defaultWords.en,
-          space: "A personal space",
-          downloadPdf: "Download PDF",
-          liveDemo: "Live demo",
-          projectsLabel: "Open source",
-        },
-      },
+    headline: "Fullstack & cloud",
+    bio: defaultWords.bio,
+    note: defaultWords.note,
+    aboutTitle: "Hello, I’m Rizki.",
+    aboutBody:
+      "I’m interested in turning ideas into useful things, from the interface to the infrastructure behind it.",
+    footer: defaultWords.built,
+    seoTitle: "Achmad Rizki Ramadhan — Fullstack & Cloud",
+    seoDescription: defaultWords.bio,
+    words: {
+      ...defaultWords,
+      space: "A personal space",
+      downloadPdf: "Download PDF",
+      liveDemo: "Live demo",
+      projectsLabel: "Open source",
     },
   };
   await api("documents", {
@@ -105,7 +88,6 @@ for (const category of [
   "writing",
   "about",
 ] as const) {
-  const grouped = new Map<string, EntryData>();
   for (const file of await readdir(
     new URL(`../content/${category}/`, import.meta.url),
   )) {
@@ -117,26 +99,13 @@ for (const category of [
     const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
     if (!match) continue;
     const meta = parse(match[1]);
-    const entry = grouped.get(meta.slug) || {
+    const draft = entrySchema.parse({
       ...emptyEntry(category),
-      slug: meta.slug,
-      date: meta.date,
-      tags: meta.tags ?? [],
-      pinned: !!meta.pinned,
-      demo: !!meta.demo,
-      repo: meta.repo ?? "",
-      visual: meta.visual ?? "",
-    };
-    entry.translations[meta.lang as "id" | "en"] = {
-      title: meta.title,
-      summary: meta.summary,
+      ...meta,
+      category,
       body: match[2],
-      seoTitle: "",
-      seoDescription: "",
-    };
-    grouped.set(meta.slug, entry);
-  }
-  for (const [slug, draft] of grouped) {
+    });
+    const slug = draft.slug;
     const id = `seed-${category}-${slug}`;
     if (docs.some((d) => d.id === id)) continue;
     await api("documents", {
@@ -147,5 +116,5 @@ for (const category of [
   }
 }
 console.log(
-  "Import selesai. Semua konten baru adalah draft; tidak ada yang dipublikasikan.",
+  "Import complete. All new content is draft; nothing was published.",
 );

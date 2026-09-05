@@ -1,17 +1,14 @@
 import { parse } from "yaml";
-import { entrySchema, type EntryData, type Lang } from "../lib/cms";
+import { entrySchema, type EntryData } from "../lib/cms";
 import { entryMarkdown, splitFrontmatter } from "../lib/markdown";
 import { downloadText } from "./client";
-import { setTranslation } from "./edit-helpers";
 
 export function MarkdownTools({
   draft,
-  lang,
   onImport,
   onRun,
 }: {
   draft: EntryData;
-  lang: Lang;
   onImport: (draft: EntryData, message: string) => void;
   onRun: (task: () => Promise<void>) => Promise<void>;
 }) {
@@ -19,14 +16,12 @@ export function MarkdownTools({
     <>
       <button
         className="cms-button"
-        onClick={() =>
-          downloadText(`${draft.slug}.${lang}.md`, entryMarkdown(draft, lang))
-        }
+        onClick={() => downloadText(`${draft.slug}.md`, entryMarkdown(draft))}
       >
-        Ekspor Markdown
+        Export Markdown
       </button>
       <label className="cms-button file-button">
-        Impor Markdown
+        Import Markdown
         <input
           type="file"
           accept=".md,.markdown"
@@ -34,34 +29,25 @@ export function MarkdownTools({
             const file = ev.target.files?.[0];
             if (!file) return;
             void onRun(async () => {
-              if (file.size > 400000) throw new Error("File terlalu besar");
+              if (file.size > 400000) throw new Error("File is too large");
               const raw = await file.text();
               const parsed = splitFrontmatter(raw);
               if (!parsed) {
                 onImport(
-                  setTranslation(draft, lang, "body", raw),
-                  "Markdown dimuat ke draft. Simpan setelah diperiksa.",
+                  { ...draft, body: raw },
+                  "Markdown loaded into the draft. Review it before saving.",
                 );
                 return;
               }
               const meta = parse(parsed.meta);
-              const translation = draft.translations[lang];
               onImport(
                 entrySchema.parse({
                   ...draft,
                   ...meta,
                   category: draft.category,
-                  translations: {
-                    ...draft.translations,
-                    [lang]: {
-                      ...translation,
-                      title: meta.title ?? translation.title,
-                      summary: meta.summary ?? translation.summary,
-                      body: parsed.body,
-                    },
-                  },
+                  body: parsed.body,
                 }),
-                "Markdown dimuat ke draft. Simpan setelah diperiksa.",
+                "Markdown loaded into the draft. Review it before saving.",
               );
             });
             ev.target.value = "";

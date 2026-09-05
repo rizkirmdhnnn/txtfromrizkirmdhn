@@ -32,7 +32,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         id="cms-navigation"
         ref={panel}
         className={`cms-sidebar ${open ? "open" : ""}`}
-        aria-label="Navigasi studio"
+        aria-label="Studio navigation"
         inert={mobile && !open}
         {...(open ? modal : {})}
       >
@@ -44,13 +44,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <button
             className="cms-drawer-close"
             data-drawer-focus
-            aria-label="Tutup navigasi"
+            aria-label="Close navigation"
             onClick={close}
           >
             <X size={20} />
           </button>
         </div>
-        <div className="cms-sidebar-caption">Ruang untuk karyamu</div>
+        <div className="cms-sidebar-caption">A space for your work</div>
         <nav>
           <Link to="/admin" activeOptions={{ exact: true }} onClick={close}>
             <Overview size={17} />
@@ -92,7 +92,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <ExternalLink size={16} />
             Preview website
           </a>
-          <a href="/cdn-cgi/access/logout">Keluar</a>
+          <a href="/cdn-cgi/access/logout">Log out</a>
         </div>
       </aside>
       <div className="cms-workspace">
@@ -100,18 +100,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <button
             ref={trigger}
             className="cms-mobile-menu"
-            aria-label={open ? "Tutup navigasi" : "Buka navigasi"}
+            aria-label={open ? "Close navigation" : "Open navigation"}
             aria-expanded={open}
             aria-controls="cms-navigation"
             onClick={() => setOpen(!open)}
           >
             <Menu size={20} />
           </button>
-          <span>Portofolio / {sectionLabel(section)}</span>
+          <span>Portfolio / {sectionLabel(section)}</span>
           <div>
             <span className="owner-dot" />
             Rizki
-            <ThemeToggle lang="id" />
+            <ThemeToggle />
           </div>
         </header>
         <main id="main" className="cms-main">

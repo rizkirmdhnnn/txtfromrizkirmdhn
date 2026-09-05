@@ -2,7 +2,6 @@
 {
   "slug": "certifications",
   "category": "about",
-  "lang": "en",
   "title": "Certifications & learning",
   "summary": "A place for credentials and continued learning.",
   "date": "2026-09-01",

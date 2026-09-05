@@ -29,8 +29,8 @@ export function ContentList({
     <>
       <input
         className="cms-search"
-        aria-label="Cari konten"
-        placeholder="Cari judul atau slug…"
+        aria-label="Search content"
+        placeholder="Search by title or slug…"
         value={query}
         onChange={(e) => onQuery(e.target.value)}
       />
@@ -43,7 +43,7 @@ export function ContentList({
                 <small>/{documentSlug(d)}</small>
               </div>
               <span className="cms-status">
-                {d.published ? "Terbit" : "Draft"}
+                {d.published ? "Published" : "Draft"}
               </span>
             </>
           );
@@ -64,18 +64,18 @@ export function ContentList({
                 {d.deleted ? (
                   <>
                     <button onClick={() => onAction(d, "restore")}>
-                      Pulihkan
+                      Restore
                     </button>
                     <button
                       className="danger"
                       onClick={() => onAction(d, "delete")}
                     >
-                      Hapus permanen
+                      Delete permanently
                     </button>
                   </>
                 ) : (
                   <button
-                    aria-label="Pindahkan ke sampah"
+                    aria-label="Move to trash"
                     onClick={() => onAction(d, "trash")}
                   >
                     <Trash2 size={16} />
@@ -88,8 +88,8 @@ export function ContentList({
         {!visible.length ? (
           <p className="empty-list">
             {needle
-              ? "Tidak ada konten yang cocok dengan pencarian."
-              : "Belum ada konten di sini."}
+              ? "No content matches your search."
+              : "No content here yet."}
           </p>
         ) : null}
       </section>

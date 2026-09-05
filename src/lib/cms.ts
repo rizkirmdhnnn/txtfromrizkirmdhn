@@ -1,6 +1,4 @@
 import { z } from "zod";
-export const langs = ["id", "en"] as const;
-export type Lang = (typeof langs)[number];
 export const kinds = ["projects", "experience", "writing", "about"] as const;
 export type Kind = (typeof kinds)[number];
 const text = z.string().max(2000);
@@ -8,8 +6,8 @@ const asset = z.string().regex(/^$|^\/api\/media\/[a-zA-Z0-9-]+$/);
 const link = z
   .string()
   .max(2000)
-  .refine((v) => !v || /^https:\/\//.test(v), "Gunakan URL HTTPS");
-export const translationSchema = z.object({
+  .refine((v) => !v || /^https:\/\//.test(v), "Use an HTTPS URL");
+export const entryTextSchema = z.object({
   title: text,
   summary: text,
   body: z.string().max(100000),
@@ -31,7 +29,7 @@ export const entrySchema = z.object({
   visual: z.enum(["", "mail", "storage", "agent"]),
   repo: link,
   demoUrl: link,
-  translations: z.object({ id: translationSchema, en: translationSchema }),
+  ...entryTextSchema.shape,
 });
 const copySchema = z.object({
   headline: text,
@@ -54,17 +52,17 @@ export const siteSchema = z.object({
   email: z
     .string()
     .max(200)
-    .refine((v) => !v || z.email().safeParse(v).success, "Email tidak valid"),
+    .refine((v) => !v || z.email().safeParse(v).success, "Invalid email"),
   whatsapp: z.string().regex(/^\d{0,18}$/),
   github: link,
   linkedin: link,
   skills: z.array(z.string().max(80)).max(20),
-  cv: z.object({ id: asset, en: asset }),
+  cv: asset,
   sections: z
     .array(z.object({ key: z.enum(kinds), visible: z.boolean() }))
     .length(4)
     .refine((v) => new Set(v.map((s) => s.key)).size === 4),
-  translations: z.object({ id: copySchema, en: copySchema }),
+  ...copySchema.shape,
 });
 export type EntryData = z.infer<typeof entrySchema>;
 export type SiteData = z.infer<typeof siteSchema>;
@@ -95,20 +93,26 @@ export type MediaItem = {
   name: string;
   type: string;
   size: number;
-  alt: Record<Lang, string>;
+  alt: string;
   created_at: string;
 };
 export type PublicData = {
   site: SiteData | null;
   entries: EntryData[];
-  media: Record<string, Record<Lang, string>>;
+  media: Record<string, string>;
   preview: boolean;
 };
 export function parseDocument(row: DocumentRow): CmsDocument {
   return {
     ...row,
-    draft: JSON.parse(row.draft),
-    published: row.published ? JSON.parse(row.published) : null,
+    draft: (row.kind === "site" ? siteSchema : entrySchema).parse(
+      JSON.parse(row.draft),
+    ),
+    published: row.published
+      ? (row.kind === "site" ? siteSchema : entrySchema).parse(
+          JSON.parse(row.published),
+        )
+      : null,
   } as CmsDocument;
 }
 export function emptyEntry(category: Kind): EntryData {
@@ -131,14 +135,8 @@ export function emptyEntry(category: Kind): EntryData {
     visual: "",
     repo: "",
     demoUrl: "",
-    translations: { id: { ...blank }, en: { ...blank } },
+    ...blank,
   };
-}
-export function otherLang(lang: Lang): Lang {
-  return lang === "id" ? "en" : "id";
-}
-export function contentLanguage(entry: EntryData, lang: Lang): Lang {
-  return entry.translations[lang].title.trim() ? lang : otherLang(lang);
 }
 export function mediaIds(data: unknown): string[] {
   return [

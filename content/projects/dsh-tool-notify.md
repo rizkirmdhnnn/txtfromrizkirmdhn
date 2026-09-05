@@ -2,7 +2,6 @@
 {
   "slug": "dsh-tool-notify",
   "category": "projects",
-  "lang": "en",
   "title": "A little signal from your AI.",
   "summary": "A notification when your AI agent finishes a task.",
   "tags": ["TypeScript", "AI tooling", "Webhooks"],

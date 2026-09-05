@@ -23,7 +23,7 @@ export function MediaLibrary({
     <>
       <div className="cms-actions">
         <label className="cms-button strong file-button">
-          {busy ? "Mengunggah…" : "Unggah file"}
+          {busy ? "Uploading…" : "Upload files"}
           <input
             type="file"
             multiple
@@ -37,7 +37,7 @@ export function MediaLibrary({
                     file.size >
                     (file.type === "application/pdf" ? 20 : 10) * 1024 * 1024
                   )
-                    throw new Error("File melebihi batas ukuran");
+                    throw new Error("File exceeds the size limit");
                   await api("media", {
                     method: "POST",
                     headers: {
@@ -48,7 +48,7 @@ export function MediaLibrary({
                   });
                 }
                 setMessage(
-                  "File berhasil diunggah. Pilih dari editor untuk menggunakannya.",
+                  "Files uploaded. Select them in the editor to use them.",
                 );
               });
               e.target.value = "";
@@ -56,7 +56,7 @@ export function MediaLibrary({
           />
         </label>
         <span className="cms-description">
-          Gambar maks. 10 MB · PDF maks. 20 MB
+          Images up to 10 MB · PDFs up to 20 MB
         </span>
       </div>
       <Notice>{message}</Notice>
@@ -72,17 +72,17 @@ export function MediaLibrary({
                   method: "PATCH",
                   body: JSON.stringify({ id: m.id, alt }),
                 });
-                setMessage("Alt text tersimpan.");
+                setMessage("Alt text saved.");
               })
             }
             onDelete={() => {
-              if (confirm("Hapus file ini secara permanen?"))
+              if (confirm("Permanently delete this file?"))
                 void runAndRefresh(async () => {
                   await api("media", {
                     method: "DELETE",
                     body: JSON.stringify({ id: m.id }),
                   });
-                  setMessage("File dihapus.");
+                  setMessage("File deleted.");
                 });
             }}
           />
@@ -107,7 +107,7 @@ function MediaCard({
   return (
     <article className="cms-card media-card">
       {item.type.startsWith("image/") ? (
-        <img src={`/api/media/${item.id}`} alt={item.alt.id || item.name} />
+        <img src={`/api/media/${item.id}`} alt={item.alt || item.name} />
       ) : (
         <div className="pdf-icon">
           <FileText size={45} />
@@ -118,31 +118,22 @@ function MediaCard({
       <small>{(item.size / 1024).toFixed(0)} KB</small>
       {item.type.startsWith("image/") ? (
         <>
-          <Field
-            label="Alt text Indonesia"
-            value={alt.id}
-            onChange={(id) => setAlt({ ...alt, id })}
-          />
-          <Field
-            label="Alt text English"
-            value={alt.en}
-            onChange={(en) => setAlt({ ...alt, en })}
-          />
+          <Field label="Alt text" value={alt} onChange={setAlt} />
           <button
             className="cms-button"
             disabled={disabled}
             onClick={() => onSave(alt)}
           >
-            Simpan alt text
+            Save alt text
           </button>
         </>
       ) : null}
       <div className="cms-actions">
         <a href={`/api/media/${item.id}`} target="_blank" rel="noreferrer">
-          Lihat
+          View
         </a>
         <button className="danger" disabled={disabled} onClick={onDelete}>
-          Hapus
+          Delete
         </button>
       </div>
     </article>

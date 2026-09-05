@@ -2,7 +2,6 @@
 {
   "slug": "fullstack",
   "category": "experience",
-  "lang": "en",
   "title": "Fullstack Developer",
   "summary": "Sample work experience",
   "date": "2026-09-01",

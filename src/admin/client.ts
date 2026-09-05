@@ -17,7 +17,7 @@ export async function api<T>(
     try {
       message = JSON.parse(text).error || text;
     } catch {}
-    throw new Error(message || "Permintaan gagal");
+    throw new Error(message || "Request failed");
   }
   return response.json();
 }

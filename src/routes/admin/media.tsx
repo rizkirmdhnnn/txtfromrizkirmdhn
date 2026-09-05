@@ -13,7 +13,7 @@ function MediaPage() {
     <>
       <PageHeader
         title={sectionLabel("media")}
-        description="Atur kontenmu dengan tenang. Publikasikan saat sudah siap."
+        description="Manage your content. Publish when you are ready."
       />
       <MediaLibrary media={media} onChanged={refresh} />
     </>

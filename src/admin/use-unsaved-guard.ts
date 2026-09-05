@@ -5,7 +5,7 @@ import { useBlocker } from "@tanstack/react-router";
 // tombol Back, dan reload lewat beforeunload bawaan blocker.
 export function useUnsavedGuard(dirty: boolean) {
   const shouldBlockFn = useCallback(
-    () => !confirm("Ada perubahan belum disimpan. Tinggalkan halaman ini?"),
+    () => !confirm("You have unsaved changes. Leave this page?"),
     [],
   );
   useBlocker({ shouldBlockFn, disabled: !dirty });

@@ -30,25 +30,25 @@ export function MaintenancePanel() {
       );
       setMessage(
         result.enabled
-          ? "Maintenance aktif. Pengunjung melihat pesan singkat."
-          : "Portofolio terbuka. Konten published tampil kembali.",
+          ? "Maintenance is on. Visitors see the maintenance message."
+          : "The portfolio is open. Published content is visible again.",
       );
     });
   return (
     <section className="cms-card">
       <div className="maintenance-heading">
         <div>
-          <h2>Mode maintenance</h2>
+          <h2>Maintenance mode</h2>
           <p className="cms-description">
-            Tutup sementara portofolio, tulisan, dan CV. Preview privat tetap
-            tersedia.
+            Temporarily close the portfolio, posts, and CV. Private preview
+            remains available.
           </p>
         </div>
         <button
           className="maintenance-switch"
           type="button"
           role="switch"
-          aria-label="Mode maintenance"
+          aria-label="Maintenance mode"
           aria-checked={saved?.enabled ?? false}
           disabled={busy || !saved}
           onClick={() =>
@@ -62,9 +62,9 @@ export function MaintenancePanel() {
         <strong>
           {saved
             ? saved.enabled
-              ? "Maintenance aktif"
-              : "Portofolio terbuka"
-            : "Memuat pengaturan…"}
+              ? "Maintenance is on"
+              : "Portfolio is open"
+            : "Loading settings…"}
         </strong>
       </p>
       {draft && (
@@ -74,44 +74,26 @@ export function MaintenancePanel() {
             void persist(draft);
           }}
         >
-          {(["id", "en"] as const).map((lang) => (
-            <fieldset key={lang} disabled={busy} className="maintenance-fields">
-              <legend>{lang === "id" ? "Bahasa Indonesia" : "English"}</legend>
-              <Field
-                label={`Judul (${lang.toUpperCase()})`}
-                value={draft.translations[lang].title}
-                onChange={(title) =>
-                  setDraft({
-                    ...draft,
-                    translations: {
-                      ...draft.translations,
-                      [lang]: { ...draft.translations[lang], title },
-                    },
-                  })
-                }
-              />
-              <Field
-                label={`Pesan (${lang.toUpperCase()})`}
-                multiline
-                value={draft.translations[lang].body}
-                onChange={(body) =>
-                  setDraft({
-                    ...draft,
-                    translations: {
-                      ...draft.translations,
-                      [lang]: { ...draft.translations[lang], body },
-                    },
-                  })
-                }
-              />
-            </fieldset>
-          ))}
+          <fieldset disabled={busy} className="maintenance-fields">
+            <legend>Visitor message</legend>
+            <Field
+              label="Title"
+              value={draft.title}
+              onChange={(title) => setDraft({ ...draft, title })}
+            />
+            <Field
+              label="Message"
+              multiline
+              value={draft.body}
+              onChange={(body) => setDraft({ ...draft, body })}
+            />
+          </fieldset>
           <button className="cms-button" disabled={busy} type="submit">
-            {busy ? "Menyimpan…" : "Simpan pesan"}
+            {busy ? "Saving…" : "Save message"}
           </button>
           <p className="cms-description">
-            Toggle langsung berlaku menggunakan pesan yang sudah disimpan.
-            Mematikan maintenance tidak memerlukan publish ulang.
+            The switch takes effect immediately using the saved message. Turning
+            maintenance off does not require republishing.
           </p>
         </form>
       )}

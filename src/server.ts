@@ -4,10 +4,15 @@ import { ZodError } from "zod";
 import { handleApi } from "./server/api";
 import { isLocal, requireAdmin } from "./server/auth";
 import { maintenanceGate } from "./server/maintenance";
+import { englishUrl } from "./lib/legacy-url";
 export default createServerEntry({
   async fetch(request) {
     try {
       const url = new URL(request.url);
+      if (url.hostname === env.PUBLIC_HOST || isLocal(request)) {
+        const canonical = englishUrl(request);
+        if (canonical) return Response.redirect(canonical, 301);
+      }
       const maintenance = await maintenanceGate(request, env);
       if (maintenance) return maintenance;
       const adminPath =
@@ -86,7 +91,7 @@ export default createServerEntry({
       return Response.json(
         {
           error:
-            "Permintaan gagal. Coba lagi; perubahan belum tentu tersimpan.",
+            "Request failed. Try again; your changes may not have been saved.",
         },
         { status: 500, headers: { "Cache-Control": "no-store" } },
       );

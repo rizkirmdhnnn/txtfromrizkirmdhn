@@ -12,30 +12,28 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 5 0 obj
-<< /Length 1440 >>
+<< /Length 1194 >>
 stream
 BT
-/F1 11 Tf 1 0 0 1 48 785 Tm (DEMO CV / CONTOH CV) Tj
+/F1 11 Tf 1 0 0 1 48 785 Tm (DEMO CV) Tj
 /F1 24 Tf 1 0 0 1 48 760 Tm (Achmad Rizki Ramadhan) Tj
 /F1 12 Tf 1 0 0 1 48 722 Tm (Fullstack Developer | Cloud Enthusiast) Tj
 /F1 11 Tf 1 0 0 1 48 696 Tm (Yogyakarta, Indonesia) Tj
 /F1 12 Tf 1 0 0 1 48 671 Tm () Tj
-/F1 12 Tf 1 0 0 1 48 645 Tm (PROFILE / PROFIL) Tj
+/F1 12 Tf 1 0 0 1 48 645 Tm (PROFILE) Tj
 /F1 10 Tf 1 0 0 1 48 619 Tm (Building applications, cloud infrastructure, and solving problems with AI.) Tj
-/F1 10 Tf 1 0 0 1 48 595 Tm (Membangun aplikasi, infrastruktur cloud, dan memecahkan masalah bersama AI.) Tj
-/F1 12 Tf 1 0 0 1 48 571 Tm () Tj
-/F1 12 Tf 1 0 0 1 48 545 Tm (PUBLIC PROJECTS / PROYEK PUBLIK) Tj
-/F1 10 Tf 1 0 0 1 48 519 Tm (Mailriz: persistent email aliases on Cloudflare \(Worker, D1, R2\).) Tj
-/F1 10 Tf 1 0 0 1 48 495 Tm (R2 x macOS: JuiceFS, Redis, Docker, and SMB.) Tj
-/F1 10 Tf 1 0 0 1 48 471 Tm (dsh-tool-notify: AI agent completion notifications.) Tj
-/F1 12 Tf 1 0 0 1 48 447 Tm () Tj
-/F1 12 Tf 1 0 0 1 48 421 Tm (LINKS / TAUTAN) Tj
-/F1 10 Tf 1 0 0 1 48 395 Tm (github.com/rizkirmdhnnn) Tj
-/F1 10 Tf 1 0 0 1 48 371 Tm (linkedin.com/in/achmadrizkirmdhn) Tj
-/F1 12 Tf 1 0 0 1 48 347 Tm () Tj
-/F1 9 Tf 1 0 0 1 48 321 Tm (This is a demo based on public profile data and owner-provided information.) Tj
-/F1 9 Tf 1 0 0 1 48 298 Tm (Employment history and certifications have not yet been supplied.) Tj
-/F1 9 Tf 1 0 0 1 48 275 Tm (CV contoh. Riwayat kerja dan sertifikasi belum dilengkapi.) Tj
+/F1 12 Tf 1 0 0 1 48 595 Tm () Tj
+/F1 12 Tf 1 0 0 1 48 569 Tm (PUBLIC PROJECTS) Tj
+/F1 10 Tf 1 0 0 1 48 543 Tm (Mailriz: persistent email aliases on Cloudflare \(Worker, D1, R2\).) Tj
+/F1 10 Tf 1 0 0 1 48 519 Tm (R2 x macOS: JuiceFS, Redis, Docker, and SMB.) Tj
+/F1 10 Tf 1 0 0 1 48 495 Tm (dsh-tool-notify: AI agent completion notifications.) Tj
+/F1 12 Tf 1 0 0 1 48 471 Tm () Tj
+/F1 12 Tf 1 0 0 1 48 445 Tm (LINKS) Tj
+/F1 10 Tf 1 0 0 1 48 419 Tm (github.com/rizkirmdhnnn) Tj
+/F1 10 Tf 1 0 0 1 48 395 Tm (linkedin.com/in/achmadrizkirmdhn) Tj
+/F1 12 Tf 1 0 0 1 48 371 Tm () Tj
+/F1 9 Tf 1 0 0 1 48 345 Tm (This is a demo based on public profile data and owner-provided information.) Tj
+/F1 9 Tf 1 0 0 1 48 322 Tm (Employment history and certifications have not yet been supplied.) Tj
 ET
 endstream
 endobj
@@ -50,5 +48,5 @@ xref
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-1803
+1557
 %%EOF

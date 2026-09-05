@@ -32,27 +32,27 @@ export function AnalyticsPanel() {
   return (
     <section className="cms-card">
       <div className="cms-title-row">
-        <h2>Pengunjung website</h2>
+        <h2>Website visitors</h2>
         <select
-          aria-label="Periode statistik"
+          aria-label="Statistics period"
           value={days}
           onChange={(e) => setDays(e.target.value)}
         >
-          <option value="7">7 hari terakhir</option>
-          <option value="30">30 hari terakhir</option>
+          <option value="7">Last 7 days</option>
+          <option value="30">Last 30 days</option>
         </select>
       </div>
       {error ? (
         <p>{error}</p>
       ) : !data ? (
-        <p>Memuat statistik…</p>
+        <p>Loading statistics…</p>
       ) : !data.configured || data.error ? (
         <p className="cms-description">{data.message}</p>
       ) : (
         <>
           <div className="stat-grid">
             <div className="stat-card">
-              <span>Kunjungan</span>
+              <span>Visits</span>
               <strong>{data.visits}</strong>
             </div>
             <div className="stat-card">
@@ -60,7 +60,7 @@ export function AnalyticsPanel() {
               <strong>{data.views}</strong>
             </div>
           </div>
-          <h3>Halaman populer</h3>
+          <h3>Popular pages</h3>
           {data.pages?.length ? (
             data.pages.map((p) => (
               <div className="revision-row" key={p.path}>
@@ -69,12 +69,12 @@ export function AnalyticsPanel() {
               </div>
             ))
           ) : (
-            <p>Belum ada data kunjungan.</p>
+            <p>No visitor data yet.</p>
           )}
           <small>
-            Diperbarui{" "}
+            Updated{" "}
             {data.updatedAt
-              ? new Date(data.updatedAt).toLocaleString("id-ID")
+              ? new Date(data.updatedAt).toLocaleString("en-US")
               : ""}
           </small>
         </>

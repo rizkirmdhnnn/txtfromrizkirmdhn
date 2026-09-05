@@ -1,4 +1,4 @@
-import type { Lang, PublicData } from "./cms";
+import type { PublicData } from "./cms";
 
 type HeadData = PublicData & { origin: string };
 
@@ -11,31 +11,25 @@ export function publicLoaderData(
 
 export function publicHead({
   data,
-  lang,
   path,
   title,
   description,
 }: {
   data: HeadData | undefined;
-  lang: Lang;
   path: string;
   title?: string;
   description?: string;
 }) {
-  const copy = data?.site?.translations[lang];
+  const copy = data?.site;
   const pageTitle = title || copy?.seoTitle || data?.site?.name || "Portfolio";
   const pageDescription =
     description || copy?.seoDescription || copy?.bio || "";
   const origin = data?.origin ?? "";
-  const url = (value: Lang) =>
-    `${origin}${path}${value === "en" ? "?lang=en" : ""}`;
+  const url = `${origin}${path}`;
   return {
     links: [
       ...(data?.site?.icon ? [{ rel: "icon", href: data.site.icon }] : []),
-      { rel: "canonical", href: url(lang) },
-      { rel: "alternate", hreflang: "id", href: url("id") },
-      { rel: "alternate", hreflang: "en", href: url("en") },
-      { rel: "alternate", hreflang: "x-default", href: url("id") },
+      { rel: "canonical", href: url },
     ],
     meta: [
       { title: pageTitle },
@@ -43,8 +37,8 @@ export function publicHead({
       { property: "og:type", content: "website" },
       { property: "og:title", content: pageTitle },
       { property: "og:description", content: pageDescription },
-      { property: "og:url", content: url(lang) },
-      { property: "og:locale", content: lang === "en" ? "en_US" : "id_ID" },
+      { property: "og:url", content: url },
+      { property: "og:locale", content: "en_US" },
       { name: "twitter:card", content: "summary_large_image" },
       ...(data?.site?.avatar
         ? [{ property: "og:image", content: `${origin}${data.site.avatar}` }]

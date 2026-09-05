@@ -8,14 +8,15 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "cf:typegen": "wrangler types --strict-vars=false",
+    "cf:typegen": "wrangler types --strict-vars=false --env-file .dev.vars.example",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:seed": "tsx scripts/seed.ts",
     "test": "vitest run",
     "preview": "vite preview",
     "deploy:preview": "npm run build && wrangler deploy",
     "deploy:production": "CLOUDFLARE_ENV=production npm run build && wrangler deploy --env production",
-    "seed:preview": "tsx scripts/seed-preview.ts"
+    "seed:preview": "tsx scripts/seed-preview.ts",
+    "content:migrate-english": "tsx scripts/migrate-english.ts"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.32",

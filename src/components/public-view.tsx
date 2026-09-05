@@ -10,7 +10,6 @@ import {
   MapPin,
   Pin,
   X,
-  Globe2,
   Mail,
   MessageCircle,
   Download,
@@ -19,36 +18,23 @@ import {
 import { ThemeToggle } from "./theme-toggle";
 import { Visual } from "./visual";
 import { defaultWords } from "../lib/default-words";
-import {
-  contentLanguage,
-  langs,
-  otherLang,
-  type PublicData,
-  type Lang,
-  type EntryData,
-  type Kind,
-} from "../lib/cms";
+import { type PublicData, type EntryData, type Kind } from "../lib/cms";
 export type PublicNav = {
   tab: (kind: Kind, children: ReactNode, active: boolean) => ReactNode;
-  lang: (value: Lang, children: ReactNode, active: boolean) => ReactNode;
 };
 
 export function PublicView({
   data,
-  lang,
   tab = "projects",
   slug,
-  onLanguage,
   onTab,
   onPost,
   onBack,
   nav,
 }: {
   data: PublicData;
-  lang: Lang;
   tab?: Kind;
   slug?: string;
-  onLanguage: (lang: Lang) => void;
   onTab: (tab: Kind) => void;
   onPost: (slug: string) => void;
   onBack: () => void;
@@ -65,19 +51,13 @@ export function PublicView({
         {children}
       </button>
     ),
-    lang: (value, children, active) => (
-      <button aria-pressed={active} onClick={() => onLanguage(value)}>
-        {children}
-      </button>
-    ),
   };
   const site = data.site;
-  const copy = site?.translations[lang];
-  const t = { ...defaultWords[lang], ...copy?.words };
+  const t = { ...defaultWords, ...site?.words };
   const sections = site?.sections.filter((s) => s.visible) ?? [];
   const selected = sections.some((s) => s.key === tab) ? tab : sections[0]?.key;
   const entry = slug ? data.entries.find((e) => e.slug === slug) : undefined;
-  const cv = site ? site.cv[lang] || site.cv[otherLang(lang)] : "";
+  const cv = site?.cv ?? "";
   const avatar = (small = false) => (
     <img
       className={small ? "avatar small" : "avatar"}
@@ -100,37 +80,23 @@ export function PublicView({
         {children}
       </button>
     ) : (
-      <Link
-        className={className}
-        to="/post/$slug"
-        params={{ slug: e.slug }}
-        search={{ lang: lang === "en" ? "en" : undefined }}
-      >
+      <Link className={className} to="/post/$slug" params={{ slug: e.slug }}>
         {children}
       </Link>
     );
   function content(e: EntryData, detail = false) {
-    const actual = contentLanguage(e, lang),
-      tr = e.translations[actual];
     return (
       <>
-        {actual !== lang ? (
-          <span className="fallback-label">
-            {lang === "id"
-              ? "Tersedia dalam bahasa Inggris"
-              : "Available in Indonesian"}
-          </span>
-        ) : null}
-        {detail ? <h1>{tr.title}</h1> : <h2>{tr.title}</h2>}
-        <p className={detail ? "detail-summary" : ""}>{tr.summary}</p>
+        {detail ? <h1>{e.title}</h1> : <h2>{e.title}</h2>}
+        <p className={detail ? "detail-summary" : ""}>{e.summary}</p>
         {e.cover ? (
           <img
             className="content-cover"
             src={e.cover}
-            alt={data.media[e.cover.split("/").pop()!]?.[actual] ?? tr.title}
+            alt={data.media[e.cover.split("/").pop()!] ?? e.title}
           />
         ) : e.visual ? (
-          <Visual kind={e.visual} lang={lang} />
+          <Visual kind={e.visual} />
         ) : null}
       </>
     );
@@ -147,32 +113,16 @@ export function PublicView({
           <span>.</span>
         </button>
         <span className="top-label">
-          {copy?.words.space ??
-            (lang === "id" ? "Ruang personal" : "A personal space")}
+          {site?.words.space ?? "A personal space"}
         </span>
         <div className="header-tools">
-          <div
-            className="language"
-            aria-label={lang === "id" ? "Bahasa" : "Language"}
-          >
-            <Globe2 size={14} />
-            {langs.map((l) => (
-              <Fragment key={l}>
-                {link.lang(l, l.toUpperCase(), lang === l)}
-              </Fragment>
-            ))}
-          </div>
-          <ThemeToggle lang={lang} />
+          <ThemeToggle />
         </div>
       </header>
       {!site ? (
         <main id="main" className="page empty-public">
-          <h1>{lang === "id" ? "Segera hadir." : "Coming soon."}</h1>
-          <p>
-            {lang === "id"
-              ? "Ruang personal ini sedang disiapkan."
-              : "This personal space is being prepared."}
-          </p>
+          <h1>{"Coming soon."}</h1>
+          <p>{"This personal space is being prepared."}</p>
         </main>
       ) : entry ? (
         <main id="main" className="page detail">
@@ -191,9 +141,7 @@ export function PublicView({
             ))}
           </div>
           <div className="prose">
-            <ReactMarkdown>
-              {entry.translations[contentLanguage(entry, lang)].body}
-            </ReactMarkdown>
+            <ReactMarkdown>{entry.body}</ReactMarkdown>
           </div>
           <div className="detail-links">
             {entry.repo ? (
@@ -214,7 +162,7 @@ export function PublicView({
                 target="_blank"
                 rel="noreferrer"
               >
-                {copy?.words.liveDemo ?? "Live demo"}
+                {site?.words.liveDemo ?? "Live demo"}
                 <ArrowUpRight size={15} />
               </a>
             ) : null}
@@ -228,13 +176,13 @@ export function PublicView({
                 <h1>{site.name}</h1>
                 <div className="handle">
                   @{site.handle}
-                  <span className="specialty">{copy?.headline}</span>
+                  <span className="specialty">{site?.headline}</span>
                 </div>
               </div>
               {avatar()}
             </div>
-            <p className="bio">{copy?.bio}</p>
-            <p className="bio-note">{copy?.note}</p>
+            <p className="bio">{site?.bio}</p>
+            <p className="bio-note">{site?.note}</p>
             <div className="location">
               <MapPin size={14} />
               {site.location}
@@ -285,12 +233,7 @@ export function PublicView({
               ))}
             </div>
           </section>
-          <nav
-            className="tabs"
-            aria-label={
-              lang === "id" ? "Kategori portofolio" : "Portfolio categories"
-            }
-          >
+          <nav className="tabs" aria-label={"Portfolio categories"}>
             {sections.map((s) => (
               <Fragment key={s.key}>
                 {link.tab(
@@ -313,9 +256,9 @@ export function PublicView({
           </nav>
           {selected === "about" ? (
             <section className="about-intro">
-              <h2>{copy?.aboutTitle}</h2>
+              <h2>{site?.aboutTitle}</h2>
               <div className="prose">
-                <ReactMarkdown>{copy?.aboutBody ?? ""}</ReactMarkdown>
+                <ReactMarkdown>{site?.aboutBody ?? ""}</ReactMarkdown>
               </div>
             </section>
           ) : null}
@@ -342,7 +285,7 @@ export function PublicView({
                         <span className="entry-kind">
                           {e.demo
                             ? t.demo
-                            : (copy?.words[e.category + "Label"] ?? "")}
+                            : (site?.words[e.category + "Label"] ?? "")}
                         </span>
                       </div>
                       {entryLink(e, content(e), "entry-link")}
@@ -373,7 +316,7 @@ export function PublicView({
         <span>{t.end}</span>
         <p>
           © {new Date().getFullYear()} {site?.name} <span>·</span>{" "}
-          {copy?.footer}
+          {site?.footer}
         </p>
         {site?.github ? (
           <a href={site.github} target="_blank" rel="noreferrer">
@@ -417,18 +360,10 @@ export function PublicView({
             </>
           ) : (
             <>
-              {!site.cv[lang] ? (
-                <p className="fallback-label">
-                  {lang === "id"
-                    ? "CV tersedia dalam bahasa Inggris"
-                    : "CV available in Indonesian"}
-                </p>
-              ) : null}
               <iframe className="cv-frame" src={cv} title={t.cvTitle} />
               <a className="button primary" href={`${cv}?download=1`}>
                 <Download size={16} />
-                {copy?.words.downloadPdf ??
-                  (lang === "id" ? "Unduh PDF" : "Download PDF")}
+                {site?.words.downloadPdf ?? "Download PDF"}
               </a>
             </>
           )}

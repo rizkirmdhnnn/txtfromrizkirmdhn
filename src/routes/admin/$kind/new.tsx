@@ -5,16 +5,12 @@ import { useAdminData } from "../../../admin/data";
 import { emptyEntry, type CmsDocument, type Kind } from "../../../lib/cms";
 
 export const Route = createFileRoute("/admin/$kind/new")({
-  validateSearch: (s: Record<string, unknown>): { lang?: "en" } => ({
-    lang: s.lang === "en" ? "en" : undefined,
-  }),
   component: NewDocumentPage,
 });
 
 function NewDocumentPage() {
   const { media } = useAdminData();
   const kind = Route.useParams().kind as Kind;
-  const { lang } = Route.useSearch();
   const router = useRouter();
   const navigate = Route.useNavigate();
   // version 0 menandai dokumen yang belum pernah masuk D1; server memakainya
@@ -33,10 +29,6 @@ function NewDocumentPage() {
     <DocumentEditor
       document={blank}
       media={media}
-      lang={lang ?? "id"}
-      onLang={(next) =>
-        navigate({ search: { lang: next === "en" ? "en" : undefined } })
-      }
       onSaved={async (doc) => {
         await router.invalidate();
         await navigate({

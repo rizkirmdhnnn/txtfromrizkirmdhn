@@ -1,73 +1,69 @@
 # Rizki Portfolio & Personal Studio
 
-Portofolio TanStack Start dengan CMS pribadi di Cloudflare Workers, D1, R2, dan Access. Desain publik mengikuti profil Threads; dashboard mengelola profil, proyek, pengalaman, tulisan, sertifikasi, media, CV, SEO, urutan bagian, dan teks website.
+An English-language portfolio and private CMS built with TanStack Start, Cloudflare Workers, D1, R2, and Access. The dashboard manages the profile, projects, experience, writing, certifications, media, CV, SEO, section order, and website copy.
 
-## Lokal
+## Local development
 
-Node.js 22.12+; implementasi diuji pada Node 24.
+Node.js 22.13+; tested with Node 24. The offline content migration uses Node's SQLite API.
 
 ```sh
 npm install
 cp .dev.vars.example .dev.vars
-# Isi CMS_ENCRYPTION_KEY dengan 32 byte acak dalam base64.
 npm run cf:typegen
 npm run db:migrate
 npm run dev
 ```
 
-Di terminal lain:
+In another terminal:
 
 ```sh
-# Sesuaikan port jika Vite menggunakan 3001.
 CMS_ORIGIN=http://localhost:3000 npm run db:seed
 ```
 
-- Dashboard: `/admin`.
-- Preview draft privat: `/preview`.
-- Website publik: `/` (menampilkan halaman sementara sampai profil dipublikasikan).
+The dashboard is at `/admin`, private saved-draft preview at `/preview`, and the public website at `/`. The public website shows a placeholder until the profile is published. The seed imports seven draft documents and two demo assets, without overwriting existing edits. Markdown files in `content/` are seeds, not runtime content.
 
-`db:seed` mengimpor tujuh dokumen dan dua file demo dari `content/` serta `seed-assets/`. Impor idempotent dan tidak menimpa edit yang sudah ada. Konten baru selalu draft. File Markdown lama kini menjadi seed, bukan sumber konten runtime.
+**Existing bilingual databases:** follow [the English migration guide](docs/ENGLISH-MIGRATION.md) before starting the new application. Schema migrations alone do not convert existing content.
 
-Akses otomatis lokal hanya aktif pada build development untuk hostname localhost/127.0.0.1. Build produksi selalu memerlukan JWT Cloudflare Access pada hostname admin. Jangan mengekspos dev server ke internet.
+Local owner access is enabled only in development builds on localhost/127.0.0.1. Deployment builds require Cloudflare Access on the admin hostname.
 
-## Mengelola konten
+## Managing content
 
-Pilih menu → Tambah/edit → Simpan draft → Preview → Publish. Simpan tidak mengubah versi terbit. Jika konten berubah di tab lain, server menolak penyimpanan usang dan meminta muat ulang.
+Choose a section → Add content/edit → Save draft → Preview → Publish. Saving never changes published content. Concurrent edits are rejected when the document version is stale.
 
-Editor mendukung visual dan Markdown, gambar dari media library, blok kode, kutipan, dan tautan. Impor/ekspor Markdown bekerja per bahasa. Indonesia/Inggris dikelola dalam tab; konten satu bahasa dapat diterbitkan dan ditampilkan sebagai fallback dengan penanda bahasa.
+The editor supports visual editing and Markdown, media images, code blocks, quotes, and links. Each document has one English title, summary, body, and set of SEO fields. Markdown import/export uses one `.md` file per document, without language metadata.
 
-Profil & website memuat seluruh pengaturan konten global. Media library menyediakan upload gambar (10 MB) dan PDF (20 MB), alt text bilingual, serta CV Indonesia/Inggris. File yang masih dirujuk konten atau revisi tidak dapat dihapus permanen.
+Profile & website contains global content settings and a single CV. The media library supports images up to 10 MB and PDFs up to 20 MB, with one English alt text per image. Files referenced by content or revisions cannot be permanently deleted.
 
-Riwayat revisi memulihkan snapshot sebagai draft. Sampah tidak otomatis menerbitkan konten saat dipulihkan. Pengaturan menyediakan ekspor ZIP lengkap, tanpa kredensial AI.
+Restoring a revision changes only the draft. Restoring trash does not republish content. Settings provides maintenance controls and a version 2 ZIP backup of documents, revisions, redirects, maintenance settings, Markdown, and media. Integration credentials are excluded.
 
-AI opsional: isi base URL OpenAI-compatible, model, dan API key melalui Pengaturan. Tes koneksi dan terjemahan menggunakan konfigurasi yang sudah disimpan. Hasil terjemahan harus diterapkan manual ke draft. Tidak ada permintaan AI otomatis.
+There is no language switcher or AI translation integration. Visitors can use Google Translate or their browser's translation feature. Public links containing an old `lang` query redirect to the same address without that parameter.
 
-## Validasi
+## Validation
 
 ```sh
 npm run typecheck
 npm run test
 npm run build
-npx wrangler deploy --dry-run
 ```
 
-Tes integrasi menggunakan D1/R2 Miniflare terisolasi, tidak mengubah database preview/produksi. Lingkungan sandbox perlu mengizinkan proses membuka port lokal. Browser diuji untuk save/publish/unpublish, editor bilingual, preview, mobile, dan unduh file.
+Integration tests use isolated Miniflare D1/R2 storage. The test environment must permit local ports. Migration tests cover publication boundaries, revisions, translations, stale data, and repeatability.
 
-## Struktur
+## Structure
 
-- `src/admin/`: dashboard, editor, media, AI, statistik.
-- `src/server/`: autentikasi, repository D1, API, file R2, AI dan statistik.
-- `src/components/public-view.tsx`: komponen publik yang juga dipakai preview.
-- `src/lib/cms.ts`: skema validasi dan tipe data bersama.
-- `migrations/`: skema berversi, termasuk guard penulisan konkuren.
-- `wrangler.jsonc`: konfigurasi preview yang kini tanpa route, serta `env.production` yang memegang kedua domain.
+- `src/admin/`: dashboard, editor, media, and statistics.
+- `src/server/`: authentication, D1 storage, API, R2 files, and statistics.
+- `src/components/public-view.tsx`: shared website and preview presentation.
+- `src/lib/cms.ts`: shared data types and validation.
+- `scripts/migrate-english.ts`: offline, reviewed data conversion with backup.
+- `migrations/`: versioned database schema.
+- `wrangler.jsonc`: preview resources and the production environment.
 
-API publik: `GET /api/public`, `GET|HEAD /api/media/:id`. API admin berada di `/api/admin/*`; semua memerlukan identitas pemilik dan pemeriksaan origin untuk write. Server functions publik hanya membaca snapshot published.
+Public API: `GET /api/public`, `GET|HEAD /api/media/:id`. Admin endpoints under `/api/admin/*` require owner authentication and validate the origin for writes. Public server functions read only published snapshots.
 
 ## Cloudflare
 
-Domain utama dan dashboard dilayani Worker produksi `rizki-portfolio` dengan database dan bucket sendiri. Domain utama hanya menampilkan konten published; dashboard dilindungi Google melalui Cloudflare Access. Environment `preview` sudah pensiun dan tidak lagi memegang route, tetapi datanya dipertahankan sebagai salinan rollback. Langkah lengkap, secrets, statistik, migrasi produksi, serta rollback: [docs/CLOUDFLARE-SETUP.md](docs/CLOUDFLARE-SETUP.md).
+Production uses Worker `rizki-portfolio` with its own database and bucket. The public domain serves published content; the dashboard uses Google sign-in through Cloudflare Access. Deployment, analytics, and recovery notes are in [the Cloudflare setup guide](docs/CLOUDFLARE-SETUP.md).
 
-Build disimpan di `dist/`. File `.dev.vars` dan output build tidak boleh masuk git; Vite dapat menyalin secrets development ke `dist/server/.dev.vars` untuk preview lokal, bukan aset publik. Jangan membagikan direktori build sebagai arsip publik.
+Build output is in `dist/`. Keep `.dev.vars` and build output out of Git. Vite may copy development secrets to `dist/server/.dev.vars` for local preview; do not distribute the build directory as a public archive.
 
-Foto dan ringkasan proyek awal berasal dari GitHub pemilik; pengalaman, sertifikasi, tulisan, dan CV contoh tetap ditandai demo. Ganti atau tinjau sebelum publikasi.
+Initial project summaries and the photo come from the owner's GitHub profile. Example experience, certifications, writing, and CV remain marked as demo content and should be reviewed before publication.

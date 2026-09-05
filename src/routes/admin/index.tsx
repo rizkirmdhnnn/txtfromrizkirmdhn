@@ -11,8 +11,8 @@ function OverviewPage() {
   return (
     <>
       <PageHeader
-        title="Selamat datang, Rizki."
-        description="Tempat merawat ide, cerita, dan karya yang kamu bagikan."
+        title="Welcome, Rizki."
+        description="A space for the ideas, stories, and work you share."
       />
       <Overview
         documents={documents}

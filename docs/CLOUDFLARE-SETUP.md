@@ -27,13 +27,11 @@ Backend memvalidasi tanda tangan JWT, issuer, audience, expiry, dan email pemili
 
 Panduan resmi: https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/google/
 
-## 2. Secrets dan AI
+## 2. English-only content
 
-Worker preview dan produksi sama-sama sudah memiliki `CMS_ENCRYPTION_KEY`; produksi memakai kunci yang sama dengan `.dev.vars` agar data terenkripsi tetap terbaca setelah migrasi. Jangan membuat ulang kunci tersebut. Untuk lingkungan baru, `CMS_ENCRYPTION_KEY` harus berupa 32 byte acak yang di-encode base64. Simpan sebagai Worker Secret, menggunakan prompt interaktif `npx wrangler secret put CMS_ENCRYPTION_KEY`. Kunci ini berbeda dari API key provider. Jangan menggantinya setelah API key disimpan tanpa rencana migrasi: kunci lama diperlukan untuk mendekripsi kredensial.
+The application, CMS, maintenance page, and content now use English only. AI translation settings and endpoints have been removed. `CMS_ENCRYPTION_KEY` is no longer used; retain any existing secret only while a rollback to the old application is still needed. New environments do not require it.
 
-API key provider diisi dari Dashboard → Pengaturan → Terjemahan dengan AI. Isi base URL berakhiran `/v1` jika provider memerlukannya, nama model, dan API key. Server menambahkan `/chat/completions`. Klik Simpan lalu Tes koneksi. Pilihan model dan harga sepenuhnya mengikuti provider yang kamu pilih.
-
-Kunci provider disimpan terenkripsi di D1. Ekspor konten tidak menyertakan kunci atau pengaturan integrasi. Terjemahan tidak pernah otomatis publish. Tes koneksi juga mengirim permintaan kecil ke provider.
+Existing bilingual data must be converted before deploying this version. Follow [the English migration guide](ENGLISH-MIGRATION.md). Visitors can use their browser's translation feature.
 
 ## 3. Statistik
 
@@ -69,7 +67,7 @@ Dijalankan pada 5 September 2026. Produksi memakai `env.production`, database `r
 1. Buat resource: `npx wrangler d1 create rizki-portfolio` dan `npx wrangler r2 bucket create rizki-portfolio-media`. Isikan `database_id` hasilnya beserta vars Access ke `env.production` pada `wrangler.jsonc`.
 2. Salin data dengan `npx wrangler d1 export rizki-portfolio-preview --remote --output dump.sql`, lalu `npx wrangler d1 execute rizki-portfolio --remote --file dump.sql`. Dump menyertakan tabel `d1_migrations`, jadi migrasi tidak perlu dijalankan terpisah dan skema produksi identik dengan asalnya.
 3. Salin objek R2 satu per satu dengan `wrangler r2 object get`/`put`; kunci objek sama dengan `media.id` di D1, jadi ID referensi tetap valid. Bandingkan hasilnya dengan `cmp` sebelum lanjut.
-4. Set secret: `npx wrangler secret put CMS_ENCRYPTION_KEY --env production`. Saat migrasi ini tabel `integrations` hanya berisi baris `maintenance`, belum ada API key terenkripsi, sehingga dump aman disalin apa adanya. Jika provider AI sudah pernah disimpan, jangan salin barisnya — isi ulang dari dashboard produksi.
+4. For the English-only release, convert existing bilingual content using [the migration guide](ENGLISH-MIGRATION.md) before deploying. No AI encryption secret is required.
 5. **Hapus dulu route lama sebelum deploy produksi.** `wrangler deploy` menolak route yang masih dipegang Worker lain, dan `routes: []` pada konfigurasi preview tidak menghapus route yang sudah ada — wrangler hanya menambah, tidak pernah menghapus. Hapus lewat dashboard Workers → Routes, atau `DELETE /zones/<zone>/workers/routes/<id>` pada API. Custom domain berpindah sendiri tanpa dihapus manual.
 6. Pindahkan definisi `routes` di `wrangler.jsonc` dari blok utama ke `env.production`, agar deployment preview berikutnya tidak menarik kembali routing.
 7. Build dan deploy: `CLOUDFLARE_ENV=production npm run build`, lalu `npx wrangler deploy --env production`. Verifikasi apex 200, admin 302 ke Access, serta `/api/media/<id>` untuk avatar dan CV.
@@ -82,11 +80,11 @@ Rollback cutover: kembalikan blok `routes` ke konfigurasi utama, hapus route pro
 - File yang masih dipakai draft, published, atau riwayat revisi ditolak saat dihapus permanen.
 - Ekspor ZIP berisi manifest `content.json`, Markdown draft, dan blob media berdasarkan ID. Simpan ZIP di tempat privat; isinya termasuk draft.
 - Pemulihan bencana menggunakan ekspor D1 dan R2 / D1 Time Travel sesuai fasilitas plan akun. Buat ekspor sebelum menjalankan migrasi produksi. Jangan memulihkan seluruh database untuk membatalkan satu tulisan.
-- Untuk mengembalikan versi aplikasi: `npx wrangler rollback <VERSION_ID>`. Rollback Worker tidak otomatis me-rollback database. Kedua migrasi awal bersifat additive; pertahankan skema saat rollback kode.
+- Untuk mengembalikan versi aplikasi: `npx wrangler rollback <VERSION_ID>`. Rollback Worker tidak otomatis me-rollback database. The English content migration changes stored JSON: rolling back that release requires restoring both the database backup and the previous Worker version.
 - Observability aktif; log aplikasi hanya mencatat tipe kegagalan, tidak request body/API key. Periksa Workers Logs ketika terjadi 5xx.
 
 ## Mode maintenance
 
-Dashboard → Pengaturan → Mode maintenance. Toggle langsung menyimpan status; judul dan pesan ID/EN disimpan melalui tombol Simpan pesan. Status terpisah dari draft/published dan default nonaktif. Saat aktif, semua request konten pada hostname publik, termasuk detail tulisan, API konten dan media/CV, mendapat HTTP 503 dengan no-store dan Retry-After. Preview serta aset pada hostname admin tetap dilindungi Access dan bisa digunakan pemilik. Menonaktifkan mode mengembalikan konten published tanpa publish ulang. File yang sudah diunduh atau konten yang sudah terbuka pada perangkat pengunjung tidak dapat ditarik kembali.
+Dashboard → Pengaturan → Mode maintenance. Toggle langsung menyimpan status; judul dan pesan Inggris disimpan melalui tombol Save message. Status terpisah dari draft/published dan default nonaktif. Saat aktif, semua request konten pada hostname publik, termasuk detail tulisan, API konten dan media/CV, mendapat HTTP 503 dengan no-store dan Retry-After. Preview serta aset pada hostname admin tetap dilindungi Access dan bisa digunakan pemilik. Menonaktifkan mode mengembalikan konten published tanpa publish ulang. File yang sudah diunduh atau konten yang sudah terbuka pada perangkat pengunjung tidak dapat ditarik kembali.
 
-Pengaturan disimpan di D1 pada integrations dengan ID maintenance, tanpa migrasi skema. Jangan mengganti atau menghapus baris tersebut saat deployment rutin. ZIP backup konten saat ini tidak menyertakan pengaturan integrations; ekspor D1 diperlukan untuk backup status dan pesan maintenance.
+Pengaturan disimpan di D1 pada integrations dengan ID maintenance, tanpa migrasi skema. Jangan mengganti atau menghapus baris tersebut saat deployment rutin. Version 2 ZIP backups include maintenance settings and redirects, while excluding integration credentials. A full D1 export remains necessary for database disaster recovery.

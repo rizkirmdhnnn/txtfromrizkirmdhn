@@ -1,32 +1,19 @@
 import { Check, Cloud, Folder, Mail, Terminal } from "lucide-react";
-import type { Lang } from "../lib/cms";
 
-export function Visual({ kind, lang }: { kind?: string; lang: Lang }) {
+export function Visual({ kind }: { kind?: string }) {
   if (kind === "mail")
     return (
       <div
         className="project-visual mail-visual"
-        aria-label={
-          lang === "id"
-            ? "Ilustrasi konsep Mailriz"
-            : "Mailriz concept illustration"
-        }
+        aria-label={"Mailriz concept illustration"}
       >
         <div className="visual-copy">
           <span className="project-brand">
             <Mail size={18} />
             mailriz
           </span>
-          <strong>
-            {lang === "id"
-              ? "Banyak alamat.\nSatu rumah."
-              : "Many addresses.\nOne home."}
-          </strong>
-          <span>
-            {lang === "id"
-              ? "Email di domain milikmu."
-              : "Email on your own domain."}
-          </span>
+          <strong>{"Many addresses.\nOne home."}</strong>
+          <span>{"Email on your own domain."}</span>
         </div>
         <div className="mail-stack">
           <div className="mail-chip">
@@ -43,12 +30,11 @@ export function Visual({ kind, lang }: { kind?: string; lang: Lang }) {
           </div>
           <div className="inbox-pill">
             <Mail size={13} />
-            {lang === "id" ? "Satu inbox milikmu" : "Your one inbox"}
+            {"Your one inbox"}
           </div>
         </div>
         <span className="visual-caption">
-          {lang === "id" ? "Ilustrasi konsep" : "Concept illustration"} /
-          Cloudflare
+          {"Concept illustration"} / Cloudflare
         </span>
       </div>
     );
@@ -60,11 +46,7 @@ export function Visual({ kind, lang }: { kind?: string; lang: Lang }) {
             <Cloud size={18} />
             R2 × macOS
           </span>
-          <strong>
-            {lang === "id"
-              ? "Cloud,\nlebih dekat."
-              : "Cloud,\na little closer."}
-          </strong>
+          <strong>{"Cloud,\na little closer."}</strong>
           <span>JuiceFS / Redis / Docker</span>
         </div>
         <div className="folder-art">
@@ -75,9 +57,7 @@ export function Visual({ kind, lang }: { kind?: string; lang: Lang }) {
             Connected via SMB
           </span>
         </div>
-        <span className="visual-caption">
-          {lang === "id" ? "Ilustrasi konsep" : "Concept illustration"}
-        </span>
+        <span className="visual-caption">{"Concept illustration"}</span>
       </div>
     );
   return (

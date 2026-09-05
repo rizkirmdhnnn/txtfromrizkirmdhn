@@ -2,7 +2,6 @@
 {
   "slug": "juicefs-r2-macos",
   "category": "projects",
-  "lang": "en",
   "title": "R2, meet Finder.",
   "summary": "Cloud storage that feels like a local folder.",
   "tags": ["Docker", "Cloudflare R2", "Redis"],

@@ -22,7 +22,7 @@ function TrashPage() {
     <>
       <PageHeader
         title={sectionLabel("trash")}
-        description="Atur kontenmu dengan tenang. Publikasikan saat sudah siap."
+        description="Manage your content. Publish when you are ready."
       />
       <Notice role="alert" onDismiss={() => setError("")}>
         {error}

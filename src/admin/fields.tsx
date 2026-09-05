@@ -62,7 +62,7 @@ export function AssetField({
     <label className="cms-field">
       <span>{label}</span>
       <select value={value} onChange={(e) => onChange(e.target.value)}>
-        <option value="">Tidak ada</option>
+        <option value="">None</option>
         {media
           .filter((m) =>
             pdf ? m.type === "application/pdf" : m.type.startsWith("image/"),
@@ -74,7 +74,7 @@ export function AssetField({
           ))}
       </select>
       {value && !pdf ? (
-        <img className="asset-thumb" src={value} alt="Pratinjau pilihan" />
+        <img className="asset-thumb" src={value} alt="Selected image preview" />
       ) : null}
     </label>
   );

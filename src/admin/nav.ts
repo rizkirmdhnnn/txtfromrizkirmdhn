@@ -12,15 +12,15 @@ import {
 import type { Section } from "../lib/routing";
 
 export const nav = [
-  { id: "overview", label: "Ringkasan", Icon: LayoutDashboard },
-  { id: "site", label: "Profil & website", Icon: User },
-  { id: "projects", label: "Proyek", Icon: Folder },
-  { id: "experience", label: "Pengalaman", Icon: Briefcase },
-  { id: "writing", label: "Tulisan", Icon: FileText },
-  { id: "about", label: "Tentang & sertifikasi", Icon: Award },
+  { id: "overview", label: "Overview", Icon: LayoutDashboard },
+  { id: "site", label: "Profile & website", Icon: User },
+  { id: "projects", label: "Projects", Icon: Folder },
+  { id: "experience", label: "Experience", Icon: Briefcase },
+  { id: "writing", label: "Writing", Icon: FileText },
+  { id: "about", label: "About & certifications", Icon: Award },
   { id: "media", label: "Media library", Icon: Image },
-  { id: "settings", label: "Pengaturan", Icon: Settings },
-  { id: "trash", label: "Sampah", Icon: Trash2 },
+  { id: "settings", label: "Settings", Icon: Settings },
+  { id: "trash", label: "Trash", Icon: Trash2 },
 ] as const satisfies ReadonlyArray<{
   id: Section;
   label: string;

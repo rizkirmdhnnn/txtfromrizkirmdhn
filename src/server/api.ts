@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { Zip, ZipPassThrough, strToU8 } from "fflate";
-import { kinds, langs, parseDocument, type DocumentRow } from "../lib/cms";
+import { kinds, parseDocument, type DocumentRow } from "../lib/cms";
 import { entryMarkdown } from "../lib/markdown";
 import { requireAdmin } from "./auth";
 import { readMaintenance, saveMaintenance } from "./maintenance";
 import { publicData, saveDocument, documentAction } from "./store";
-import { readAi, saveAi, runAi, analytics, boundedText } from "./integrations";
+import { analytics, boundedText } from "./integrations";
 const json = (value: unknown, status = 200) =>
   Response.json(value, { status, headers: { "Cache-Control": "no-store" } });
 async function body(request: Request) {
@@ -37,13 +37,13 @@ export async function upload(request: Request, env: Env) {
       "application/pdf",
     ].includes(type)
   )
-    throw new Response("Format file tidak didukung", { status: 400 });
+    throw new Response("Unsupported file format", { status: 400 });
   const limit =
     type === "application/pdf" ? 20 * 1024 * 1024 : 10 * 1024 * 1024;
   if (Number(request.headers.get("content-length") || 0) > limit)
-    throw new Response("File terlalu besar", { status: 413 });
+    throw new Response("File is too large", { status: 413 });
   const reader = request.body?.getReader();
-  if (!reader) throw new Response("File kosong", { status: 400 });
+  if (!reader) throw new Response("File is empty", { status: 400 });
   const chunks: Uint8Array[] = [];
   let size = 0;
   try {
@@ -53,7 +53,7 @@ export async function upload(request: Request, env: Env) {
       size += value.length;
       if (size > limit) {
         await reader.cancel();
-        throw new Response("File terlalu besar", { status: 413 });
+        throw new Response("File is too large", { status: 413 });
       }
       chunks.push(value);
     }
@@ -67,24 +67,25 @@ export async function upload(request: Request, env: Env) {
     offset += c.length;
   }
   if (!signature(bytes, type))
-    throw new Response("Isi file tidak sesuai format", { status: 400 });
+    throw new Response("File contents do not match the format", {
+      status: 400,
+    });
   const id = crypto.randomUUID(),
     name = decodeURIComponent(request.headers.get("x-file-name") || "upload")
       .replace(/[\r\n\x00-\x1f]/g, "")
       .slice(0, 200);
   await env.MEDIA.put(id, bytes, { httpMetadata: { contentType: type } });
   try {
-    await env.DB.prepare("INSERT INTO media(id,name,type,size) VALUES(?,?,?,?)")
-      .bind(id, name, type, size)
+    await env.DB.prepare(
+      "INSERT INTO media(id,name,type,size,alt) VALUES(?,?,?,?,?)",
+    )
+      .bind(id, name, type, size, JSON.stringify(""))
       .run();
   } catch (error) {
     await env.MEDIA.delete(id);
     throw error;
   }
-  return json(
-    { id, name, type, size, url: `/api/media/${id}`, alt: { id: "", en: "" } },
-    201,
-  );
+  return json({ id, name, type, size, url: `/api/media/${id}`, alt: "" }, 201);
 }
 export async function mediaResponse(request: Request, env: Env, id: string) {
   const published = await env.DB.prepare(
@@ -96,13 +97,13 @@ export async function mediaResponse(request: Request, env: Env, id: string) {
   const row = await env.DB.prepare("SELECT name,type FROM media WHERE id=?")
     .bind(id)
     .first<{ name: string; type: string }>();
-  if (!row) throw new Response("File tidak ditemukan", { status: 404 });
+  if (!row) throw new Response("File not found", { status: 404 });
   const rangeHeader = request.headers.get("range");
   let rangeRequest: R2Range | undefined;
   if (rangeHeader) {
     const match = rangeHeader.match(/^bytes=(\d*)-(\d*)$/);
     if (!match || (!match[1] && !match[2]))
-      throw new Response("Range tidak valid", { status: 416 });
+      throw new Response("Invalid range", { status: 416 });
     if (!match[1]) rangeRequest = { suffix: Number(match[2]) };
     else {
       const offset = Number(match[1]);
@@ -111,7 +112,7 @@ export async function mediaResponse(request: Request, env: Env, id: string) {
         !Number.isSafeInteger(offset) ||
         (end !== undefined && (!Number.isSafeInteger(end) || end < offset))
       )
-        throw new Response("Range tidak valid", { status: 416 });
+        throw new Response("Invalid range", { status: 416 });
       rangeRequest =
         end === undefined ? { offset } : { offset, length: end - offset + 1 };
     }
@@ -120,7 +121,7 @@ export async function mediaResponse(request: Request, env: Env, id: string) {
     id,
     rangeRequest ? { range: rangeRequest } : undefined,
   );
-  if (!obj) throw new Response("File tidak ditemukan", { status: 404 });
+  if (!obj) throw new Response("File not found", { status: 404 });
   const headers = new Headers({
     "Content-Type": row.type,
     "Cache-Control": "no-store",
@@ -148,6 +149,8 @@ async function backup(env: Env) {
     "SELECT * FROM documents",
   ).all<DocumentRow>();
   const revisions = await env.DB.prepare("SELECT * FROM revisions").all();
+  const redirects = await env.DB.prepare("SELECT * FROM redirects").all();
+  const maintenance = await readMaintenance(env);
   const media = await env.DB.prepare("SELECT * FROM media").all<{
     id: string;
     name: string;
@@ -170,9 +173,11 @@ async function backup(env: Env) {
       strToU8(
         JSON.stringify(
           {
-            format: 1,
+            format: 2,
             documents: docs.results,
             revisions: revisions.results,
+            redirects: redirects.results,
+            maintenance,
             media: media.results,
           },
           null,
@@ -185,10 +190,10 @@ async function backup(env: Env) {
     for (const row of docs.results) {
       if (row.kind === "site") continue;
       const doc = JSON.parse(row.draft);
-      for (const lang of langs) {
-        const file = new ZipPassThrough(`markdown/${row.id}.${lang}.md`);
+      {
+        const file = new ZipPassThrough(`markdown/${row.id}.md`);
         zip.add(file);
-        file.push(strToU8(entryMarkdown(doc, lang)), true);
+        file.push(strToU8(entryMarkdown(doc)), true);
         await pending;
       }
     }
@@ -214,7 +219,7 @@ async function backup(env: Env) {
     zip.end();
     await pending;
   })().catch(async () => {
-    await writer.abort("Ekspor gagal; silakan ulangi.");
+    await writer.abort("Export failed; please try again.");
   });
   void task;
   return new Response(stream.readable, {
@@ -311,7 +316,7 @@ export async function handleApi(request: Request, env: Env) {
     const input = z
       .object({
         id: idSchema,
-        alt: z.object({ id: z.string().max(500), en: z.string().max(500) }),
+        alt: z.string().max(500),
       })
       .parse(await body(request));
     await env.DB.prepare("UPDATE media SET alt=? WHERE id=?")
@@ -327,32 +332,15 @@ export async function handleApi(request: Request, env: Env) {
       .bind(`/api/media/${id}`, `/api/media/${id}`, `/api/media/${id}`)
       .first();
     if (used)
-      throw new Response("File masih digunakan konten atau riwayat revisi", {
-        status: 409,
-      });
+      throw new Response(
+        "File is still referenced by content or revision history",
+        {
+          status: 409,
+        },
+      );
     await env.MEDIA.delete(id);
     await env.DB.prepare("DELETE FROM media WHERE id=?").bind(id).run();
     return json({ ok: true });
-  }
-  if (route === "ai" && request.method === "GET") {
-    const settings = await readAi(env);
-    return json({
-      baseUrl: settings.baseUrl,
-      model: settings.model,
-      hasKey: !!settings.encryptedKey,
-    });
-  }
-  if (route === "ai" && request.method === "POST")
-    return json(await saveAi(env, await body(request)));
-  if (route === "translate" && request.method === "POST") {
-    const input = z
-      .object({
-        text: z.string().max(30000),
-        lang: z.enum(["id", "en"]),
-        test: z.boolean().optional(),
-      })
-      .parse(await body(request));
-    return json(await runAi(env, input));
   }
   if (route === "analytics" && request.method === "GET")
     return json(

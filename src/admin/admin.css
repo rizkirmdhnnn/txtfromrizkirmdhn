@@ -335,30 +335,6 @@ a.document-list-item {
   color: var(--muted);
   font-size: 11px;
 }
-.editor-language {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 22px;
-}
-.editor-language button {
-  padding: 9px 15px;
-  background: transparent;
-  border: 0;
-  border-radius: 7px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.editor-language button.selected {
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: 0 0 0 1px var(--line);
-}
-.editor-language > span {
-  font-size: 10px;
-  color: var(--muted);
-  margin-left: 10px;
-}
 .editor-fields {
   border: 0;
   padding: 0;
@@ -483,8 +459,7 @@ a.document-list-item {
 .cms-rich-editor a {
   text-decoration: underline;
 }
-.markdown-input,
-.translation-review textarea {
+.markdown-input {
   border: 0;
   width: 100%;
   min-height: 320px;
@@ -493,11 +468,6 @@ a.document-list-item {
   background: var(--paper);
   color: var(--ink);
   font: 12px/1.8 monospace;
-}
-.translation-review textarea {
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  margin-bottom: 16px;
 }
 .checkbox-row {
   display: flex;
@@ -723,9 +693,6 @@ a.document-list-item {
   }
   .field-grid {
     grid-template-columns: 1fr;
-  }
-  .editor-language > span {
-    display: none;
   }
   .media-grid {
     grid-template-columns: 1fr 1fr;

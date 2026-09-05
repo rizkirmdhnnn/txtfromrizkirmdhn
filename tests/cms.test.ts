@@ -12,12 +12,6 @@ import {
 import { handleApi, mediaResponse } from "../src/server/api";
 import { requireAdmin } from "../src/server/auth";
 import { generateKeyPair, exportJWK, SignJWT } from "jose";
-import {
-  validateEndpoint,
-  saveAi,
-  readAi,
-  runAi,
-} from "../src/server/integrations";
 let mf: Miniflare, env: Env;
 const owner = "achmadrizkiramadhan0101@gmail.com";
 beforeAll(async () => {
@@ -37,7 +31,11 @@ beforeAll(async () => {
   );
   const db = await mf.getD1Database("DB"),
     media = await mf.getR2Bucket("MEDIA");
-  for (const file of ["0001_cms.sql", "0002_mutation_guard.sql"]) {
+  for (const file of [
+    "0001_cms.sql",
+    "0002_mutation_guard.sql",
+    "0003_english_media.sql",
+  ]) {
     const sql = await readFile(`migrations/${file}`, "utf8");
     for (const statement of sql.split(";").filter((s) => s.trim()))
       await db.prepare(statement).run();
@@ -53,9 +51,6 @@ beforeAll(async () => {
     CF_ACCOUNT_ID: "",
     ANALYTICS_SITE_TAG: "",
     ANALYTICS_BEACON_TOKEN: "",
-    CMS_ENCRYPTION_KEY: btoa(
-      String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))),
-    ),
     CF_ANALYTICS_TOKEN: "",
   } as Env;
 });
@@ -65,13 +60,13 @@ afterAll(async () => {
 function entry(slug: string) {
   const e = emptyEntry("projects");
   e.slug = slug;
-  e.translations.id = {
+  Object.assign(e, {
     title: "Judul Indonesia",
     summary: "Ringkasan",
     body: "## Isi\n\nKonten asli.",
     seoTitle: "",
     seoDescription: "",
-  };
+  });
   return e;
 }
 describe("draft and publication boundaries", () => {
@@ -85,24 +80,17 @@ describe("draft and publication boundaries", () => {
     });
     expect((await publicData(env)).entries).toHaveLength(0);
     d = (await documentAction(env, id, "publish", d.version)) as typeof d;
-    expect((await publicData(env)).entries[0].translations.id.title).toBe(
-      "Judul Indonesia",
-    );
+    expect((await publicData(env)).entries[0].title).toBe("Judul Indonesia");
     const changed = {
       ...original,
-      translations: {
-        ...original.translations,
-        id: { ...original.translations.id, title: "Draft berikutnya" },
-      },
+      title: "Next draft",
     };
     d = await saveDocument(env, id, {
       kind: "projects",
       draft: changed,
       version: d.version,
     });
-    expect((await publicData(env)).entries[0].translations.id.title).toBe(
-      "Judul Indonesia",
-    );
+    expect((await publicData(env)).entries[0].title).toBe("Judul Indonesia");
     const rev = await env.DB.prepare(
       "SELECT id FROM revisions WHERE document_id=? AND action='create'",
     )
@@ -115,9 +103,9 @@ describe("draft and publication boundaries", () => {
       d.version,
       rev!.id,
     )) as typeof d;
-    expect(
-      JSON.parse((await getDocument(env, id)).draft).translations.id.title,
-    ).toBe("Judul Indonesia");
+    expect(JSON.parse((await getDocument(env, id)).draft).title).toBe(
+      "Judul Indonesia",
+    );
     await documentAction(env, id, "unpublish", d.version);
     expect((await publicData(env)).entries).toHaveLength(0);
   });
@@ -346,7 +334,7 @@ describe("admin and media protection", () => {
       status: 404,
     });
     const draft = entry("asset-doc");
-    draft.translations.id.body = `[CV](/api/media/${asset})`;
+    draft.body = `[CV](/api/media/${asset})`;
     const d = await saveDocument(env, crypto.randomUUID(), {
       kind: "projects",
       draft,
@@ -381,65 +369,7 @@ describe("admin and media protection", () => {
     ).rejects.toMatchObject({ status: 400 });
   });
 });
-describe("AI configuration", () => {
-  it("rejects private and non-HTTPS endpoint syntax", () => {
-    for (const url of [
-      "http://api.example.com",
-      "https://localhost/v1",
-      "https://127.0.0.1/v1",
-      "https://[::1]/",
-      "https://example.internal/",
-      "https://u:p@api.example.com",
-    ])
-      expect(() => validateEndpoint(url)).toThrow();
-    expect(validateEndpoint("https://api.example.com/v1").hostname).toBe(
-      "api.example.com",
-    );
-  });
-  it("encrypts keys and does not expose them through the settings endpoint", async () => {
-    const result = await saveAi(env, {
-      baseUrl: "https://api.example.com/v1",
-      model: "test",
-      apiKey: "sensitive-key",
-    });
-    expect(result).toEqual({
-      baseUrl: "https://api.example.com/v1",
-      model: "test",
-      hasKey: true,
-    });
-    expect((await readAi(env)).encryptedKey).not.toContain("sensitive-key");
-    const response = await handleApi(
-      new Request("http://localhost/api/admin/ai"),
-      env,
-    );
-    expect(await response.text()).not.toContain("sensitive-key");
-  });
-  it("uses the saved key server-side and bounds invalid provider responses", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(async (input) =>
-        String(input).startsWith("https://cloudflare-dns.com")
-          ? Response.json({ Answer: [{ type: 1, data: "8.8.8.8" }] })
-          : Response.json({
-              choices: [{ message: { content: "Translated text" } }],
-            }),
-      );
-    expect(await runAi(env, { text: "Hello", lang: "id" })).toEqual({
-      text: "Translated text",
-    });
-    fetchMock.mockImplementation(async (input) =>
-      String(input).startsWith("https://cloudflare-dns.com")
-        ? Response.json({ Answer: [{ type: 1, data: "8.8.8.8" }] })
-        : Response.json({ choices: [] }),
-    );
-    await expect(
-      runAi(env, { text: "Hello", lang: "id" }),
-    ).rejects.toMatchObject({ status: 502 });
-    fetchMock.mockRestore();
-  });
-});
-
-describe("backup and provider failures", () => {
+describe("backup and removed translation APIs", () => {
   it("exports a complete ZIP without integration credentials", async () => {
     const response = await handleApi(
       new Request("http://localhost/api/admin/backup"),
@@ -448,43 +378,49 @@ describe("backup and provider failures", () => {
     const files = unzipSync(new Uint8Array(await response.arrayBuffer()));
     const manifest = strFromU8(files["content.json"]);
     expect(JSON.parse(manifest).documents.length).toBeGreaterThan(0);
+    expect(JSON.parse(manifest).format).toBe(2);
+    const markdown = Object.keys(files).filter((name) =>
+      name.startsWith("markdown/"),
+    );
+    expect(markdown.length).toBeGreaterThan(0);
+    expect(markdown.every((name) => !/\.(id|en)\.md$/.test(name))).toBe(true);
+    expect(strFromU8(files[markdown[0]])).not.toContain('"lang"');
     expect(Object.keys(files).some((name) => name.startsWith("media/"))).toBe(
       true,
     );
     expect(manifest).not.toContain("sensitive-key");
     expect(manifest).not.toContain("encryptedKey");
   });
-  it("rejects private DNS answers before sending an API key", async () => {
-    const spy = vi
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(async () =>
-        Response.json({ Answer: [{ type: 1, data: "10.0.0.1" }] }),
-      );
-    await expect(
-      runAi(env, { text: "hello", lang: "en" }),
-    ).rejects.toMatchObject({ status: 400 });
-    expect(
-      spy.mock.calls.every(([url]) =>
-        String(url).startsWith("https://cloudflare-dns.com"),
-      ),
-    ).toBe(true);
-    spy.mockRestore();
-  });
-  it("returns an actionable failure when the provider rejects credentials", async () => {
-    const spy = vi
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(async (input) =>
-        String(input).startsWith("https://cloudflare-dns.com")
-          ? Response.json({ Answer: [{ type: 1, data: "8.8.8.8" }] })
-          : new Response("secret internal error", { status: 401 }),
-      );
-    await expect(
-      runAi(env, { text: "hello", lang: "en" }),
-    ).rejects.toMatchObject({ status: 502 });
-    spy.mockRestore();
-  });
 });
 
+describe("removed translation APIs", () => {
+  it("returns 404 for translation and AI settings", async () => {
+    for (const [path, method] of [
+      ["ai", "GET"],
+      ["ai", "POST"],
+      ["translate", "POST"],
+    ]) {
+      const response = await handleApi(
+        new Request(`http://localhost/api/admin/${path}`, {
+          method,
+          headers: { origin: "http://localhost" },
+        }),
+        env,
+      );
+      expect(response.status).toBe(404);
+    }
+  });
+  it("requires an English title before publication", async () => {
+    const d = await saveDocument(env, crypto.randomUUID(), {
+      kind: "writing",
+      version: 0,
+      draft: emptyEntry("writing"),
+    });
+    await expect(
+      documentAction(env, d.id, "publish", d.version),
+    ).rejects.toMatchObject({ status: 400 });
+  });
+});
 describe("maintenance mode", () => {
   it("blocks public pages, direct media and data while preserving private preview and published content", async () => {
     const { maintenanceGate, saveMaintenance } =
@@ -531,20 +467,15 @@ describe("maintenance mode", () => {
     ).toBeNull();
     expect(await publicData(env)).toEqual(before);
   });
-  it("renders the selected language and escapes owner text", async () => {
+  it("renders English and escapes owner text", async () => {
     const { maintenanceGate, saveMaintenance } =
       await import("../src/server/maintenance");
     const { defaultMaintenance } = await import("../src/lib/maintenance");
     await saveMaintenance(env, {
       ...defaultMaintenance,
       enabled: true,
-      translations: {
-        ...defaultMaintenance.translations,
-        en: {
-          title: "<script>alert(1)</script>",
-          body: "Back soon & thank you",
-        },
-      },
+      title: "<script>alert(1)</script>",
+      body: "Back soon & thank you",
     });
     try {
       const response = await maintenanceGate(

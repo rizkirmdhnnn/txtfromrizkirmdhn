@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-import type { Lang } from "../lib/cms";
 
 type Theme = "system" | "light" | "dark";
 const key = "portfolio-theme";
@@ -13,7 +12,7 @@ function readTheme(): Theme {
   }
   return "system";
 }
-export function ThemeToggle({ lang }: { lang: Lang }) {
+export function ThemeToggle() {
   const [dark, setDark] = useState(false);
   const preference = useRef<Theme>("system");
   function apply(value: Theme) {
@@ -39,14 +38,7 @@ export function ThemeToggle({ lang }: { lang: Lang }) {
       window.removeEventListener("storage", onStorage);
     };
   }, []);
-  const label =
-    lang === "id"
-      ? dark
-        ? "Gunakan tema terang"
-        : "Gunakan tema gelap"
-      : dark
-        ? "Switch to light theme"
-        : "Switch to dark theme";
+  const label = dark ? "Switch to light theme" : "Switch to dark theme";
   return (
     <button
       className="theme-button"

@@ -13,7 +13,7 @@ export function Notice({
   return (
     <p className="cms-notice" role={role}>
       {children}
-      {onDismiss ? <button onClick={onDismiss}>Tutup</button> : null}
+      {onDismiss ? <button onClick={onDismiss}>Close</button> : null}
     </p>
   );
 }

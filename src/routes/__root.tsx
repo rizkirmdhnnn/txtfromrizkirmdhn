@@ -3,7 +3,6 @@ import {
   HeadContent,
   Outlet,
   Scripts,
-  useRouterState,
 } from "@tanstack/react-router";
 import stylesheet from "../styles.css?url";
 export const Route = createRootRoute({
@@ -15,7 +14,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Portofolio Achmad Rizki Ramadhan. Fullstack developer, cloud enthusiast, and solving problems with AI.",
+          "Achmad Rizki Ramadhan’s portfolio. Fullstack developer, cloud enthusiast, and solving problems with AI.",
       },
     ],
     links: [
@@ -27,20 +26,14 @@ export const Route = createRootRoute({
   notFoundComponent: () => (
     <main id="main" className="not-found">
       <h1>404</h1>
-      <p>Halaman tidak ditemukan / Page not found</p>
-      <a href="/">Kembali ke profil / Back to profile</a>
+      <p>Page not found</p>
+      <a href="/">Back to profile</a>
     </main>
   ),
 });
 function RootDocument() {
-  const lang = useRouterState({
-    select: (state) =>
-      new URLSearchParams(state.location.searchStr).get("lang") === "en"
-        ? "en"
-        : "id",
-  });
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

@@ -3,27 +3,25 @@
 from pathlib import Path
 
 lines = [
-    ("DEMO CV / CONTOH CV", 11),
+    ("DEMO CV", 11),
     ("Achmad Rizki Ramadhan", 24),
     ("Fullstack Developer | Cloud Enthusiast", 12),
     ("Yogyakarta, Indonesia", 11),
     ("", 12),
-    ("PROFILE / PROFIL", 12),
+    ("PROFILE", 12),
     ("Building applications, cloud infrastructure, and solving problems with AI.", 10),
-    ("Membangun aplikasi, infrastruktur cloud, dan memecahkan masalah bersama AI.", 10),
     ("", 12),
-    ("PUBLIC PROJECTS / PROYEK PUBLIK", 12),
+    ("PUBLIC PROJECTS", 12),
     ("Mailriz: persistent email aliases on Cloudflare (Worker, D1, R2).", 10),
     ("R2 x macOS: JuiceFS, Redis, Docker, and SMB.", 10),
     ("dsh-tool-notify: AI agent completion notifications.", 10),
     ("", 12),
-    ("LINKS / TAUTAN", 12),
+    ("LINKS", 12),
     ("github.com/rizkirmdhnnn", 10),
     ("linkedin.com/in/achmadrizkirmdhn", 10),
     ("", 12),
     ("This is a demo based on public profile data and owner-provided information.", 9),
     ("Employment history and certifications have not yet been supplied.", 9),
-    ("CV contoh. Riwayat kerja dan sertifikasi belum dilengkapi.", 9),
 ]
 stream = "BT\n"
 y = 785

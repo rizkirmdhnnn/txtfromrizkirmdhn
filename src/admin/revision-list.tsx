@@ -16,21 +16,22 @@ export function RevisionList({
 }) {
   return (
     <section className="cms-card">
-      <h2>Riwayat revisi</h2>
-      <p>Memulihkan versi tidak mengubah website publik.</p>
+      <h2>Revision history</h2>
+      <p>Restoring a revision does not change the public website.</p>
       {revisions.map((r) => (
         <div className="revision-row" key={r.id}>
           <span>
-            {new Date(r.created_at).toLocaleString("id-ID")} · {r.action}
+            {new Date(r.created_at).toLocaleString("en-US")} · {r.action}
           </span>
           <button
             className="cms-button"
             disabled={disabled}
             onClick={() => {
-              if (confirm("Pulihkan versi ini menjadi draft?")) onRestore(r.id);
+              if (confirm("Restore this revision as the draft?"))
+                onRestore(r.id);
             }}
           >
-            Pulihkan
+            Restore
           </button>
         </div>
       ))}

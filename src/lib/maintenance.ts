@@ -5,19 +5,11 @@ const message = z.object({
 });
 export const maintenanceSchema = z.object({
   enabled: z.boolean(),
-  translations: z.object({ id: message, en: message }),
+  ...message.shape,
 });
 export type Maintenance = z.infer<typeof maintenanceSchema>;
 export const defaultMaintenance: Maintenance = {
   enabled: false,
-  translations: {
-    id: {
-      title: "Sedang dalam pemeliharaan",
-      body: "Portofolio ini sedang diperbarui. Silakan kembali lagi nanti.",
-    },
-    en: {
-      title: "Under maintenance",
-      body: "This portfolio is being updated. Please check back soon.",
-    },
-  },
+  title: "Under maintenance",
+  body: "This portfolio is being updated. Please check back soon.",
 };

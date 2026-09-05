@@ -5,7 +5,7 @@ import type { CmsDocument, MediaItem } from "../../lib/cms";
 import "../../admin/admin.css";
 
 export const Route = createFileRoute("/admin")({
-  // Identitas pemilik ada pada cookie Access di browser, jadi loader tidak
+  // Identity pemilik ada pada cookie Access di browser, jadi loader tidak
   // boleh berjalan di server: fetch dari Worker tidak membawa JWT itu.
   ssr: false,
   staleTime: Infinity,
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/admin")({
   },
   pendingComponent: () => (
     <AdminShell>
-      <p>Memuat ruang kerjamu…</p>
+      <p>Loading your workspace…</p>
     </AdminShell>
   ),
   errorComponent: ({ error }) => (

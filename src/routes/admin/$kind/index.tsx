@@ -25,7 +25,7 @@ function ContentPage() {
     <>
       <PageHeader
         title={sectionLabel(kind)}
-        description="Atur kontenmu dengan tenang. Publikasikan saat sudah siap."
+        description="Manage your content. Publish when you are ready."
         action={
           <Link
             className="cms-button strong"
@@ -33,7 +33,7 @@ function ContentPage() {
             params={{ kind }}
           >
             <Plus size={16} />
-            Tambah konten
+            Add content
           </Link>
         }
       />

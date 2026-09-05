@@ -2,7 +2,6 @@
 {
   "slug": "mailriz",
   "category": "projects",
-  "lang": "en",
   "title": "Mailriz",
   "summary": "One inbox. An address for everything.",
   "tags": ["Cloudflare", "TypeScript", "D1 + R2"],

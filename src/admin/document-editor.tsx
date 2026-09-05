@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Eye, Save, Upload, History } from "lucide-react";
-import type {
-  CmsDocument,
-  EntryData,
-  SiteData,
-  Lang,
-  MediaItem,
-} from "../lib/cms";
-import { otherLang } from "../lib/cms";
+import type { CmsDocument, EntryData, SiteData, MediaItem } from "../lib/cms";
 import { api } from "./client";
 import { categoryNames } from "./edit-helpers";
 import { EntryForm } from "./entry-form";
@@ -16,36 +9,32 @@ import { Notice } from "./notice";
 import { RevisionList, type Revision } from "./revision-list";
 import { SeoFields } from "./seo-fields";
 import { SiteForm } from "./site-form";
-import { TranslationReview, type Translation } from "./translation-review";
 import { useAsyncAction } from "./use-async-action";
 import { useUnsavedGuard } from "./use-unsaved-guard";
 
 export function DocumentEditor({
   document,
   media,
-  lang,
-  onLang,
   onSaved,
   onBack,
 }: {
   document: CmsDocument;
   media: MediaItem[];
-  lang: Lang;
-  onLang: (lang: Lang) => void;
-  onSaved: (d: CmsDocument) => void;
+  onSaved: (d: CmsDocument) => void | Promise<void>;
   onBack: () => void;
 }) {
   const [draft, setDraft] = useState(document.draft),
-    [revisions, setRevisions] = useState<Revision[] | null>(null),
-    [translation, setTranslation] = useState<Translation | null>(null);
+    [savedDraft, setSavedDraft] = useState(document.draft),
+    [revisions, setRevisions] = useState<Revision[] | null>(null);
   const { busy, message, setMessage, run } = useAsyncAction();
-  const dirty = JSON.stringify(draft) !== JSON.stringify(document.draft),
+  const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft),
     site = document.kind === "site";
   useUnsavedGuard(dirty);
   // Sengaja bergantung pada versi, bukan identitas objek: data loader
   // menghasilkan objek baru tiap invalidate dan akan menghapus ketikan.
   useEffect(() => {
     setDraft(document.draft);
+    setSavedDraft(document.draft);
   }, [document.id, document.version]);
   const save = () =>
     run(async () => {
@@ -58,8 +47,9 @@ export function DocumentEditor({
           draft,
         }),
       });
-      onSaved(updated);
-      setMessage("Draft tersimpan. Versi publik belum berubah.");
+      setSavedDraft(updated.draft);
+      await onSaved(updated);
+      setMessage("Draft saved. The published version has not changed.");
     });
   const action = (action: string, revisionId?: string) =>
     run(async () => {
@@ -72,20 +62,13 @@ export function DocumentEditor({
           revisionId,
         }),
       });
-      onSaved(updated);
+      setDraft(updated.draft);
+      setSavedDraft(updated.draft);
+      await onSaved(updated);
       setMessage(
-        action === "publish" ? "Konten diterbitkan." : "Perubahan tersimpan.",
+        action === "publish" ? "Content published." : "Changes saved.",
       );
       setRevisions(null);
-    });
-  const translate = (field: string, text: string) =>
-    run(async () => {
-      const target = otherLang(lang);
-      const result = await api<{ text: string }>("translate", {
-        method: "POST",
-        body: JSON.stringify({ text, lang: target }),
-      });
-      setTranslation({ field, text: result.text, target });
     });
   const entry = draft as EntryData;
   return (
@@ -93,25 +76,21 @@ export function DocumentEditor({
       <div className="editor-heading">
         <button className="cms-quiet" onClick={onBack}>
           <ArrowLeft size={16} />
-          Kembali
+          Back
         </button>
         <span className="cms-status">
-          {document.published ? "Terbit" : "Draft"}
-          {dirty ? " · Belum disimpan" : ""}
+          {document.published ? "Published" : "Draft"}
+          {dirty ? " · Unsaved changes" : ""}
         </span>
       </div>
       <div className="cms-title-row">
         <div>
           <p className="cms-eyebrow">
             {site
-              ? "Profil & pengaturan website"
+              ? "Profile & website settings"
               : categoryNames[entry.category]}
           </p>
-          <h1>
-            {site
-              ? "Ruang personalmu"
-              : entry.translations[lang].title || "Konten baru"}
-          </h1>
+          <h1>{site ? "Your personal space" : entry.title || "New content"}</h1>
         </div>
         <div className="cms-actions">
           <button
@@ -133,13 +112,13 @@ export function DocumentEditor({
             onClick={save}
           >
             <Save size={15} />
-            Simpan draft
+            Save draft
           </button>
           <button
             className="cms-button strong"
             disabled={busy || dirty || !document.version}
             onClick={() => {
-              if (confirm("Publikasikan versi draft ini ke website?"))
+              if (confirm("Publish this draft to the website?"))
                 void action("publish");
             }}
           >
@@ -149,54 +128,18 @@ export function DocumentEditor({
         </div>
       </div>
       <Notice>{message}</Notice>
-      <div className="editor-language">
-        <button
-          className={lang === "id" ? "selected" : ""}
-          onClick={() => onLang("id")}
-        >
-          Indonesia
-        </button>
-        <button
-          className={lang === "en" ? "selected" : ""}
-          onClick={() => onLang("en")}
-        >
-          English
-        </button>
-        <span>Isi satu bahasa dahulu juga boleh.</span>
-      </div>
       <fieldset disabled={busy} className="editor-fields">
         {site ? (
           <SiteForm
             draft={draft as SiteData}
             media={media}
-            lang={lang}
             onChange={setDraft}
-            onTranslate={translate}
           />
         ) : (
-          <EntryForm
-            draft={entry}
-            media={media}
-            lang={lang}
-            onChange={setDraft}
-            onTranslate={translate}
-          />
+          <EntryForm draft={entry} media={media} onChange={setDraft} />
         )}
-        <SeoFields draft={draft} lang={lang} onChange={setDraft} />
+        <SeoFields draft={draft} onChange={setDraft} />
       </fieldset>
-      {translation ? (
-        <TranslationReview
-          draft={draft}
-          translation={translation}
-          onChangeText={(text) => setTranslation({ ...translation, text })}
-          onApply={(next, target) => {
-            setDraft(next);
-            onLang(target);
-            setTranslation(null);
-          }}
-          onCancel={() => setTranslation(null)}
-        />
-      ) : null}
       <div className="cms-actions editor-bottom">
         <button
           className="cms-button"
@@ -208,12 +151,11 @@ export function DocumentEditor({
           }
         >
           <History size={15} />
-          Riwayat revisi
+          Revision history
         </button>
         {!site ? (
           <MarkdownTools
             draft={entry}
-            lang={lang}
             onImport={(next, note) => {
               setDraft(next);
               setMessage(note);
@@ -226,7 +168,7 @@ export function DocumentEditor({
             className="cms-button danger"
             disabled={busy || dirty}
             onClick={() => {
-              if (confirm("Tarik konten ini dari website publik?"))
+              if (confirm("Unpublish this content from the website?"))
                 void action("unpublish");
             }}
           >

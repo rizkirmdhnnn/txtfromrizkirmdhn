@@ -16,10 +16,9 @@ export const Route = createFileRoute("/_public/")({
       statusCode: 301,
     });
   },
-  head: ({ matches, match }) =>
+  head: ({ matches }) =>
     publicHead({
       data: publicLoaderData(matches),
-      lang: match.search.lang ?? "id",
       path: "/",
     }),
   component: () => <PublicPage tab="projects" />,

@@ -2,9 +2,8 @@ import type { CmsDocument, MediaItem } from "../lib/cms";
 import { AnalyticsPanel } from "./analytics-panel";
 
 export function documentTitle(doc: CmsDocument) {
-  if (doc.kind === "site") return "Profil & website";
-  const { translations } = doc.draft;
-  return translations.id.title || translations.en.title || "Tanpa judul";
+  if (doc.kind === "site") return "Profile & website";
+  return doc.draft.title || "Untitled";
 }
 
 export function documentSlug(doc: CmsDocument) {
@@ -25,7 +24,7 @@ export function Overview({
     <>
       <div className="stat-grid">
         <div className="stat-card">
-          <span>Konten terbit</span>
+          <span>Published content</span>
           <strong>{live.filter((d) => d.published).length}</strong>
         </div>
         <div className="stat-card">
@@ -33,12 +32,12 @@ export function Overview({
           <strong>{live.filter((d) => !d.published).length}</strong>
         </div>
         <div className="stat-card">
-          <span>File media</span>
+          <span>Media files</span>
           <strong>{media.length}</strong>
         </div>
       </div>
       <section className="cms-card">
-        <h2>Lanjutkan menulis</h2>
+        <h2>Continue writing</h2>
         {live.slice(0, 5).map((d) => (
           <button
             className="document-list-item"
@@ -46,13 +45,13 @@ export function Overview({
             onClick={() => onOpen(d)}
           >
             <span>{documentTitle(d)}</span>
-            <small>{d.published ? "Terbit" : "Draft"}</small>
+            <small>{d.published ? "Published" : "Draft"}</small>
           </button>
         ))}
         {!documents.length ? (
           <p>
-            Jalankan impor awal melalui <code>npm run db:seed</code> untuk
-            menyiapkan konten draft.
+            Run the initial import with <code>npm run db:seed</code>
+            to create draft content.
           </p>
         ) : null}
       </section>

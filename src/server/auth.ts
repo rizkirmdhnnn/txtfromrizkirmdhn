@@ -11,14 +11,14 @@ export async function requireAdmin(request: Request, env: Env) {
     !["GET", "HEAD", "OPTIONS"].includes(request.method) &&
     request.headers.get("origin") !== url.origin
   )
-    throw new Response("Origin tidak diizinkan", { status: 403 });
+    throw new Response("Origin is not allowed", { status: 403 });
   if (isLocal(request)) return env.OWNER_EMAIL;
   if (url.hostname !== env.ADMIN_HOST)
     throw new Response("Not found", { status: 404 });
   if (!env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD)
-    throw new Response("Login belum dikonfigurasi", { status: 503 });
+    throw new Response("Login has not been configured", { status: 503 });
   const token = request.headers.get("Cf-Access-Jwt-Assertion");
-  if (!token) throw new Response("Login diperlukan", { status: 401 });
+  if (!token) throw new Response("Login required", { status: 401 });
   try {
     const issuer = `https://${env.ACCESS_TEAM_DOMAIN}`;
     const { payload } = await jwtVerify(
@@ -29,6 +29,6 @@ export async function requireAdmin(request: Request, env: Env) {
     if (payload.email !== env.OWNER_EMAIL) throw new Error("owner");
     return env.OWNER_EMAIL;
   } catch {
-    throw new Response("Akses ditolak", { status: 403 });
+    throw new Response("Access denied", { status: 403 });
   }
 }

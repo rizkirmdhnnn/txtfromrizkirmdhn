@@ -27,7 +27,7 @@ export function RichEditor({
     immediatelyRender: false,
     onUpdate: ({ editor }) => onChange(editor.getMarkdown()),
     editorProps: {
-      attributes: { "aria-label": "Isi konten", class: "cms-rich-editor" },
+      attributes: { "aria-label": "Content", class: "cms-rich-editor" },
     },
   });
   useEffect(() => {
@@ -59,14 +59,14 @@ export function RichEditor({
             <span />
             <button
               type="button"
-              aria-label="Tebal"
+              aria-label="Bold"
               onClick={() => editor.chain().focus().toggleBold().run()}
             >
               <b>B</b>
             </button>
             <button
               type="button"
-              aria-label="Miring"
+              aria-label="Italic"
               onClick={() => editor.chain().focus().toggleItalic().run()}
             >
               <i>I</i>
@@ -83,32 +83,32 @@ export function RichEditor({
               type="button"
               onClick={() => editor.chain().focus().toggleBulletList().run()}
             >
-              Daftar
+              List
             </button>
             <button
               type="button"
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
             >
-              Kutipan
+              Quote
             </button>
             <button
               type="button"
               onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             >
-              Kode
+              Code
             </button>
             <button
               type="button"
               onClick={() => {
-                const href = prompt("URL HTTPS");
+                const href = prompt("HTTPS URL");
                 if (href && /^https:\/\//.test(href))
                   editor.chain().focus().setLink({ href }).run();
               }}
             >
-              Tautan
+              Link
             </button>
             <select
-              aria-label="Sisipkan gambar"
+              aria-label="Insert image"
               value=""
               onChange={(e) => {
                 const image = media.find((m) => m.id === e.target.value);
@@ -118,12 +118,12 @@ export function RichEditor({
                     .focus()
                     .setImage({
                       src: `/api/media/${image.id}`,
-                      alt: image.alt.id || image.name,
+                      alt: image.alt || image.name,
                     })
                     .run();
               }}
             >
-              <option value="">+ Gambar</option>
+              <option value="">+ Image</option>
               {media
                 .filter((m) => m.type.startsWith("image/"))
                 .map((m) => (
@@ -140,7 +140,7 @@ export function RichEditor({
       ) : (
         <textarea
           className="markdown-input"
-          aria-label="Isi Markdown"
+          aria-label="Markdown content"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />

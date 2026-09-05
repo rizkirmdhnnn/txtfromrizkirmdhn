@@ -12,7 +12,7 @@ function SettingsPage() {
     <>
       <PageHeader
         title={sectionLabel("settings")}
-        description="Atur kontenmu dengan tenang. Publikasikan saat sudah siap."
+        description="Manage your content. Publish when you are ready."
       />
       <SettingsPanel />
     </>

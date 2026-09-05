@@ -9,7 +9,7 @@ export function useAsyncAction() {
     try {
       await task();
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Terjadi kesalahan");
+      setMessage(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setBusy(false);
     }

@@ -2,7 +2,6 @@
 {
   "slug": "small-reliable-systems",
   "category": "writing",
-  "lang": "en",
   "title": "Small systems, good habits.",
   "summary": "Notes on building applications that are easier to maintain.",
   "date": "2026-09-01",

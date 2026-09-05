@@ -8,7 +8,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { loadPublic } from "../lib/public-data";
 import { loadOrigin } from "../lib/public-origin";
 import { publicHead } from "../lib/public-head";
-import { contentLanguage } from "../lib/cms";
 import { PublicView, type PublicNav } from "../components/public-view";
 import { tabPaths } from "../lib/tabs";
 const findRedirect = createServerFn({ method: "GET" })
@@ -23,9 +22,6 @@ const findRedirect = createServerFn({ method: "GET" })
     return row?.slug ?? null;
   });
 export const Route = createFileRoute("/post/$slug")({
-  validateSearch: (s: Record<string, unknown>): { lang?: "en" } => ({
-    lang: s.lang === "en" ? "en" : undefined,
-  }),
   loader: async ({ params }) => {
     const [data, origin] = await Promise.all([loadPublic(), loadOrigin()]);
     if (!data.entries.some((e) => e.slug === params.slug)) {
@@ -41,18 +37,15 @@ export const Route = createFileRoute("/post/$slug")({
     }
     return { ...data, origin };
   },
-  head: ({ loaderData, params, match }) => {
-    const lang = match.search.lang ?? "id";
+  head: ({ loaderData, params }) => {
     const entry = loaderData?.entries.find((e) => e.slug === params.slug);
-    const tr = entry?.translations[contentLanguage(entry, lang)];
     return publicHead({
       data: loaderData,
-      lang,
       path: `/post/${params.slug}`,
       title:
-        tr?.seoTitle ||
-        `${tr?.title ?? "Portfolio"} — ${loaderData?.site?.name ?? ""}`,
-      description: tr?.seoDescription || tr?.summary || "",
+        entry?.seoTitle ||
+        `${entry?.title ?? "Portfolio"} — ${loaderData?.site?.name ?? ""}`,
+      description: entry?.seoDescription || entry?.summary || "",
     });
   },
   component: Post,
@@ -67,7 +60,6 @@ function Post() {
     navigate({
       to: "/",
       search: {
-        lang: search.lang,
         tab: category === "projects" ? undefined : category,
       },
     });
@@ -84,32 +76,12 @@ function Post() {
         {children}
       </Link>
     ),
-    lang: (value, children, active) => (
-      <Link
-        to="/post/$slug"
-        params={{ slug }}
-        search={{ lang: value === "en" ? "en" : undefined }}
-        replace
-        activeProps={{}}
-        activeOptions={{ exact: true, includeSearch: true }}
-        className={active ? "selected" : ""}
-      >
-        {children}
-      </Link>
-    ),
   };
   return (
     <PublicView
       data={data}
-      lang={search.lang ?? "id"}
       slug={slug}
       nav={nav}
-      onLanguage={(next) =>
-        navigate({
-          search: { lang: next === "en" ? "en" : undefined },
-          replace: true,
-        })
-      }
       onBack={back}
       onTab={back}
       onPost={(next) => navigate({ params: { slug: next }, search })}

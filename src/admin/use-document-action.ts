@@ -10,8 +10,8 @@ export function useDocumentAction() {
     if (
       !confirm(
         action === "delete"
-          ? "Hapus permanen konten dan seluruh revisinya?"
-          : "Lanjutkan perubahan ini?",
+          ? "Permanently delete this content and all its revisions?"
+          : "Continue with this change?",
       )
     )
       return;

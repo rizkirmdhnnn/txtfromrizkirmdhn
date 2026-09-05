@@ -99,29 +99,6 @@ a:hover {
   color: var(--muted);
   margin-left: 38px;
 }
-.language {
-  display: flex;
-  gap: 3px;
-  align-items: center;
-  color: var(--muted);
-}
-.language > svg {
-  margin-right: 5px;
-}
-.language button,
-.language a {
-  border: 0;
-  background: transparent;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 6px 7px;
-  border-radius: 5px;
-}
-.language button[aria-pressed="true"],
-.language a.selected {
-  background: var(--line);
-  color: var(--ink);
-}
 .page {
   max-width: 680px;
   margin: auto;
@@ -1121,12 +1098,6 @@ footer a {
   object-fit: cover;
   border: 1px solid var(--line);
   border-radius: 11px;
-}
-.fallback-label {
-  display: block;
-  color: var(--muted);
-  font-size: 11px;
-  margin: 8px 0;
 }
 .cv-frame {
   width: 100%;

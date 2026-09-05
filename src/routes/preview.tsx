@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PublicView } from "../components/public-view";
 import { api } from "../admin/client";
-import type { PublicData, Lang, Kind } from "../lib/cms";
+import type { PublicData, Kind } from "../lib/cms";
 export const Route = createFileRoute("/preview")({
   validateSearch: (
     s: Record<string, unknown>,
@@ -22,7 +22,6 @@ function Preview() {
   const search = Route.useSearch();
   const [data, setData] = useState<PublicData | null>(null),
     [error, setError] = useState(""),
-    [lang, setLang] = useState<Lang>("id"),
     [tab, setTab] = useState<Kind>("projects"),
     [slug, setSlug] = useState(search.slug),
     [mobile, setMobile] = useState(false);
@@ -35,17 +34,17 @@ function Preview() {
     <>
       {!search.embedded ? (
         <div className="preview-banner">
-          <span>Preview draft tersimpan · Hanya pemilik</span>
+          <span>Saved draft preview · Owner only</span>
           <button onClick={() => setMobile(!mobile)}>
             {mobile ? "Desktop" : "Mobile"}
           </button>
-          <a href="/admin">Kembali ke dashboard</a>
+          <a href="/admin">Back to dashboard</a>
         </div>
       ) : null}
       {mobile ? (
         <iframe
           className="mobile-preview-frame"
-          title="Preview ukuran mobile"
+          title="Mobile preview"
           src={`/preview?embedded=true${slug ? `&slug=${encodeURIComponent(slug)}` : ""}`}
         />
       ) : error ? (
@@ -53,16 +52,14 @@ function Preview() {
       ) : data ? (
         <PublicView
           data={data}
-          lang={lang}
           tab={tab}
           slug={slug}
-          onLanguage={setLang}
           onTab={setTab}
           onPost={setSlug}
           onBack={() => setSlug(undefined)}
         />
       ) : (
-        <p>Memuat preview…</p>
+        <p>Loading preview…</p>
       )}
     </>
   );

@@ -25,32 +25,12 @@ export function PublicPage({ tab }: { tab: Kind }) {
         {children}
       </Link>
     ),
-    lang: (value, children, active) => (
-      <Link
-        to={tabPaths[tab]}
-        search={{ lang: value === "en" ? "en" : undefined }}
-        replace
-        activeProps={{}}
-        activeOptions={{ exact: true, includeSearch: true }}
-        className={active ? "selected" : ""}
-      >
-        {children}
-      </Link>
-    ),
   };
   return (
     <PublicView
       data={data}
-      lang={search.lang ?? "id"}
       tab={tab}
       nav={nav}
-      onLanguage={(next) =>
-        navigate({
-          to: tabPaths[tab],
-          search: { lang: next === "en" ? "en" : undefined },
-          replace: true,
-        })
-      }
       onTab={(next) => navigate({ to: tabPaths[next], search })}
       onPost={(slug) =>
         navigate({ to: "/post/$slug", params: { slug }, search })
