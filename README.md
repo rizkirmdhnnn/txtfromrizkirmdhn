@@ -22,8 +22,6 @@ CMS_ORIGIN=http://localhost:3000 npm run db:seed
 
 The dashboard is at `/admin`, private saved-draft preview at `/preview`, and the public website at `/`. The public website shows a placeholder until the profile is published. The seed imports seven draft documents and two demo assets, without overwriting existing edits. Markdown files in `content/` are seeds, not runtime content.
 
-**Existing bilingual databases:** follow [the English migration guide](docs/ENGLISH-MIGRATION.md) before starting the new application. Schema migrations alone do not convert existing content.
-
 Local owner access is enabled only in development builds on localhost/127.0.0.1. Deployment builds require Cloudflare Access on the admin hostname.
 
 ## Managing content
@@ -54,7 +52,6 @@ Integration tests use isolated Miniflare D1/R2 storage. The test environment mus
 - `src/server/`: authentication, D1 storage, API, R2 files, and statistics.
 - `src/components/public-view.tsx`: shared website and preview presentation.
 - `src/lib/cms.ts`: shared data types and validation.
-- `scripts/migrate-english.ts`: offline, reviewed data conversion with backup.
 - `migrations/`: versioned database schema.
 - `wrangler.jsonc`: preview resources and the production environment.
 

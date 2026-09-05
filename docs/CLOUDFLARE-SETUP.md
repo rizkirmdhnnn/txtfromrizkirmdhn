@@ -27,11 +27,11 @@ Backend memvalidasi tanda tangan JWT, issuer, audience, expiry, dan email pemili
 
 Panduan resmi: https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/google/
 
-## 2. English-only content
+## 2. Konten English-only
 
-The application, CMS, maintenance page, and content now use English only. AI translation settings and endpoints have been removed. `CMS_ENCRYPTION_KEY` is no longer used; retain any existing secret only while a rollback to the old application is still needed. New environments do not require it.
+Aplikasi, CMS, halaman maintenance, dan konten kini seluruhnya berbahasa Inggris. Pengaturan beserta endpoint terjemahan AI sudah dihapus. `CMS_ENCRYPTION_KEY` tidak lagi dipakai; simpan secret lama hanya selama rollback ke aplikasi versi sebelumnya masih mungkin dibutuhkan. Environment baru tidak memerlukannya.
 
-Existing bilingual data must be converted before deploying this version. Follow [the English migration guide](ENGLISH-MIGRATION.md). Visitors can use their browser's translation feature.
+Perkakas konversi bilingual sudah tidak ada di repo ini. Kalau masih ada database yang menyimpan konten dua bahasa, ambil kembali `scripts/english-migration.ts` beserta CLI-nya dari riwayat git sebelum mengonversi — menjalankan migrasi skema saja tidak mengubah isi konten. Pengunjung dapat memakai fitur terjemahan browser masing-masing.
 
 ## 3. Statistik
 
@@ -67,7 +67,7 @@ Dijalankan pada 5 September 2026. Produksi memakai `env.production`, database `r
 1. Buat resource: `npx wrangler d1 create rizki-portfolio` dan `npx wrangler r2 bucket create rizki-portfolio-media`. Isikan `database_id` hasilnya beserta vars Access ke `env.production` pada `wrangler.jsonc`.
 2. Salin data dengan `npx wrangler d1 export rizki-portfolio-preview --remote --output dump.sql`, lalu `npx wrangler d1 execute rizki-portfolio --remote --file dump.sql`. Dump menyertakan tabel `d1_migrations`, jadi migrasi tidak perlu dijalankan terpisah dan skema produksi identik dengan asalnya.
 3. Salin objek R2 satu per satu dengan `wrangler r2 object get`/`put`; kunci objek sama dengan `media.id` di D1, jadi ID referensi tetap valid. Bandingkan hasilnya dengan `cmp` sebelum lanjut.
-4. For the English-only release, convert existing bilingual content using [the migration guide](ENGLISH-MIGRATION.md) before deploying. No AI encryption secret is required.
+4. Untuk rilis English-only, konversi dulu konten bilingual yang tersisa sebelum deploy. Perkakasnya sudah tidak ada di repo; ambil dari riwayat git bila diperlukan. Secret enkripsi AI tidak dibutuhkan.
 5. **Hapus dulu route lama sebelum deploy produksi.** `wrangler deploy` menolak route yang masih dipegang Worker lain, dan `routes: []` pada konfigurasi preview tidak menghapus route yang sudah ada — wrangler hanya menambah, tidak pernah menghapus. Hapus lewat dashboard Workers → Routes, atau `DELETE /zones/<zone>/workers/routes/<id>` pada API. Custom domain berpindah sendiri tanpa dihapus manual.
 6. Pindahkan definisi `routes` di `wrangler.jsonc` dari blok utama ke `env.production`, agar deployment preview berikutnya tidak menarik kembali routing.
 7. Build dan deploy: `CLOUDFLARE_ENV=production npm run build`, lalu `npx wrangler deploy --env production`. Verifikasi apex 200, admin 302 ke Access, serta `/api/media/<id>` untuk avatar dan CV.

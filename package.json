@@ -15,8 +15,7 @@
     "preview": "vite preview",
     "deploy:preview": "npm run build && wrangler deploy",
     "deploy:production": "CLOUDFLARE_ENV=production npm run build && wrangler deploy --env production",
-    "seed:preview": "tsx scripts/seed-preview.ts",
-    "content:migrate-english": "tsx scripts/migrate-english.ts"
+    "seed:preview": "tsx scripts/seed-preview.ts"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.32",
