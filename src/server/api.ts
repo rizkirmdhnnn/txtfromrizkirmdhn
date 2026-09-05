@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Zip, ZipPassThrough, strToU8 } from "fflate";
-import { kinds, parseDocument, type DocumentRow } from "../lib/cms";
+import { kinds, langs, parseDocument, type DocumentRow } from "../lib/cms";
+import { entryMarkdown } from "../lib/markdown";
 import { requireAdmin } from "./auth";
 import { readMaintenance, saveMaintenance } from "./maintenance";
 import { publicData, saveDocument, documentAction } from "./store";
@@ -184,16 +185,10 @@ async function backup(env: Env) {
     for (const row of docs.results) {
       if (row.kind === "site") continue;
       const doc = JSON.parse(row.draft);
-      for (const lang of ["id", "en"]) {
-        const t = doc.translations[lang];
+      for (const lang of langs) {
         const file = new ZipPassThrough(`markdown/${row.id}.${lang}.md`);
         zip.add(file);
-        file.push(
-          strToU8(
-            `---\n${JSON.stringify({ ...doc, translations: undefined, ...t, lang }, null, 2)}\n---\n${t.body}`,
-          ),
-          true,
-        );
+        file.push(strToU8(entryMarkdown(doc, lang)), true);
         await pending;
       }
     }
