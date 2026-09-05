@@ -15,6 +15,7 @@ import { RichEditor } from "./editor";
 import { Field, AssetField } from "./fields";
 import { Notice } from "./notice";
 import { useAsyncAction } from "./use-async-action";
+import { useUnsavedGuard } from "./use-unsaved-guard";
 const categoryNames = {
   projects: "Proyek",
   experience: "Pengalaman",
@@ -24,18 +25,19 @@ const categoryNames = {
 export function DocumentEditor({
   document,
   media,
+  lang,
+  onLang,
   onSaved,
   onBack,
-  onDirty,
 }: {
   document: CmsDocument;
   media: MediaItem[];
+  lang: Lang;
+  onLang: (lang: Lang) => void;
   onSaved: (d: CmsDocument) => void;
   onBack: () => void;
-  onDirty: (dirty: boolean) => void;
 }) {
   const [draft, setDraft] = useState(document.draft),
-    [lang, setLang] = useState<Lang>("id"),
     [revisions, setRevisions] = useState<
       | { id: string; action: string; created_at: string; snapshot: string }[]
       | null
@@ -48,20 +50,12 @@ export function DocumentEditor({
   const { busy, message, setMessage, run } = useAsyncAction();
   const dirty = JSON.stringify(draft) !== JSON.stringify(document.draft),
     site = document.kind === "site";
-  useEffect(() => {
-    onDirty(dirty);
-    const warn = (e: BeforeUnloadEvent) => {
-      if (dirty) e.preventDefault();
-    };
-    window.addEventListener("beforeunload", warn);
-    return () => {
-      window.removeEventListener("beforeunload", warn);
-      onDirty(false);
-    };
-  }, [dirty, onDirty]);
+  useUnsavedGuard(dirty);
+  // Sengaja bergantung pada versi, bukan identitas objek: data loader
+  // menghasilkan objek baru tiap invalidate dan akan menghapus ketikan.
   useEffect(() => {
     setDraft(document.draft);
-  }, [document]);
+  }, [document.id, document.version]);
   const save = () =>
     run(async () => {
       const updated = await api<CmsDocument>("documents", {
@@ -183,13 +177,13 @@ export function DocumentEditor({
       <div className="editor-language">
         <button
           className={lang === "id" ? "selected" : ""}
-          onClick={() => setLang("id")}
+          onClick={() => onLang("id")}
         >
           Indonesia
         </button>
         <button
           className={lang === "en" ? "selected" : ""}
-          onClick={() => setLang("en")}
+          onClick={() => onLang("en")}
         >
           English
         </button>
@@ -434,7 +428,6 @@ export function DocumentEditor({
                 </button>
               </div>
               <RichEditor
-                key={lang}
                 value={e.translations[lang].body}
                 onChange={(v) => textField("body", v)}
                 media={media}
@@ -573,7 +566,7 @@ export function DocumentEditor({
                     },
                   },
                 } as EntryData | SiteData);
-                setLang(translation.target);
+                onLang(translation.target);
                 setTranslation(null);
               }}
             >

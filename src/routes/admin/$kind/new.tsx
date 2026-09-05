@@ -1,0 +1,51 @@
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { DocumentEditor } from "../../../admin/document-editor";
+import { useAdminData } from "../../../admin/data";
+import { emptyEntry, type CmsDocument, type Kind } from "../../../lib/cms";
+
+export const Route = createFileRoute("/admin/$kind/new")({
+  validateSearch: (s: Record<string, unknown>): { lang?: "en" } => ({
+    lang: s.lang === "en" ? "en" : undefined,
+  }),
+  component: NewDocumentPage,
+});
+
+function NewDocumentPage() {
+  const { media } = useAdminData();
+  const kind = Route.useParams().kind as Kind;
+  const { lang } = Route.useSearch();
+  const router = useRouter();
+  const navigate = Route.useNavigate();
+  // version 0 menandai dokumen yang belum pernah masuk D1; server memakainya
+  // sebagai syarat insert, dan editor mematikan Preview/Publish karenanya.
+  const [blank] = useState<CmsDocument>(() => ({
+    id: crypto.randomUUID(),
+    kind,
+    draft: emptyEntry(kind),
+    published: null,
+    slug: null,
+    version: 0,
+    deleted: 0,
+    updated_at: new Date().toISOString(),
+  }));
+  return (
+    <DocumentEditor
+      document={blank}
+      media={media}
+      lang={lang ?? "id"}
+      onLang={(next) =>
+        navigate({ search: { lang: next === "en" ? "en" : undefined } })
+      }
+      onSaved={async (doc) => {
+        await router.invalidate();
+        await navigate({
+          to: "/admin/$kind/$id",
+          params: { kind, id: doc.id },
+          replace: true,
+        });
+      }}
+      onBack={() => navigate({ to: "/admin/$kind", params: { kind } })}
+    />
+  );
+}

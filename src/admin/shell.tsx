@@ -1,40 +1,66 @@
 import { useState, type ReactNode } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { ExternalLink, Menu } from "lucide-react";
 import { ThemeToggle } from "../components/theme-toggle";
-import { nav, sectionLabel, type Section } from "./nav";
+import { nav, sectionFromPath, sectionLabel, type Section } from "./nav";
+import { kinds } from "../lib/cms";
 
-export function AdminShell({
-  section,
-  onNavigate,
-  children,
-}: {
-  section: Section;
-  onNavigate: (id: Section) => void;
-  children: ReactNode;
-}) {
+const icon = (id: Section) => nav.find((n) => n.id === id)!.Icon;
+
+export function AdminShell({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const section = useRouterState({
+    select: (state) => sectionFromPath(state.location.pathname),
+  });
+  const close = () => setMobileOpen(false);
+  const Overview = icon("overview"),
+    Site = icon("site"),
+    Media = icon("media"),
+    Settings = icon("settings"),
+    Trash = icon("trash");
   return (
     <div className="cms-shell">
       <aside className={`cms-sidebar ${mobileOpen ? "open" : ""}`}>
-        <a className="cms-brand" href="/admin">
+        <Link className="cms-brand" to="/admin" onClick={close}>
           ar<span>.</span>
           <small>Studio</small>
-        </a>
+        </Link>
         <div className="cms-sidebar-caption">Ruang untuk karyamu</div>
         <nav>
-          {nav.map(({ id, label, Icon }) => (
-            <button
-              className={section === id ? "active" : ""}
-              key={id}
-              onClick={() => {
-                setMobileOpen(false);
-                onNavigate(id);
-              }}
-            >
-              <Icon size={17} />
-              {label}
-            </button>
-          ))}
+          <Link to="/admin" activeOptions={{ exact: true }} onClick={close}>
+            <Overview size={17} />
+            {sectionLabel("overview")}
+          </Link>
+          <Link to="/admin/profile" onClick={close}>
+            <Site size={17} />
+            {sectionLabel("site")}
+          </Link>
+          {kinds.map((kind) => {
+            const Icon = icon(kind);
+            return (
+              <Link
+                key={kind}
+                to="/admin/$kind"
+                params={{ kind }}
+                onClick={close}
+              >
+                <Icon size={17} />
+                {sectionLabel(kind)}
+              </Link>
+            );
+          })}
+          <Link to="/admin/media" onClick={close}>
+            <Media size={17} />
+            {sectionLabel("media")}
+          </Link>
+          <Link to="/admin/settings" onClick={close}>
+            <Settings size={17} />
+            {sectionLabel("settings")}
+          </Link>
+          <Link to="/admin/trash" onClick={close}>
+            <Trash size={17} />
+            {sectionLabel("trash")}
+          </Link>
         </nav>
         <div className="sidebar-bottom">
           <a href="/preview" target="_blank" rel="noreferrer">

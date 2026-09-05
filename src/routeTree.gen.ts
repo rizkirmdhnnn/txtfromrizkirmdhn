@@ -10,16 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as PreviewRouteImport } from './routes/preview'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminKindRouteRouteImport } from './routes/admin/$kind/route'
+import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminProfileRouteImport } from './routes/admin/profile'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminTrashRouteImport } from './routes/admin/trash'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
+import { Route as AdminKindIndexRouteImport } from './routes/admin/$kind/index'
+import { Route as AdminKindIdRouteImport } from './routes/admin/$kind/$id'
+import { Route as AdminKindNewRouteImport } from './routes/admin/$kind/new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
+const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => rootRouteImport,
@@ -29,42 +38,150 @@ const PreviewRoute = PreviewRouteImport.update({
   path: '/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminKindRouteRoute = AdminKindRouteRouteImport.update({
+  id: '/$kind',
+  path: '/$kind',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminProfileRoute = AdminProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminTrashRoute = AdminTrashRouteImport.update({
+  id: '/trash',
+  path: '/trash',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const PostSlugRoute = PostSlugRouteImport.update({
   id: '/post/$slug',
   path: '/post/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminKindIndexRoute = AdminKindIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminKindRouteRoute,
+} as any)
+const AdminKindIdRoute = AdminKindIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminKindRouteRoute,
+} as any)
+const AdminKindNewRoute = AdminKindNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AdminKindRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/preview': typeof PreviewRoute
+  '/admin/$kind': typeof AdminKindRouteRouteWithChildren
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/trash': typeof AdminTrashRoute
   '/post/$slug': typeof PostSlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/$kind/$id': typeof AdminKindIdRoute
+  '/admin/$kind/new': typeof AdminKindNewRoute
+  '/admin/$kind/': typeof AdminKindIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/preview': typeof PreviewRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/trash': typeof AdminTrashRoute
   '/post/$slug': typeof PostSlugRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/$kind/$id': typeof AdminKindIdRoute
+  '/admin/$kind/new': typeof AdminKindNewRoute
+  '/admin/$kind': typeof AdminKindIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/preview': typeof PreviewRoute
+  '/admin/$kind': typeof AdminKindRouteRouteWithChildren
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/trash': typeof AdminTrashRoute
   '/post/$slug': typeof PostSlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/$kind/$id': typeof AdminKindIdRoute
+  '/admin/$kind/new': typeof AdminKindNewRoute
+  '/admin/$kind/': typeof AdminKindIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/preview' | '/post/$slug'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/preview'
+    | '/admin/$kind'
+    | '/admin/media'
+    | '/admin/profile'
+    | '/admin/settings'
+    | '/admin/trash'
+    | '/post/$slug'
+    | '/admin/'
+    | '/admin/$kind/$id'
+    | '/admin/$kind/new'
+    | '/admin/$kind/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/preview' | '/post/$slug'
-  id: '__root__' | '/' | '/admin' | '/preview' | '/post/$slug'
+  to:
+    | '/'
+    | '/preview'
+    | '/admin/media'
+    | '/admin/profile'
+    | '/admin/settings'
+    | '/admin/trash'
+    | '/post/$slug'
+    | '/admin'
+    | '/admin/$kind/$id'
+    | '/admin/$kind/new'
+    | '/admin/$kind'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/preview'
+    | '/admin/$kind'
+    | '/admin/media'
+    | '/admin/profile'
+    | '/admin/settings'
+    | '/admin/trash'
+    | '/post/$slug'
+    | '/admin/'
+    | '/admin/$kind/$id'
+    | '/admin/$kind/new'
+    | '/admin/$kind/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   PreviewRoute: typeof PreviewRoute
   PostSlugRoute: typeof PostSlugRoute
 }
@@ -82,7 +199,7 @@ declare module '@tanstack/react-router' {
       id: '/admin'
       path: '/admin'
       fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+      preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview': {
@@ -92,6 +209,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/$kind': {
+      id: '/admin/$kind'
+      path: '/$kind'
+      fullPath: '/admin/$kind'
+      preLoaderRoute: typeof AdminKindRouteRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/profile': {
+      id: '/admin/profile'
+      path: '/profile'
+      fullPath: '/admin/profile'
+      preLoaderRoute: typeof AdminProfileRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/trash': {
+      id: '/admin/trash'
+      path: '/trash'
+      fullPath: '/admin/trash'
+      preLoaderRoute: typeof AdminTrashRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/post/$slug': {
       id: '/post/$slug'
       path: '/post/$slug'
@@ -99,12 +258,71 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/$kind/': {
+      id: '/admin/$kind/'
+      path: '/'
+      fullPath: '/admin/$kind/'
+      preLoaderRoute: typeof AdminKindIndexRouteImport
+      parentRoute: typeof AdminKindRouteRoute
+    }
+    '/admin/$kind/$id': {
+      id: '/admin/$kind/$id'
+      path: '/$id'
+      fullPath: '/admin/$kind/$id'
+      preLoaderRoute: typeof AdminKindIdRouteImport
+      parentRoute: typeof AdminKindRouteRoute
+    }
+    '/admin/$kind/new': {
+      id: '/admin/$kind/new'
+      path: '/new'
+      fullPath: '/admin/$kind/new'
+      preLoaderRoute: typeof AdminKindNewRouteImport
+      parentRoute: typeof AdminKindRouteRoute
+    }
   }
 }
 
+interface AdminKindRouteRouteChildren {
+  AdminKindIdRoute: typeof AdminKindIdRoute
+  AdminKindNewRoute: typeof AdminKindNewRoute
+  AdminKindIndexRoute: typeof AdminKindIndexRoute
+}
+
+const AdminKindRouteRouteChildren: AdminKindRouteRouteChildren = {
+  AdminKindIdRoute: AdminKindIdRoute,
+  AdminKindNewRoute: AdminKindNewRoute,
+  AdminKindIndexRoute: AdminKindIndexRoute,
+}
+
+const AdminKindRouteRouteWithChildren = AdminKindRouteRoute._addFileChildren(
+  AdminKindRouteRouteChildren,
+)
+
+interface AdminRouteRouteChildren {
+  AdminKindRouteRoute: typeof AdminKindRouteRouteWithChildren
+  AdminMediaRoute: typeof AdminMediaRoute
+  AdminProfileRoute: typeof AdminProfileRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTrashRoute: typeof AdminTrashRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminKindRouteRoute: AdminKindRouteRouteWithChildren,
+  AdminMediaRoute: AdminMediaRoute,
+  AdminProfileRoute: AdminProfileRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTrashRoute: AdminTrashRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   PreviewRoute: PreviewRoute,
   PostSlugRoute: PostSlugRoute,
 }
