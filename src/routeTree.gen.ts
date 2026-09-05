@@ -9,9 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as PreviewRouteImport } from './routes/preview'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as PublicAboutRouteImport } from './routes/_public/about'
+import { Route as PublicExperienceRouteImport } from './routes/_public/experience'
+import { Route as PublicProjectsRouteImport } from './routes/_public/projects'
+import { Route as PublicWritingRouteImport } from './routes/_public/writing'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminKindRouteRouteImport } from './routes/admin/$kind/route'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
@@ -23,9 +28,8 @@ import { Route as AdminKindIndexRouteImport } from './routes/admin/$kind/index'
 import { Route as AdminKindIdRouteImport } from './routes/admin/$kind/$id'
 import { Route as AdminKindNewRouteImport } from './routes/admin/$kind/new'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
@@ -37,6 +41,31 @@ const PreviewRoute = PreviewRouteImport.update({
   id: '/preview',
   path: '/preview',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PublicIndexRoute = PublicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicAboutRoute = PublicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicExperienceRoute = PublicExperienceRouteImport.update({
+  id: '/experience',
+  path: '/experience',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicProjectsRoute = PublicProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicWritingRoute = PublicWritingRouteImport.update({
+  id: '/writing',
+  path: '/writing',
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -90,10 +119,14 @@ const AdminKindNewRoute = AdminKindNewRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof PublicIndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/preview': typeof PreviewRoute
   '/admin/$kind': typeof AdminKindRouteRouteWithChildren
+  '/about': typeof PublicAboutRoute
+  '/experience': typeof PublicExperienceRoute
+  '/projects': typeof PublicProjectsRoute
+  '/writing': typeof PublicWritingRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -105,13 +138,17 @@ export interface FileRoutesByFullPath {
   '/admin/$kind/': typeof AdminKindIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/preview': typeof PreviewRoute
+  '/about': typeof PublicAboutRoute
+  '/experience': typeof PublicExperienceRoute
+  '/projects': typeof PublicProjectsRoute
+  '/writing': typeof PublicWritingRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/trash': typeof AdminTrashRoute
   '/post/$slug': typeof PostSlugRoute
+  '/': typeof PublicIndexRoute
   '/admin': typeof AdminIndexRoute
   '/admin/$kind/$id': typeof AdminKindIdRoute
   '/admin/$kind/new': typeof AdminKindNewRoute
@@ -119,15 +156,20 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_public': typeof PublicRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
   '/preview': typeof PreviewRoute
   '/admin/$kind': typeof AdminKindRouteRouteWithChildren
+  '/_public/about': typeof PublicAboutRoute
+  '/_public/experience': typeof PublicExperienceRoute
+  '/_public/projects': typeof PublicProjectsRoute
+  '/_public/writing': typeof PublicWritingRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/trash': typeof AdminTrashRoute
   '/post/$slug': typeof PostSlugRoute
+  '/_public/': typeof PublicIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/$kind/$id': typeof AdminKindIdRoute
   '/admin/$kind/new': typeof AdminKindNewRoute
@@ -140,6 +182,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/preview'
     | '/admin/$kind'
+    | '/about'
+    | '/experience'
+    | '/projects'
+    | '/writing'
     | '/admin/media'
     | '/admin/profile'
     | '/admin/settings'
@@ -151,28 +197,37 @@ export interface FileRouteTypes {
     | '/admin/$kind/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/preview'
+    | '/about'
+    | '/experience'
+    | '/projects'
+    | '/writing'
     | '/admin/media'
     | '/admin/profile'
     | '/admin/settings'
     | '/admin/trash'
     | '/post/$slug'
+    | '/'
     | '/admin'
     | '/admin/$kind/$id'
     | '/admin/$kind/new'
     | '/admin/$kind'
   id:
     | '__root__'
-    | '/'
+    | '/_public'
     | '/admin'
     | '/preview'
     | '/admin/$kind'
+    | '/_public/about'
+    | '/_public/experience'
+    | '/_public/projects'
+    | '/_public/writing'
     | '/admin/media'
     | '/admin/profile'
     | '/admin/settings'
     | '/admin/trash'
     | '/post/$slug'
+    | '/_public/'
     | '/admin/'
     | '/admin/$kind/$id'
     | '/admin/$kind/new'
@@ -180,7 +235,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   PreviewRoute: typeof PreviewRoute
   PostSlugRoute: typeof PostSlugRoute
@@ -188,11 +243,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_public': {
+      id: '/_public'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof PublicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -208,6 +263,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/preview'
       preLoaderRoute: typeof PreviewRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_public/': {
+      id: '/_public/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/about': {
+      id: '/_public/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof PublicAboutRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/experience': {
+      id: '/_public/experience'
+      path: '/experience'
+      fullPath: '/experience'
+      preLoaderRoute: typeof PublicExperienceRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/projects': {
+      id: '/_public/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof PublicProjectsRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/writing': {
+      id: '/_public/writing'
+      path: '/writing'
+      fullPath: '/writing'
+      preLoaderRoute: typeof PublicWritingRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -282,6 +372,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface PublicRouteRouteChildren {
+  PublicAboutRoute: typeof PublicAboutRoute
+  PublicExperienceRoute: typeof PublicExperienceRoute
+  PublicProjectsRoute: typeof PublicProjectsRoute
+  PublicWritingRoute: typeof PublicWritingRoute
+  PublicIndexRoute: typeof PublicIndexRoute
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicAboutRoute: PublicAboutRoute,
+  PublicExperienceRoute: PublicExperienceRoute,
+  PublicProjectsRoute: PublicProjectsRoute,
+  PublicWritingRoute: PublicWritingRoute,
+  PublicIndexRoute: PublicIndexRoute,
+}
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
+
 interface AdminKindRouteRouteChildren {
   AdminKindIdRoute: typeof AdminKindIdRoute
   AdminKindNewRoute: typeof AdminKindNewRoute
@@ -321,7 +431,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   PreviewRoute: PreviewRoute,
   PostSlugRoute: PostSlugRoute,
