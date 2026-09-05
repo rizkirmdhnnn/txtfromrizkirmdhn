@@ -15,6 +15,18 @@
   flex-direction: column;
   z-index: 20;
 }
+.cms-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.cms-drawer-close {
+  display: none;
+}
+.cms-scrim {
+  display: none;
+}
 .cms-brand {
   font-size: 34px;
   font-weight: 700;
@@ -633,12 +645,45 @@ a.document-list-item {
 }
 @media (max-width: 760px) {
   .cms-sidebar {
+    width: min(300px, 82vw);
     transform: translateX(-100%);
-    box-shadow: 10px 0 40px #0002;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 10px 0 40px #00000026;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .cms-sidebar.open {
     transform: none;
-    top: 65px;
+  }
+  .cms-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    background: var(--scrim);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.24s;
+  }
+  .cms-scrim.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .cms-drawer-close {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--muted);
+  }
+  .cms-sidebar nav a,
+  .sidebar-bottom a {
+    min-height: 44px;
+    font-size: 13px;
   }
   .cms-workspace {
     margin-left: 0;

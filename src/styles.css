@@ -14,6 +14,7 @@
   --muted: #727983;
   --line: #e9ebef;
   --soft: #f5f6f8;
+  --scrim: #1c1f2459;
   --accent: #4b6c9d;
   --button: #303640;
   --button-text: #fff;
@@ -765,6 +766,7 @@ footer a {
   --accent: #a3bfe5;
   --button: #e1e6ed;
   --button-text: #252a32;
+  --scrim: #0a0c0fbf;
   color: var(--ink);
 }
 :root[data-theme="dark"] .page {
