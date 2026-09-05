@@ -1,0 +1,12 @@
+node_modules
+dist
+.output
+.tanstack
+.DS_Store
+.env*
+
+.playwright-mcp
+
+.wrangler
+.dev.vars*
+!.dev.vars.example
