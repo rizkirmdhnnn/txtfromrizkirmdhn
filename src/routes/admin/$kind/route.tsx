@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
-import { isKind } from "../../../admin/nav";
+import { isKind } from "../../../lib/routing";
 
 export const Route = createFileRoute("/admin/$kind")({
   beforeLoad: ({ params }) => {

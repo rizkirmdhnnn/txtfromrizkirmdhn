@@ -184,6 +184,67 @@ describe("draft and publication boundaries", () => {
     ).toBe(2);
   });
 });
+describe("public payload", () => {
+  it("orders entries by pinned, order, then date and hides drafts", async () => {
+    const base = Date.now();
+    const rows = [
+      { slug: "lama", order: 5, pinned: false, date: "2024-01-01" },
+      { slug: "baru", order: 5, pinned: false, date: "2026-01-01" },
+      { slug: "utama", order: 9, pinned: true, date: "2020-01-01" },
+      { slug: "awal", order: 1, pinned: false, date: "2020-01-01" },
+    ];
+    const ids: string[] = [];
+    for (const row of rows) {
+      const id = `sort-${row.slug}-${base}`;
+      ids.push(id);
+      const e = entry(row.slug);
+      e.order = row.order;
+      e.pinned = row.pinned;
+      e.date = row.date;
+      await saveDocument(env, id, { kind: "projects", version: 0, draft: e });
+      await documentAction(env, id, "publish", 1);
+    }
+    const draftOnly = `sort-draft-${base}`;
+    await saveDocument(env, draftOnly, {
+      kind: "projects",
+      version: 0,
+      draft: entry(`draft-${base}`),
+    });
+
+    const published = await publicData(env);
+    const order = published.entries
+      .filter((e) => ids.some((id) => id.includes(e.slug)))
+      .map((e) => e.slug);
+    expect(order).toEqual(["utama", "awal", "baru", "lama"]);
+    expect(published.entries.some((e) => e.slug === `draft-${base}`)).toBe(
+      false,
+    );
+
+    const preview = await publicData(env, true);
+    expect(preview.entries.some((e) => e.slug === `draft-${base}`)).toBe(true);
+  });
+
+  it("refuses to publish a document whose media reference is missing", async () => {
+    const id = crypto.randomUUID();
+    const e = entry(`dangling-${Date.now()}`);
+    e.cover = "/api/media/tidak-ada";
+    await saveDocument(env, id, { kind: "projects", version: 0, draft: e });
+    await expect(documentAction(env, id, "publish", 1)).rejects.toBeDefined();
+  });
+
+  it("removes a document permanently only after it reaches the trash", async () => {
+    const id = crypto.randomUUID();
+    await saveDocument(env, id, {
+      kind: "projects",
+      version: 0,
+      draft: entry(`hapus-${Date.now()}`),
+    });
+    await expect(documentAction(env, id, "delete", 1)).rejects.toBeDefined();
+    await documentAction(env, id, "trash", 1);
+    await documentAction(env, id, "delete", 2);
+    await expect(getDocument(env, id)).rejects.toMatchObject({ status: 404 });
+  });
+});
 describe("admin and media protection", () => {
   it("accepts only a signed, unexpired owner token for the configured audience", async () => {
     const { privateKey, publicKey } = await generateKeyPair("RS256");

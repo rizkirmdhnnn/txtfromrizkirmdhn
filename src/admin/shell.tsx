@@ -2,7 +2,8 @@ import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ExternalLink, Menu } from "lucide-react";
 import { ThemeToggle } from "../components/theme-toggle";
-import { nav, sectionFromPath, sectionLabel, type Section } from "./nav";
+import { nav, sectionLabel } from "./nav";
+import { sectionFromPath, type Section } from "../lib/routing";
 import { kinds } from "../lib/cms";
 
 const icon = (id: Section) => nav.find((n) => n.id === id)!.Icon;

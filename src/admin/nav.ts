@@ -9,7 +9,7 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
-import { kinds, type Kind } from "../lib/cms";
+import type { Section } from "../lib/routing";
 
 export const nav = [
   { id: "overview", label: "Ringkasan", Icon: LayoutDashboard },
@@ -21,24 +21,12 @@ export const nav = [
   { id: "media", label: "Media library", Icon: Image },
   { id: "settings", label: "Pengaturan", Icon: Settings },
   { id: "trash", label: "Sampah", Icon: Trash2 },
-] as const;
-
-export type Section = (typeof nav)[number]["id"];
+] as const satisfies ReadonlyArray<{
+  id: Section;
+  label: string;
+  Icon: unknown;
+}>;
 
 export function sectionLabel(section: Section) {
   return nav.find((n) => n.id === section)?.label ?? "";
-}
-
-export function isKind(value: string): value is Kind {
-  return (kinds as readonly string[]).includes(value);
-}
-
-export function sectionFromPath(pathname: string): Section {
-  const segment = pathname.replace(/^\/admin\/?/, "").split("/")[0];
-  if (!segment) return "overview";
-  if (segment === "profile") return "site";
-  if (isKind(segment)) return segment;
-  return segment === "media" || segment === "settings" || segment === "trash"
-    ? segment
-    : "overview";
 }
