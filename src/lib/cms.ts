@@ -7,7 +7,7 @@ const link = z
   .string()
   .max(2000)
   .refine((v) => !v || /^https:\/\//.test(v), "Use an HTTPS URL");
-export const entryTextSchema = z.object({
+const entryTextSchema = z.object({
   title: text,
   summary: text,
   body: z.string().max(100000),

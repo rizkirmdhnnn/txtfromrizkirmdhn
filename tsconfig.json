@@ -16,7 +16,6 @@
     "src",
     "vite.config.ts",
     "worker-configuration.d.ts",
-    "scripts/**/*.ts",
     "tests/**/*.ts",
     "vitest.config.ts"
   ]
