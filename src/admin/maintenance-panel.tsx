@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { type Maintenance } from "../lib/maintenance";
 import { api } from "./client";
 import { Field } from "./fields";
+import { Notice } from "./notice";
+import { useAsyncAction } from "./use-async-action";
 export function MaintenancePanel() {
   const [saved, setSaved] = useState<Maintenance | null>(null);
   const [draft, setDraft] = useState<Maintenance | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
+  const { busy, message, setMessage, run } = useAsyncAction();
   useEffect(() => {
     api<Maintenance>("maintenance")
       .then((s) => {
@@ -14,11 +15,9 @@ export function MaintenancePanel() {
         setDraft(s);
       })
       .catch((e) => setMessage(e.message));
-  }, []);
-  async function persist(value: Maintenance, preserveDraft = false) {
-    setBusy(true);
-    setMessage("");
-    try {
+  }, [setMessage]);
+  const persist = (value: Maintenance, preserveDraft = false) =>
+    run(async () => {
       const result = await api<Maintenance>("maintenance", {
         method: "POST",
         body: JSON.stringify(value),
@@ -34,12 +33,7 @@ export function MaintenancePanel() {
           ? "Maintenance aktif. Pengunjung melihat pesan singkat."
           : "Portofolio terbuka. Konten published tampil kembali.",
       );
-    } catch (e) {
-      setMessage((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  }
+    });
   return (
     <section className="cms-card">
       <div className="maintenance-heading">
@@ -121,7 +115,7 @@ export function MaintenancePanel() {
           </p>
         </form>
       )}
-      {message && <p role="status">{message}</p>}
+      <Notice>{message}</Notice>
     </section>
   );
 }

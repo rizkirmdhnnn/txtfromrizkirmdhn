@@ -13,7 +13,10 @@ export function Language({
     document.documentElement.lang = lang;
   }, [lang]);
   return (
-    <div className="language" aria-label={lang === "id" ? "Bahasa" : "Language"}>
+    <div
+      className="language"
+      aria-label={lang === "id" ? "Bahasa" : "Language"}
+    >
       <Globe2 size={14} />
       {(["id", "en"] as const).map((l) => (
         <button key={l} aria-pressed={lang === l} onClick={() => onChange(l)}>
@@ -84,7 +87,9 @@ export function Visual({ kind, lang }: { kind?: string; lang: Lang }) {
             R2 × macOS
           </span>
           <strong>
-            {lang === "id" ? "Cloud,\nlebih dekat." : "Cloud,\na little closer."}
+            {lang === "id"
+              ? "Cloud,\nlebih dekat."
+              : "Cloud,\na little closer."}
           </strong>
           <span>JuiceFS / Redis / Docker</span>
         </div>

@@ -18,8 +18,11 @@ import { api } from "./client";
 import { DocumentEditor } from "./document-editor";
 import { Field } from "./fields";
 import { MaintenancePanel } from "./maintenance-panel";
+import { Notice } from "./notice";
+import { useAsyncAction } from "./use-async-action";
 import {
   emptyEntry,
+  kinds,
   type CmsDocument,
   type EntryData,
   type Kind,
@@ -145,12 +148,9 @@ export function Dashboard() {
           </div>
         </header>
         <main id="main" className="cms-main">
-          {error ? (
-            <div className="cms-notice" role="alert">
-              {error}
-              <button onClick={() => setError("")}>Tutup</button>
-            </div>
-          ) : null}
+          <Notice role="alert" onDismiss={() => setError("")}>
+            {error}
+          </Notice>
           {loading ? (
             <p>Memuat ruang kerjamu…</p>
           ) : selected ? (
@@ -183,9 +183,7 @@ export function Dashboard() {
                       : "Atur kontenmu dengan tenang. Publikasikan saat sudah siap."}
                   </p>
                 </div>
-                {["projects", "experience", "writing", "about"].includes(
-                  section,
-                ) ? (
+                {(kinds as readonly string[]).includes(section) ? (
                   <button
                     className="cms-button strong"
                     onClick={() =>
@@ -362,19 +360,12 @@ function MediaLibrary({
   media: MediaItem[];
   refresh: () => Promise<void>;
 }) {
-  const [busy, setBusy] = useState(false),
-    [message, setMessage] = useState("");
-  async function run(fn: () => Promise<void>) {
-    setBusy(true);
-    try {
+  const { busy, message, setMessage, run } = useAsyncAction();
+  const runAndRefresh = (fn: () => Promise<void>) =>
+    run(async () => {
       await fn();
       await refresh();
-    } catch (e) {
-      setMessage((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  }
+    });
   return (
     <>
       <div className="cms-actions">
@@ -387,7 +378,7 @@ function MediaLibrary({
             accept="image/png,image/jpeg,image/webp,image/gif,application/pdf"
             onChange={(e) => {
               const files = [...(e.target.files ?? [])];
-              void run(async () => {
+              void runAndRefresh(async () => {
                 for (const file of files) {
                   if (
                     file.size >
@@ -415,11 +406,7 @@ function MediaLibrary({
           Gambar maks. 10 MB · PDF maks. 20 MB
         </span>
       </div>
-      {message ? (
-        <p className="cms-notice" role="status">
-          {message}
-        </p>
-      ) : null}
+      <Notice>{message}</Notice>
       <div className="media-grid">
         {media.map((m) => (
           <MediaCard
@@ -427,7 +414,7 @@ function MediaLibrary({
             item={m}
             disabled={busy}
             onSave={(alt) =>
-              run(async () => {
+              runAndRefresh(async () => {
                 await api("media", {
                   method: "PATCH",
                   body: JSON.stringify({ id: m.id, alt }),
@@ -437,7 +424,7 @@ function MediaLibrary({
             }
             onDelete={() => {
               if (confirm("Hapus file ini secara permanen?"))
-                void run(async () => {
+                void runAndRefresh(async () => {
                   await api("media", {
                     method: "DELETE",
                     body: JSON.stringify({ id: m.id }),
@@ -509,33 +496,26 @@ function MediaCard({
 }
 function SettingsPanel() {
   const [settings, setSettings] = useState({
-      baseUrl: "",
-      model: "",
-      apiKey: "",
-      hasKey: false,
-    }),
-    [busy, setBusy] = useState(false),
-    [message, setMessage] = useState("");
+    baseUrl: "",
+    model: "",
+    apiKey: "",
+    hasKey: false,
+  });
+  const { busy, message, setMessage, run } = useAsyncAction();
   useEffect(() => {
     api<Omit<typeof settings, "apiKey">>("ai")
       .then((s) => setSettings({ ...s, apiKey: "" }))
       .catch((e) => setMessage(e.message));
-  }, []);
-  async function save(removeKey = false) {
-    setBusy(true);
-    try {
+  }, [setMessage]);
+  const save = (removeKey = false) =>
+    run(async () => {
       const saved = await api<Omit<typeof settings, "apiKey">>("ai", {
         method: "POST",
         body: JSON.stringify({ ...settings, removeKey }),
       });
       setSettings({ ...saved, apiKey: "" });
       setMessage("Pengaturan AI tersimpan.");
-    } catch (e) {
-      setMessage((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  }
+    });
   return (
     <>
       <MaintenancePanel />
@@ -581,9 +561,8 @@ function SettingsPanel() {
           <button
             className="cms-button"
             disabled={busy || !settings.hasKey}
-            onClick={async () => {
-              setBusy(true);
-              try {
+            onClick={() =>
+              run(async () => {
                 await api("translate", {
                   method: "POST",
                   body: JSON.stringify({ text: "", lang: "en", test: true }),
@@ -591,12 +570,8 @@ function SettingsPanel() {
                 setMessage(
                   "Koneksi berhasil menggunakan pengaturan tersimpan.",
                 );
-              } catch (e) {
-                setMessage((e as Error).message);
-              } finally {
-                setBusy(false);
-              }
-            }}
+              })
+            }
           >
             Tes koneksi
           </button>
@@ -610,11 +585,7 @@ function SettingsPanel() {
             Hapus key
           </button>
         </div>
-        {message ? (
-          <p role="status" className="cms-notice">
-            {message}
-          </p>
-        ) : null}
+        <Notice>{message}</Notice>
       </section>
       <section className="cms-card">
         <h2>Cadangan konten</h2>

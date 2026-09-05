@@ -8,10 +8,13 @@ import type {
   Lang,
   MediaItem,
 } from "../lib/cms";
-import { entrySchema } from "../lib/cms";
+import { entrySchema, otherLang } from "../lib/cms";
+import { splitList } from "../lib/text";
 import { api, downloadText } from "./client";
 import { RichEditor } from "./editor";
 import { Field, AssetField } from "./fields";
+import { Notice } from "./notice";
+import { useAsyncAction } from "./use-async-action";
 const categoryNames = {
   projects: "Proyek",
   experience: "Pengalaman",
@@ -33,8 +36,6 @@ export function DocumentEditor({
 }) {
   const [draft, setDraft] = useState(document.draft),
     [lang, setLang] = useState<Lang>("id"),
-    [busy, setBusy] = useState(false),
-    [message, setMessage] = useState(""),
     [revisions, setRevisions] = useState<
       | { id: string; action: string; created_at: string; snapshot: string }[]
       | null
@@ -44,6 +45,7 @@ export function DocumentEditor({
       text: string;
       target: Lang;
     } | null>(null);
+  const { busy, message, setMessage, run } = useAsyncAction();
   const dirty = JSON.stringify(draft) !== JSON.stringify(document.draft),
     site = document.kind === "site";
   useEffect(() => {
@@ -60,17 +62,6 @@ export function DocumentEditor({
   useEffect(() => {
     setDraft(document.draft);
   }, [document]);
-  async function run(task: () => Promise<void>) {
-    setBusy(true);
-    setMessage("");
-    try {
-      await task();
-    } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Terjadi kesalahan");
-    } finally {
-      setBusy(false);
-    }
-  }
   const save = () =>
     run(async () => {
       const updated = await api<CmsDocument>("documents", {
@@ -118,7 +109,7 @@ export function DocumentEditor({
     } as EntryData | SiteData);
   }
   async function translate(field: string) {
-    const target = lang === "id" ? "en" : "id";
+    const target = otherLang(lang);
     const text = String(
       (draft.translations[lang] as unknown as Record<string, unknown>)[field] ??
         "",
@@ -188,11 +179,7 @@ export function DocumentEditor({
           </button>
         </div>
       </div>
-      {message ? (
-        <p className="cms-notice" role="status">
-          {message}
-        </p>
-      ) : null}
+      <Notice>{message}</Notice>
       <div className="editor-language">
         <button
           className={lang === "id" ? "selected" : ""}
@@ -250,15 +237,7 @@ export function DocumentEditor({
               <Field
                 label="Keahlian (pisahkan dengan koma)"
                 value={s.skills.join(", ")}
-                onChange={(v) =>
-                  editSite(
-                    "skills",
-                    v
-                      .split(",")
-                      .map((x) => x.trim())
-                      .filter(Boolean),
-                  )
-                }
+                onChange={(v) => editSite("skills", splitList(v))}
               />
             </section>
             <section className="cms-card">
@@ -484,15 +463,7 @@ export function DocumentEditor({
                 <Field
                   label="Tags (pisahkan dengan koma)"
                   value={e.tags.join(", ")}
-                  onChange={(v) =>
-                    editEntry(
-                      "tags",
-                      v
-                        .split(",")
-                        .map((x) => x.trim())
-                        .filter(Boolean),
-                    )
-                  }
+                  onChange={(v) => editEntry("tags", splitList(v))}
                 />
                 <Field
                   label="Repository URL"

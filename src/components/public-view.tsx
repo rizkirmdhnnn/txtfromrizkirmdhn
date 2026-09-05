@@ -20,6 +20,7 @@ import { Visual, Language } from "./visual";
 import { defaultWords } from "../lib/default-words";
 import {
   contentLanguage,
+  otherLang,
   type PublicData,
   type Lang,
   type EntryData,
@@ -51,6 +52,7 @@ export function PublicView({
   const sections = site?.sections.filter((s) => s.visible) ?? [];
   const selected = sections.some((s) => s.key === tab) ? tab : sections[0]?.key;
   const entry = slug ? data.entries.find((e) => e.slug === slug) : undefined;
+  const cv = site ? site.cv[lang] || site.cv[otherLang(lang)] : "";
   const avatar = (small = false) => (
     <img
       className={small ? "avatar small" : "avatar"}
@@ -210,7 +212,7 @@ export function PublicView({
                 {t.contact}
                 <ArrowUpRight size={17} />
               </button>
-              {site.cv[lang] || site.cv[lang === "id" ? "en" : "id"] ? (
+              {cv ? (
                 <button className="button" onClick={() => setModal("cv")}>
                   <FileText size={16} />
                   {t.cv}
@@ -386,15 +388,8 @@ export function PublicView({
                     : "CV available in Indonesian"}
                 </p>
               ) : null}
-              <iframe
-                className="cv-frame"
-                src={site.cv[lang] || site.cv[lang === "id" ? "en" : "id"]}
-                title={t.cvTitle}
-              />
-              <a
-                className="button primary"
-                href={`${site.cv[lang] || site.cv[lang === "id" ? "en" : "id"]}?download=1`}
-              >
+              <iframe className="cv-frame" src={cv} title={t.cvTitle} />
+              <a className="button primary" href={`${cv}?download=1`}>
                 <Download size={16} />
                 {copy?.words.downloadPdf ??
                   (lang === "id" ? "Unduh PDF" : "Download PDF")}

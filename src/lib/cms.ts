@@ -126,12 +126,11 @@ export function emptyEntry(category: Kind): EntryData {
     translations: { id: { ...blank }, en: { ...blank } },
   };
 }
+export function otherLang(lang: Lang): Lang {
+  return lang === "id" ? "en" : "id";
+}
 export function contentLanguage(entry: EntryData, lang: Lang): Lang {
-  return entry.translations[lang].title.trim()
-    ? lang
-    : lang === "id"
-      ? "en"
-      : "id";
+  return entry.translations[lang].title.trim() ? lang : otherLang(lang);
 }
 export function mediaIds(data: unknown): string[] {
   return [
