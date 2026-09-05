@@ -54,8 +54,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "rizki-portfolio",
-          "database_id": "273db981-25ed-4464-82f3-d646fc3dc4b8",
+          "database_name": "rizki-portfolio-english",
+          "database_id": "97df1c8a-33e8-4183-9ac9-3d19a19dc6b4",
           "migrations_dir": "migrations",
         },
       ],
