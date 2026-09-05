@@ -48,6 +48,18 @@ Yang masih kurang adalah **`CF_ANALYTICS_TOKEN`**, dipakai server untuk membaca 
 3. Simpan dengan `npx wrangler secret put CF_ANALYTICS_TOKEN --env production`, lalu tempel nilainya saat diminta.
 4. Deploy ulang tidak diperlukan; secret langsung aktif. Buka Dashboard → Ringkasan untuk memeriksa.
 
+### Kalau angkanya tetap nol
+
+Beacon dimuat dari `static.cloudflareinsights.com`, host yang masuk banyak blocklist pelacak. Sebagian jaringan mengembalikan `0.0.0.0` untuk host itu lewat pencegatan DNS, sehingga kunjungan dari jaringan tersebut tidak pernah terhitung — termasuk kunjunganmu sendiri saat menguji. Membedakannya:
+
+```sh
+dig +short static.cloudflareinsights.com @1.1.1.1
+curl -sS -H 'accept: application/dns-json' \
+  'https://cloudflare-dns.com/dns-query?name=static.cloudflareinsights.com&type=A'
+```
+
+DNS biasa menjawab `0.0.0.0` sementara DNS over HTTPS menjawab IP asli berarti jaringanmu yang memblokir, bukan konfigurasinya. Untuk memastikan skrip beacon sehat, ambil langsung ke IP aslinya: `curl --resolve static.cloudflareinsights.com:443:<ip> https://static.cloudflareinsights.com/beacon.min.js` — jawaban wajar adalah 200 dengan sekitar 30 kB JavaScript. Uji dari jaringan lain, misalnya data seluler, sebelum menyimpulkan ada yang rusak.
+
 Dashboard menampilkan kunjungan, page views, dan halaman populer dari dataset RUM, cache 15 menit. Angka bukan pengunjung unik, dan dapat dipengaruhi pemblokir tracking. Data baru muncul setelah ada kunjungan sejak beacon aktif.
 
 ## 4. Peluncuran produksi
