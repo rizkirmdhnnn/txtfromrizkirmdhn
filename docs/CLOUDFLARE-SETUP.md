@@ -6,7 +6,7 @@ Implementasi memakai Workers, D1, R2 privat, dan Cloudflare Access. Local develo
 
 - Account: `4a273df5ad27c77f3a28a6d0bbcf770f`.
 - Zone: `txtfromrizkirmdhn.my.id` (`6a3ec6fd3b5c5f12fcf0978c4e3397c0`).
-- **Produksi (melayani traffic sejak 5 September 2026):** Worker `rizki-portfolio`, D1 `rizki-portfolio` (`273db981-25ed-4464-82f3-d646fc3dc4b8`), R2 privat `rizki-portfolio-media`. Memegang route `txtfromrizkirmdhn.my.id/*` dan custom domain `admin.txtfromrizkirmdhn.my.id`.
+- **Produksi (melayani traffic sejak 5 September 2026):** Worker `rizki-portfolio`, D1 `rizki-portfolio-english` (`97df1c8a-33e8-4183-9ac9-3d19a19dc6b4`), R2 privat `rizki-portfolio-media`. D1 `rizki-portfolio` (`273db981-25ed-4464-82f3-d646fc3dc4b8`) berisi konten bilingual sebelum migrasi dan dipertahankan sebagai jalur rollback. Memegang route `txtfromrizkirmdhn.my.id/*` dan custom domain `admin.txtfromrizkirmdhn.my.id`.
 - **Preview (pensiun, tanpa route):** Worker `rizki-portfolio-preview`, D1 `rizki-portfolio-preview` (`cc415328-cdcc-4cf4-8449-42f401c41ecd`), R2 `rizki-portfolio-preview-media`. Dipertahankan sebagai salinan rollback berisi data sampai cutover produksi 5 September 2026. Pengembangan sehari-hari memakai `npm run dev` dengan D1/R2 Miniflare lokal.
 - Kedua Worker tidak mengaktifkan workers.dev maupun preview URLs. Record CNAME Tunnel lama pada apex dipertahankan.
 - Team domain dan AUD Access terpasang pada vars produksi. Policy Access diperiksa melalui browser pada 5 September 2026 dan hanya memuat email pemilik.
@@ -62,7 +62,7 @@ Dashboard menampilkan kunjungan, page views, dan halaman populer dari dataset RU
 
 ## 4. Peluncuran produksi
 
-Dijalankan pada 5 September 2026. Produksi memakai `env.production`, database `rizki-portfolio`, dan bucket `rizki-portfolio-media`. Urutan yang terbukti bekerja:
+Dijalankan pada 5 September 2026. Langkah di bawah ini adalah catatan peristiwa saat itu, ketika produksi masih memakai database `rizki-portfolio`. Sejak migrasi English, `env.production` pada `wrangler.jsonc` menunjuk `rizki-portfolio-english`; bucket `rizki-portfolio-media` tidak berubah. Urutan yang terbukti bekerja:
 
 1. Buat resource: `npx wrangler d1 create rizki-portfolio` dan `npx wrangler r2 bucket create rizki-portfolio-media`. Isikan `database_id` hasilnya beserta vars Access ke `env.production` pada `wrangler.jsonc`.
 2. Salin data dengan `npx wrangler d1 export rizki-portfolio-preview --remote --output dump.sql`, lalu `npx wrangler d1 execute rizki-portfolio --remote --file dump.sql`. Dump menyertakan tabel `d1_migrations`, jadi migrasi tidak perlu dijalankan terpisah dan skema produksi identik dengan asalnya.
@@ -80,11 +80,11 @@ Rollback cutover: kembalikan blok `routes` ke konfigurasi utama, hapus route pro
 - File yang masih dipakai draft, published, atau riwayat revisi ditolak saat dihapus permanen.
 - Ekspor ZIP berisi manifest `content.json`, Markdown draft, dan blob media berdasarkan ID. Simpan ZIP di tempat privat; isinya termasuk draft.
 - Pemulihan bencana menggunakan ekspor D1 dan R2 / D1 Time Travel sesuai fasilitas plan akun. Buat ekspor sebelum menjalankan migrasi produksi. Jangan memulihkan seluruh database untuk membatalkan satu tulisan.
-- Untuk mengembalikan versi aplikasi: `npx wrangler rollback <VERSION_ID>`. Rollback Worker tidak otomatis me-rollback database. The English content migration changes stored JSON: rolling back that release requires restoring both the database backup and the previous Worker version.
+- Untuk mengembalikan versi aplikasi: `npx wrangler rollback <VERSION_ID>`. Rollback Worker tidak otomatis me-rollback database. Migrasi konten English mengubah JSON yang tersimpan, jadi me-rollback rilis itu menuntut pemulihan backup database sekaligus versi Worker sebelumnya.
 - Observability aktif; log aplikasi hanya mencatat tipe kegagalan, tidak request body/API key. Periksa Workers Logs ketika terjadi 5xx.
 
 ## Mode maintenance
 
 Dashboard → Pengaturan → Mode maintenance. Toggle langsung menyimpan status; judul dan pesan Inggris disimpan melalui tombol Save message. Status terpisah dari draft/published dan default nonaktif. Saat aktif, semua request konten pada hostname publik, termasuk detail tulisan, API konten dan media/CV, mendapat HTTP 503 dengan no-store dan Retry-After. Preview serta aset pada hostname admin tetap dilindungi Access dan bisa digunakan pemilik. Menonaktifkan mode mengembalikan konten published tanpa publish ulang. File yang sudah diunduh atau konten yang sudah terbuka pada perangkat pengunjung tidak dapat ditarik kembali.
 
-Pengaturan disimpan di D1 pada integrations dengan ID maintenance, tanpa migrasi skema. Jangan mengganti atau menghapus baris tersebut saat deployment rutin. Version 2 ZIP backups include maintenance settings and redirects, while excluding integration credentials. A full D1 export remains necessary for database disaster recovery.
+Pengaturan disimpan di D1 pada integrations dengan ID maintenance, tanpa migrasi skema. Jangan mengganti atau menghapus baris tersebut saat deployment rutin. Backup ZIP versi 2 memuat pengaturan maintenance dan redirect, tanpa kredensial integrasi. Ekspor D1 penuh tetap diperlukan untuk pemulihan bencana database.

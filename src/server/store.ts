@@ -62,7 +62,7 @@ export async function saveDocument(
   if (input.kind !== "site" && (draft as EntryData).category !== input.kind)
     throw new Response("Category does not match", { status: 400 });
   if ((input.kind === "site") !== (id === "site"))
-    throw new Response("Identity profil tidak valid", { status: 400 });
+    throw new Response("Invalid profile identity", { status: 400 });
   const raw = JSON.stringify(draft);
   if (new TextEncoder().encode(raw).length > 400000)
     throw new Response("Content is too large", { status: 413 });

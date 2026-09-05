@@ -171,6 +171,16 @@ describe("draft and publication boundaries", () => {
       )?.n,
     ).toBe(2);
   });
+  it("requires an English title before publication", async () => {
+    const d = await saveDocument(env, crypto.randomUUID(), {
+      kind: "writing",
+      version: 0,
+      draft: emptyEntry("writing"),
+    });
+    await expect(
+      documentAction(env, d.id, "publish", d.version),
+    ).rejects.toMatchObject({ status: 400 });
+  });
 });
 describe("public payload", () => {
   it("orders entries by pinned, order, then date and hides drafts", async () => {
@@ -369,7 +379,7 @@ describe("admin and media protection", () => {
     ).rejects.toMatchObject({ status: 400 });
   });
 });
-describe("backup and removed translation APIs", () => {
+describe("backup", () => {
   it("exports a complete ZIP without integration credentials", async () => {
     const response = await handleApi(
       new Request("http://localhost/api/admin/backup"),
@@ -409,16 +419,6 @@ describe("removed translation APIs", () => {
       );
       expect(response.status).toBe(404);
     }
-  });
-  it("requires an English title before publication", async () => {
-    const d = await saveDocument(env, crypto.randomUUID(), {
-      kind: "writing",
-      version: 0,
-      draft: emptyEntry("writing"),
-    });
-    await expect(
-      documentAction(env, d.id, "publish", d.version),
-    ).rejects.toMatchObject({ status: 400 });
   });
 });
 describe("maintenance mode", () => {
