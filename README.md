@@ -60,13 +60,13 @@ Tes integrasi menggunakan D1/R2 Miniflare terisolasi, tidak mengubah database pr
 - `src/components/public-view.tsx`: komponen publik yang juga dipakai preview.
 - `src/lib/cms.ts`: skema validasi dan tipe data bersama.
 - `migrations/`: skema berversi, termasuk guard penulisan konkuren.
-- `wrangler.jsonc`: resource preview serta konfigurasi produksi terpisah.
+- `wrangler.jsonc`: konfigurasi preview yang kini tanpa route, serta `env.production` yang memegang kedua domain.
 
 API publik: `GET /api/public`, `GET|HEAD /api/media/:id`. API admin berada di `/api/admin/*`; semua memerlukan identitas pemilik dan pemeriksaan origin untuk write. Server functions publik hanya membaca snapshot published.
 
 ## Cloudflare
 
-Domain utama dan dashboard menggunakan Worker serta database/bucket `preview` yang sama. Domain utama hanya menampilkan konten published; dashboard dilindungi Google melalui Cloudflare Access. Resource produksi terpisah belum dibuat. Langkah lengkap, secrets, statistik, migrasi produksi, serta rollback: [docs/CLOUDFLARE-SETUP.md](docs/CLOUDFLARE-SETUP.md).
+Domain utama dan dashboard dilayani Worker produksi `rizki-portfolio` dengan database dan bucket sendiri. Domain utama hanya menampilkan konten published; dashboard dilindungi Google melalui Cloudflare Access. Environment `preview` sudah pensiun dan tidak lagi memegang route, tetapi datanya dipertahankan sebagai salinan rollback. Langkah lengkap, secrets, statistik, migrasi produksi, serta rollback: [docs/CLOUDFLARE-SETUP.md](docs/CLOUDFLARE-SETUP.md).
 
 Build disimpan di `dist/`. File `.dev.vars` dan output build tidak boleh masuk git; Vite dapat menyalin secrets development ke `dist/server/.dev.vars` untuk preview lokal, bukan aset publik. Jangan membagikan direktori build sebagai arsip publik.
 

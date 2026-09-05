@@ -6,10 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "preview_urls": false,
-  "routes": [
-    { "pattern": "admin.txtfromrizkirmdhn.my.id", "custom_domain": true },
-    { "pattern": "txtfromrizkirmdhn.my.id/*", "zone_name": "txtfromrizkirmdhn.my.id" }
-  ],
+  "routes": [],
   "observability": { "enabled": true },
   "vars": {
     "PUBLIC_HOST": "txtfromrizkirmdhn.my.id",
@@ -35,15 +32,21 @@
   "env": {
     "production": {
       "name": "rizki-portfolio",
-      "routes": [],
+      "routes": [
+        { "pattern": "admin.txtfromrizkirmdhn.my.id", "custom_domain": true },
+        {
+          "pattern": "txtfromrizkirmdhn.my.id/*",
+          "zone_name": "txtfromrizkirmdhn.my.id",
+        },
+      ],
       "workers_dev": false,
       "preview_urls": false,
       "vars": {
         "PUBLIC_HOST": "txtfromrizkirmdhn.my.id",
         "ADMIN_HOST": "admin.txtfromrizkirmdhn.my.id",
         "OWNER_EMAIL": "achmadrizkiramadhan0101@gmail.com",
-        "ACCESS_TEAM_DOMAIN": "",
-        "ACCESS_AUD": "",
+        "ACCESS_TEAM_DOMAIN": "rizkirmdhn.cloudflareaccess.com",
+        "ACCESS_AUD": "09d658c56c9a0a3b335624bb5eaf2be296a89c655c80ca5c129b0cb54673d0c0",
         "CF_ACCOUNT_ID": "4a273df5ad27c77f3a28a6d0bbcf770f",
         "ANALYTICS_SITE_TAG": "",
         "ANALYTICS_BEACON_TOKEN": "",
@@ -52,7 +55,7 @@
         {
           "binding": "DB",
           "database_name": "rizki-portfolio",
-          "database_id": "00000000-0000-0000-0000-000000000002",
+          "database_id": "273db981-25ed-4464-82f3-d646fc3dc4b8",
           "migrations_dir": "migrations",
         },
       ],

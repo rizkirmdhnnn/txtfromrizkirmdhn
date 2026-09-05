@@ -2,15 +2,14 @@
 
 Implementasi memakai Workers, D1, R2 privat, dan Cloudflare Access. Local development memiliki akses pemilik otomatis **hanya pada build development dan hostname localhost/127.0.0.1**. Build deployment tidak memiliki bypass ini.
 
-## Resource preview yang sudah disiapkan
+## Resource yang aktif
 
 - Account: `4a273df5ad27c77f3a28a6d0bbcf770f`.
 - Zone: `txtfromrizkirmdhn.my.id` (`6a3ec6fd3b5c5f12fcf0978c4e3397c0`).
-- Worker: `rizki-portfolio-preview`.
-- D1: `rizki-portfolio-preview` (`cc415328-cdcc-4cf4-8449-42f401c41ecd`).
-- R2: `rizki-portfolio-preview-media`, akses publik dinonaktifkan.
-- Atas permintaan pemilik untuk menyiapkan domain lebih dahulu, domain publik memakai route `txtfromrizkirmdhn.my.id/*` ke Worker preview yang sama dengan dashboard. Record CNAME Tunnel lama dipertahankan. Worker tidak mengaktifkan workers.dev maupun preview URLs. Publish di dashboard sekarang berdampak pada domain publik; draft tetap privat.
-- Subdomain dashboard `admin.txtfromrizkirmdhn.my.id` sudah dihubungkan ke Worker preview. Team domain dan AUD sudah terpasang. Policy Access diperiksa melalui browser pada 5 September 2026 dan hanya memuat email pemilik.
+- **Produksi (melayani traffic sejak 5 September 2026):** Worker `rizki-portfolio`, D1 `rizki-portfolio` (`273db981-25ed-4464-82f3-d646fc3dc4b8`), R2 privat `rizki-portfolio-media`. Memegang route `txtfromrizkirmdhn.my.id/*` dan custom domain `admin.txtfromrizkirmdhn.my.id`.
+- **Preview (pensiun, tanpa route):** Worker `rizki-portfolio-preview`, D1 `rizki-portfolio-preview` (`cc415328-cdcc-4cf4-8449-42f401c41ecd`), R2 `rizki-portfolio-preview-media`. Dipertahankan sebagai salinan rollback berisi data sampai cutover produksi 5 September 2026. Pengembangan sehari-hari memakai `npm run dev` dengan D1/R2 Miniflare lokal.
+- Kedua Worker tidak mengaktifkan workers.dev maupun preview URLs. Record CNAME Tunnel lama pada apex dipertahankan.
+- Team domain dan AUD Access terpasang pada vars produksi. Policy Access diperiksa melalui browser pada 5 September 2026 dan hanya memuat email pemilik.
 
 ## 1. Google dan Cloudflare Access
 
@@ -30,7 +29,7 @@ Panduan resmi: https://developers.cloudflare.com/cloudflare-one/integrations/ide
 
 ## 2. Secrets dan AI
 
-Worker preview sudah memiliki `CMS_ENCRYPTION_KEY` yang dibuat pada implementasi ini; jangan membuat ulang kunci tersebut. Untuk lingkungan baru, `CMS_ENCRYPTION_KEY` harus berupa 32 byte acak yang di-encode base64. Simpan sebagai Worker Secret, menggunakan prompt interaktif `npx wrangler secret put CMS_ENCRYPTION_KEY`. Kunci ini berbeda dari API key provider. Jangan menggantinya setelah API key disimpan tanpa rencana migrasi: kunci lama diperlukan untuk mendekripsi kredensial.
+Worker preview dan produksi sama-sama sudah memiliki `CMS_ENCRYPTION_KEY`; produksi memakai kunci yang sama dengan `.dev.vars` agar data terenkripsi tetap terbaca setelah migrasi. Jangan membuat ulang kunci tersebut. Untuk lingkungan baru, `CMS_ENCRYPTION_KEY` harus berupa 32 byte acak yang di-encode base64. Simpan sebagai Worker Secret, menggunakan prompt interaktif `npx wrangler secret put CMS_ENCRYPTION_KEY`. Kunci ini berbeda dari API key provider. Jangan menggantinya setelah API key disimpan tanpa rencana migrasi: kunci lama diperlukan untuk mendekripsi kredensial.
 
 API key provider diisi dari Dashboard → Pengaturan → Terjemahan dengan AI. Isi base URL berakhiran `/v1` jika provider memerlukannya, nama model, dan API key. Server menambahkan `/chat/completions`. Klik Simpan lalu Tes koneksi. Pilihan model dan harga sepenuhnya mengikuti provider yang kamu pilih.
 
@@ -44,17 +43,19 @@ Kunci provider disimpan terenkripsi di D1. Ekspor konten tidak menyertakan kunci
 4. Build dan deploy. Beacon hanya disisipkan pada HTML hostname publik; preview dan dashboard tidak dilacak.
 5. Dashboard menampilkan kunjungan, page views, dan halaman populer dari dataset RUM, cache 15 menit. Angka bukan pengunjung unik, dan dapat dipengaruhi pemblokir tracking. Jika token/dataset belum tersedia, tampilkan status belum tersedia tanpa data buatan.
 
-## 4. Peluncuran produksi setelah konten siap
+## 4. Peluncuran produksi
 
-Produksi menggunakan konfigurasi terpisah `env.production`, database `rizki-portfolio`, dan bucket `rizki-portfolio-media`.
+Dijalankan pada 5 September 2026. Produksi memakai `env.production`, database `rizki-portfolio`, dan bucket `rizki-portfolio-media`. Urutan yang terbukti bekerja:
 
-1. Buat resource produksi, ganti UUID placeholder pada `env.production`, dan lengkapi vars Access/Analytics produksi. Jangan memakai D1 atau R2 preview sebagai resource produksi.
-2. Terapkan migrasi dengan `npx wrangler d1 migrations apply DB --remote --env production`.
-3. Buat secrets khusus produksi (`CMS_ENCRYPTION_KEY`, `CF_ANALYTICS_TOKEN`) melalui `wrangler secret put … --env production`.
-4. Salin konten dan aset melalui ekspor D1/R2 yang terkontrol, mempertahankan ID referensi; jangan menyalin integrations berisi API key terenkripsi dengan kunci preview. Isi ulang provider di produksi. Setelah migrasi, verifikasi draft/published serta file CV.
-5. Build dengan `CLOUDFLARE_ENV=production npm run build`, lalu deploy dengan `npx wrangler deploy --env production`.
-6. Saat migrasi produksi disetujui, pindahkan custom domain admin dan route domain utama dari Worker preview ke produksi. Pindahkan juga definisi routes pada wrangler.jsonc agar deployment berikutnya tidak mengembalikan routing ke preview. Pertahankan database dan aset sebelum memindahkan traffic.
-7. Uji login, publish, fallback bahasa, PDF, kontak, dan statistik dari domain aktual.
+1. Buat resource: `npx wrangler d1 create rizki-portfolio` dan `npx wrangler r2 bucket create rizki-portfolio-media`. Isikan `database_id` hasilnya beserta vars Access ke `env.production` pada `wrangler.jsonc`.
+2. Salin data dengan `npx wrangler d1 export rizki-portfolio-preview --remote --output dump.sql`, lalu `npx wrangler d1 execute rizki-portfolio --remote --file dump.sql`. Dump menyertakan tabel `d1_migrations`, jadi migrasi tidak perlu dijalankan terpisah dan skema produksi identik dengan asalnya.
+3. Salin objek R2 satu per satu dengan `wrangler r2 object get`/`put`; kunci objek sama dengan `media.id` di D1, jadi ID referensi tetap valid. Bandingkan hasilnya dengan `cmp` sebelum lanjut.
+4. Set secret: `npx wrangler secret put CMS_ENCRYPTION_KEY --env production`. Saat migrasi ini tabel `integrations` hanya berisi baris `maintenance`, belum ada API key terenkripsi, sehingga dump aman disalin apa adanya. Jika provider AI sudah pernah disimpan, jangan salin barisnya — isi ulang dari dashboard produksi.
+5. **Hapus dulu route lama sebelum deploy produksi.** `wrangler deploy` menolak route yang masih dipegang Worker lain, dan `routes: []` pada konfigurasi preview tidak menghapus route yang sudah ada — wrangler hanya menambah, tidak pernah menghapus. Hapus lewat dashboard Workers → Routes, atau `DELETE /zones/<zone>/workers/routes/<id>` pada API. Custom domain berpindah sendiri tanpa dihapus manual.
+6. Pindahkan definisi `routes` di `wrangler.jsonc` dari blok utama ke `env.production`, agar deployment preview berikutnya tidak menarik kembali routing.
+7. Build dan deploy: `CLOUDFLARE_ENV=production npm run build`, lalu `npx wrangler deploy --env production`. Verifikasi apex 200, admin 302 ke Access, serta `/api/media/<id>` untuk avatar dan CV.
+
+Rollback cutover: kembalikan blok `routes` ke konfigurasi utama, hapus route produksi, lalu `npm run build && npx wrangler deploy`. Data preview masih utuh per 5 September 2026.
 
 ## Pemulihan dan rollback
 
