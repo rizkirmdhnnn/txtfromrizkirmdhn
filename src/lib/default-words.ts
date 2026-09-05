@@ -3,6 +3,7 @@ export const defaultWords = {
   experience: "Experience",
   writing: "Writing",
   about: "About",
+  space: "A personal space",
   contact: "Let’s connect",
   cv: "View CV",
   pinned: "Featured project",
@@ -12,7 +13,9 @@ export const defaultWords = {
   back: "Back to profile",
   end: "Always building. Always learning.",
   source: "View repository",
+  liveDemo: "Live demo",
   close: "Close",
   contactSub: "Have an idea, an opportunity, or just want to say hello?",
   cvTitle: "Curriculum vitae",
+  downloadPdf: "Download PDF",
 };

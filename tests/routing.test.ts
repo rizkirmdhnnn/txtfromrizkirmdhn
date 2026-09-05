@@ -2,7 +2,8 @@ import { describe, it, expect } from "vitest";
 import { isKind, sectionFromPath } from "../src/lib/routing";
 import { tabPaths } from "../src/lib/tabs";
 import { entryMarkdown, splitFrontmatter } from "../src/lib/markdown";
-import { emptyEntry, kinds, mediaIds } from "../src/lib/cms";
+import { emptyEntry, kinds, mediaIds, siteSchema } from "../src/lib/cms";
+import { defaultWords } from "../src/lib/default-words";
 
 describe("admin paths", () => {
   it("maps every sidebar destination back to its section", () => {
@@ -126,5 +127,25 @@ describe("English URLs and metadata", () => {
       content: "https://portfolio.example/post/example",
     });
     expect(JSON.stringify(head)).not.toContain("hreflang");
+  });
+});
+
+describe("interface text contract", () => {
+  it("still accepts stored words the code no longer defines", () => {
+    // Dokumen site di produksi menyimpan key dari versi lama. Memperketat
+    // skema ini menjadi objek dengan key tetap akan menolak dokumen itu,
+    // dan halaman publik ikut kosong karena site menjadi null.
+    const parsed = siteSchema.shape.words.parse({
+      ...defaultWords,
+      cvNote: "key yang sudah dibuang dari kode",
+    });
+    expect(parsed.cvNote).toBe("key yang sudah dibuang dari kode");
+    expect(parsed.downloadPdf).toBe(defaultWords.downloadPdf);
+  });
+
+  it("lets a stored value win and falls back to the default otherwise", () => {
+    const t = { ...defaultWords, ...{ contact: "Say hi" } };
+    expect(t.contact).toBe("Say hi");
+    expect(t.space).toBe("A personal space");
   });
 });

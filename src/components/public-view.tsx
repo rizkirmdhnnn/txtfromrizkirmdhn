@@ -112,9 +112,7 @@ export function PublicView({
           {site?.brand || "ar"}
           <span>.</span>
         </button>
-        <span className="top-label">
-          {site?.words.space ?? "A personal space"}
-        </span>
+        <span className="top-label">{t.space}</span>
         <div className="header-tools">
           <ThemeToggle />
         </div>
@@ -162,7 +160,7 @@ export function PublicView({
                 target="_blank"
                 rel="noreferrer"
               >
-                {site?.words.liveDemo ?? "Live demo"}
+                {t.liveDemo}
                 <ArrowUpRight size={15} />
               </a>
             ) : null}
@@ -363,7 +361,7 @@ export function PublicView({
               <iframe className="cv-frame" src={cv} title={t.cvTitle} />
               <a className="button primary" href={`${cv}?download=1`}>
                 <Download size={16} />
-                {site?.words.downloadPdf ?? "Download PDF"}
+                {t.downloadPdf}
               </a>
             </>
           )}

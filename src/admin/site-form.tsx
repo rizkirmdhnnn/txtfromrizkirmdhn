@@ -1,4 +1,5 @@
 import type { MediaItem, SiteData } from "../lib/cms";
+import { defaultWords } from "../lib/default-words";
 import { splitList } from "../lib/text";
 import { AssetField, Field } from "./fields";
 import { categoryNames } from "./edit-helpers";
@@ -155,11 +156,11 @@ export function SiteForm({
       <details className="cms-card">
         <summary>Interface text</summary>
         <div className="field-grid">
-          {Object.entries(draft.words).map(([key, value]) => (
+          {Object.entries(defaultWords).map(([key, fallback]) => (
             <Field
               key={key}
               label={key}
-              value={value}
+              value={draft.words[key] ?? fallback}
               onChange={(next) =>
                 onChange({
                   ...draft,
