@@ -14,13 +14,7 @@ npm run db:migrate
 npm run dev
 ```
 
-In another terminal:
-
-```sh
-CMS_ORIGIN=http://localhost:3000 npm run db:seed
-```
-
-The dashboard is at `/admin`, private saved-draft preview at `/preview`, and the public website at `/`. The public website shows a placeholder until the profile is published. The seed imports seven draft documents and two demo assets, without overwriting existing edits. Markdown files in `content/` are seeds, not runtime content.
+The dashboard is at `/admin`, private saved-draft preview at `/preview`, and the public website at `/`. A freshly migrated database is empty, so the public website shows a placeholder until you create a profile in the dashboard and publish it. There is no seed step: all content lives in D1 and is authored through `/admin`.
 
 Local owner access is enabled only in development builds on localhost/127.0.0.1. Deployment builds require Cloudflare Access on the admin hostname.
 
@@ -44,7 +38,7 @@ npm run test
 npm run build
 ```
 
-Integration tests use isolated Miniflare D1/R2 storage. The test environment must permit local ports. Migration tests cover publication boundaries, revisions, translations, stale data, and repeatability.
+Integration tests use isolated Miniflare D1/R2 storage, applying the files in `migrations/` in order. The test environment must permit local ports. Coverage spans publication boundaries, revisions, owner authentication, media protection, stale data, and maintenance mode.
 
 ## Structure
 
@@ -62,5 +56,3 @@ Public API: `GET /api/public`, `GET|HEAD /api/media/:id`. Admin endpoints under 
 Production uses Worker `rizki-portfolio` with its own database and bucket. The public domain serves published content; the dashboard uses Google sign-in through Cloudflare Access. Deployment, analytics, and recovery notes are in [the Cloudflare setup guide](docs/CLOUDFLARE-SETUP.md).
 
 Build output is in `dist/`. Keep `.dev.vars` and build output out of Git. Vite may copy development secrets to `dist/server/.dev.vars` for local preview; do not distribute the build directory as a public archive.
-
-Initial project summaries and the photo come from the owner's GitHub profile. Example experience, certifications, writing, and CV remain marked as demo content and should be reviewed before publication.

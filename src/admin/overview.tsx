@@ -50,8 +50,8 @@ export function Overview({
         ))}
         {!documents.length ? (
           <p>
-            Run the initial import with <code>npm run db:seed</code>
-            to create draft content.
+            Nothing here yet. Pick a section in the sidebar and add your first
+            draft.
           </p>
         ) : null}
       </section>

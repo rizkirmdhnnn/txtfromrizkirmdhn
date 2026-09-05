@@ -10,12 +10,10 @@
     "format:check": "prettier --check .",
     "cf:typegen": "wrangler types --strict-vars=false --env-file .dev.vars.example",
     "db:migrate": "wrangler d1 migrations apply DB --local",
-    "db:seed": "tsx scripts/seed.ts",
     "test": "vitest run",
     "preview": "vite preview",
     "deploy:preview": "npm run build && wrangler deploy",
-    "deploy:production": "CLOUDFLARE_ENV=production npm run build && wrangler deploy --env production",
-    "seed:preview": "tsx scripts/seed-preview.ts"
+    "deploy:production": "CLOUDFLARE_ENV=production npm run build && wrangler deploy --env production"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.32",
@@ -41,7 +39,6 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.1.1",
     "prettier": "^3.9.6",
-    "tsx": "^4.23.13",
     "typescript": "^5.9.0",
     "vite": "^8.2.2",
     "vitest": "^5.0.0",
