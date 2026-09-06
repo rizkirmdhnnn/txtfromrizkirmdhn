@@ -53,7 +53,7 @@ export async function getDocument(env: Env, id: string) {
 export async function saveDocument(
   env: Env,
   id: string,
-  input: { kind: string; draft: unknown; version: number },
+  input: { kind: string; draft: unknown; version: number; revision?: boolean },
 ) {
   const draft =
     input.kind === "site"
@@ -79,6 +79,7 @@ export async function saveDocument(
       status: 409,
     });
   const revision = crypto.randomUUID();
+  const skipRevision = input.revision === false;
   if (!existing) {
     if (input.version !== 0)
       throw new Response("Invalid version", { status: 409 });
@@ -88,6 +89,9 @@ export async function saveDocument(
         input.kind,
         raw,
       ),
+      // Revisi 'create' selalu dicatat, termasuk saat baris dibuat oleh
+      // autosave: ini baseline dokumen dan hanya terjadi sekali, jadi tidak
+      // ikut membanjiri riwayat seperti revisi 'save' per jeda ketik.
       env.DB.prepare(
         "INSERT INTO revisions(id,document_id,snapshot,action) VALUES(?,?,?,'create')",
       ).bind(revision, id, raw),
@@ -97,9 +101,13 @@ export async function saveDocument(
       env.DB.prepare(
         "UPDATE documents SET draft=?,mutation=?,version=version+1,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=? AND version=?",
       ).bind(raw, revision, id, input.version),
-      env.DB.prepare(
-        "INSERT INTO revisions(id,document_id,snapshot,action) SELECT ?,id,draft,'save' FROM documents WHERE id=? AND mutation=?",
-      ).bind(revision, id, revision),
+      ...(skipRevision
+        ? []
+        : [
+            env.DB.prepare(
+              "INSERT INTO revisions(id,document_id,snapshot,action) SELECT ?,id,draft,'save' FROM documents WHERE id=? AND mutation=?",
+            ).bind(revision, id, revision),
+          ]),
     ]);
     if (!res[0].meta.changes)
       throw new Response("Edit conflict", { status: 409 });

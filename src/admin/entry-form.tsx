@@ -6,10 +6,20 @@ import { AssetField, Field } from "./fields";
 export function EntryForm({
   draft,
   media,
+  onMediaUploaded,
+  saveLabel,
+  focusSignal,
+  onFocusMode,
+  hideFocusButton,
   onChange,
 }: {
   draft: EntryData;
   media: MediaItem[];
+  onMediaUploaded: () => void | Promise<void>;
+  saveLabel?: React.ReactNode;
+  focusSignal?: number;
+  onFocusMode?: () => void;
+  hideFocusButton?: boolean;
   onChange: (draft: EntryData) => void;
 }) {
   const edit = <K extends keyof EntryData>(key: K, value: EntryData[K]) =>
@@ -30,11 +40,26 @@ export function EntryForm({
         />
         <div className="body-label">
           <h2>Content</h2>
+          <div className="body-label-actions">
+            {saveLabel}
+            {onFocusMode && !hideFocusButton ? (
+              <button
+                type="button"
+                className="cms-quiet"
+                onClick={onFocusMode}
+                title="Mode fokus: sembunyikan panel lain (Esc untuk keluar)"
+              >
+                Mode fokus
+              </button>
+            ) : null}
+          </div>
         </div>
         <RichEditor
           value={draft.body}
           onChange={(v) => edit("body", v)}
           media={media}
+          onMediaUploaded={onMediaUploaded}
+          focusSignal={focusSignal}
         />
       </section>
       <section className="cms-card">

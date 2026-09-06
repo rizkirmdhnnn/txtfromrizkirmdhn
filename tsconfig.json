@@ -17,6 +17,7 @@
     "vite.config.ts",
     "worker-configuration.d.ts",
     "tests/**/*.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "vitest.editor.config.ts"
   ]
 }

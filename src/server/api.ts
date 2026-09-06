@@ -260,6 +260,9 @@ export async function handleApi(request: Request, env: Env) {
         kind: z.enum(["site", ...kinds]),
         draft: z.unknown(),
         version: z.number().int().min(0),
+        // Autosave mengirim revision:false agar revision history tidak
+        // dibanjiri setiap jeda ketik (seperti autosave WordPress).
+        revision: z.boolean().default(true),
       })
       .parse(await body(request));
     return json(await saveDocument(env, input.id, input));
