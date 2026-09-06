@@ -8,12 +8,10 @@ import {
   Github,
   Linkedin,
   MapPin,
-  Pin,
   X,
   Mail,
   MessageCircle,
   Download,
-  Code2,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { Visual } from "./visual";
@@ -58,15 +56,28 @@ export function PublicView({
   const selected = sections.some((s) => s.key === tab) ? tab : sections[0]?.key;
   const entry = slug ? data.entries.find((e) => e.slug === slug) : undefined;
   const cv = site?.cv ?? "";
-  const avatar = (small = false) => (
-    <img
-      className={small ? "avatar small" : "avatar"}
-      src={site?.avatar || "/favicon.svg"}
-      alt={site?.name ?? ""}
-      width={small ? 32 : 82}
-      height={small ? 32 : 82}
-    />
+  const projects = data.entries.filter((e) => e.category === "projects");
+  const selectedEntries = data.entries.filter((e) => e.category === selected);
+  const featured = projects.find((e) => e.pinned) ?? projects[0];
+  const otherProjects = projects.filter((e) => e !== featured);
+  const writingVisible = sections.some((s) => s.key === "writing");
+  const latestWriting = writingVisible
+    ? data.entries
+        .filter((e) => e.category === "writing")
+        .reduce<EntryData | undefined>(
+          (latest, e) => (!latest || e.date > latest.date ? e : latest),
+          undefined,
+        )
+    : undefined;
+  const hasContact = Boolean(
+    site?.email || site?.github || site?.linkedin || site?.whatsapp,
   );
+  const emptyCopy = {
+    projects: t.projectsEmpty,
+    experience: t.experienceEmpty,
+    writing: t.writingEmpty,
+    about: t.aboutEmpty,
+  };
   const entryLink = (
     e: EntryData,
     children: React.ReactNode,
@@ -84,25 +95,41 @@ export function PublicView({
         {children}
       </Link>
     );
-  function content(e: EntryData, detail = false) {
+  function projectCard(e: EntryData, featuredCard = false) {
     return (
-      <>
-        {detail ? <h1>{e.title}</h1> : <h2>{e.title}</h2>}
-        <p className={detail ? "detail-summary" : ""}>{e.summary}</p>
-        {e.cover ? (
-          <img
-            className="content-cover"
-            src={e.cover}
-            alt={data.media[e.cover.split("/").pop()!] ?? e.title}
-          />
-        ) : e.visual ? (
-          <Visual kind={e.visual} />
-        ) : null}
-      </>
+      <article
+        className={`work-card${featuredCard ? " featured-work" : ""}`}
+        key={e.slug}
+      >
+        <EntryMedia entry={e} media={data.media} priority={featuredCard} />
+        <div className="work-info">
+          {e.pinned || e.demo || site?.words[e.category + "Label"] ? (
+            <div className="work-meta">
+              {e.pinned ? <span>{t.pinned}</span> : null}
+              {e.demo ? (
+                <span className="demo-label">{t.demo}</span>
+              ) : (
+                <span>{site?.words[e.category + "Label"]}</span>
+              )}
+            </div>
+          ) : null}
+          <h3>{entryLink(e, e.title, "work-title")}</h3>
+          {e.summary ? <p className="work-summary">{e.summary}</p> : null}
+          <EntryTags tags={e.tags} />
+          {entryLink(
+            e,
+            <>
+              {e.category === "projects" ? t.read : t.article}
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </>,
+            "read-link",
+          )}
+        </div>
+      </article>
     );
   }
   return (
-    <>
+    <div className="public-site">
       <header className="topbar">
         <button
           className="monogram preview-link"
@@ -132,7 +159,11 @@ export function PublicView({
             {t[entry.category]}
             {entry.demo ? <span className="demo-label">{t.demo}</span> : null}
           </div>
-          {content(entry, true)}
+          <h1>{entry.title}</h1>
+          {entry.summary ? (
+            <p className="detail-summary">{entry.summary}</p>
+          ) : null}
+          <EntryMedia entry={entry} media={data.media} priority />
           <div className="entry-tags">
             {entry.tags.map((tag) => (
               <span key={tag}>{tag}</span>
@@ -167,150 +198,184 @@ export function PublicView({
           </div>
         </main>
       ) : (
-        <main id="main" className="page">
-          <section className="profile">
+        <main id="main" className="portfolio-layout">
+          <section className="profile" aria-label={t.profileLabel}>
             <div className="identity">
               <div>
                 <h1>{site.name}</h1>
-                <div className="handle">
-                  @{site.handle}
-                  <span className="specialty">{site?.headline}</span>
+                {site.handle ? <p className="handle">@{site.handle}</p> : null}
+                {site.headline ? (
+                  <p className="specialty">{site.headline}</p>
+                ) : null}
+              </div>
+              <img
+                className="avatar"
+                src={site.avatar || "/favicon.svg"}
+                alt={site.name}
+                width={86}
+                height={86}
+              />
+            </div>
+            {site.bio ? <p className="bio">{site.bio}</p> : null}
+            {site.note ? <p className="bio-note">{site.note}</p> : null}
+            {site.location ? (
+              <div className="location">
+                <MapPin size={16} aria-hidden="true" />
+                {site.location}
+              </div>
+            ) : null}
+            {hasContact || cv ? (
+              <div className="profile-actions">
+                {hasContact ? (
+                  <button
+                    className="button primary"
+                    onClick={() => setModal("contact")}
+                  >
+                    {t.contact}
+                    <ArrowUpRight size={17} aria-hidden="true" />
+                  </button>
+                ) : null}
+                {cv ? (
+                  <button className="button" onClick={() => setModal("cv")}>
+                    <FileText size={16} aria-hidden="true" />
+                    {t.cv}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+            {site.skills.length ? (
+              <ul className="focus-tags">
+                {site.skills.map((skill) => (
+                  <li key={skill}>{skill}</li>
+                ))}
+              </ul>
+            ) : null}
+            {site.github || site.linkedin ? (
+              <div className="profile-socials">
+                {site.github ? (
+                  <a href={site.github} target="_blank" rel="noreferrer">
+                    GitHub
+                    <ArrowUpRight size={14} aria-hidden="true" />
+                  </a>
+                ) : null}
+                {site.linkedin ? (
+                  <a href={site.linkedin} target="_blank" rel="noreferrer">
+                    LinkedIn
+                    <ArrowUpRight size={14} aria-hidden="true" />
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
+          </section>
+          <div className="portfolio-content">
+            {sections.length ? (
+              <nav className="tabs" aria-label="Portfolio categories">
+                {sections.map((s) => (
+                  <Fragment key={s.key}>
+                    {link.tab(
+                      s.key,
+                      <>
+                        {t[s.key]}
+                        {s.key === "projects" ? (
+                          <span>{projects.length}</span>
+                        ) : null}
+                      </>,
+                      selected === s.key,
+                    )}
+                  </Fragment>
+                ))}
+              </nav>
+            ) : null}
+            {selected === "projects" ? (
+              <section aria-labelledby="work-heading">
+                <div className="section-heading">
+                  <h2 id="work-heading">{t.selectedWork}</h2>
+                  <p>{t.workIntro}</p>
                 </div>
-              </div>
-              {avatar()}
-            </div>
-            <p className="bio">{site?.bio}</p>
-            <p className="bio-note">{site?.note}</p>
-            <div className="location">
-              <MapPin size={14} />
-              {site.location}
-            </div>
-            <div className="profile-actions">
-              <button
-                className="button primary"
-                onClick={() => setModal("contact")}
-              >
-                {t.contact}
-                <ArrowUpRight size={17} />
-              </button>
-              {cv ? (
-                <button className="button" onClick={() => setModal("cv")}>
-                  <FileText size={16} />
-                  {t.cv}
-                </button>
-              ) : null}
-              {site.github ? (
-                <a
-                  className="icon-button"
-                  href={site.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="GitHub"
-                >
-                  <Github size={20} />
-                </a>
-              ) : null}
-              {site.linkedin ? (
-                <a
-                  className="icon-button"
-                  href={site.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin size={20} />
-                </a>
-              ) : null}
-            </div>
-            <div className="focus-tags">
-              {site.skills.map((skill) => (
-                <span key={skill}>
-                  <Code2 size={14} />
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </section>
-          <nav className="tabs" aria-label={"Portfolio categories"}>
-            {sections.map((s) => (
-              <Fragment key={s.key}>
-                {link.tab(
-                  s.key,
+                {featured ? (
                   <>
-                    {t[s.key]}
-                    {s.key === "projects" ? (
-                      <span>
-                        {
-                          data.entries.filter((e) => e.category === "projects")
-                            .length
-                        }
-                      </span>
+                    {projectCard(featured, true)}
+                    {otherProjects.length ? (
+                      <div className="work-grid">
+                        {otherProjects.map((e) => projectCard(e))}
+                      </div>
                     ) : null}
-                  </>,
-                  selected === s.key,
-                )}
-              </Fragment>
-            ))}
-          </nav>
-          {selected === "about" ? (
-            <section className="about-intro">
-              <h2>{site?.aboutTitle}</h2>
-              <div className="prose">
-                <ReactMarkdown>{site?.aboutBody ?? ""}</ReactMarkdown>
-              </div>
-            </section>
-          ) : null}
-          <section>
-            {data.entries
-              .filter((e) => e.category === selected)
-              .map((e) => (
-                <article className="entry" key={e.slug}>
-                  {e.pinned ? (
-                    <div className="pinned">
-                      <Pin size={12} />
-                      {t.pinned}
-                    </div>
-                  ) : null}
-                  <div className="thread">
-                    <div className="thread-rail">
-                      {avatar(true)}
-                      <span />
-                    </div>
-                    <div className="entry-content">
-                      <div className="post-author">
-                        <strong>{site.name}</strong>
-                        <span>@{site.handle}</span>
-                        <span className="entry-kind">
-                          {e.demo
-                            ? t.demo
-                            : (site?.words[e.category + "Label"] ?? "")}
-                        </span>
-                      </div>
-                      {entryLink(e, content(e), "entry-link")}
-                      <div className="entry-tags">
-                        {e.tags.map((tag) => (
-                          <span key={tag}>{tag}</span>
-                        ))}
-                      </div>
-                      {entryLink(
-                        e,
-                        <>
-                          {e.category === "projects" ? t.read : t.article}
-                          <ArrowUpRight size={14} />
-                        </>,
-                        "read-link",
-                      )}
-                    </div>
+                  </>
+                ) : (
+                  <div className="empty-section">
+                    <p>{t.projectsEmpty}</p>
                   </div>
-                </article>
-              ))}
-          </section>
-          <div className="feed-end">
-            <span />
+                )}
+                {latestWriting ? (
+                  <aside className="latest-writing" aria-label={t.notebook}>
+                    <div>
+                      <span>{t.notebook}</span>
+                      {latestWriting.demo ? (
+                        <span className="demo-label">{t.demo}</span>
+                      ) : null}
+                      <h3>
+                        {entryLink(
+                          latestWriting,
+                          latestWriting.title,
+                          "work-title",
+                        )}
+                      </h3>
+                    </div>
+                    {entryLink(
+                      latestWriting,
+                      <>
+                        {t.article}
+                        <ArrowUpRight size={16} aria-hidden="true" />
+                      </>,
+                      "read-link",
+                    )}
+                  </aside>
+                ) : null}
+              </section>
+            ) : selected ? (
+              <section aria-labelledby="section-heading">
+                <div className="section-heading">
+                  <h2 id="section-heading">
+                    {selected === "about"
+                      ? site.aboutTitle || t.about
+                      : t[selected]}
+                  </h2>
+                </div>
+                {selected === "about" && site.aboutBody ? (
+                  <div className="prose about-intro">
+                    <ReactMarkdown>{site.aboutBody}</ReactMarkdown>
+                  </div>
+                ) : null}
+                {selectedEntries.length ? (
+                  <div className="content-list">
+                    {selectedEntries.map((e) => projectCard(e))}
+                  </div>
+                ) : selected !== "about" || !site.aboutBody ? (
+                  <div className="empty-section">
+                    <p>{emptyCopy[selected]}</p>
+                    {sections.some((s) => s.key === "projects") &&
+                    projects.length
+                      ? link.tab(
+                          "projects",
+                          <>
+                            {t.browseProjects}
+                            <ArrowUpRight size={16} aria-hidden="true" />
+                          </>,
+                          false,
+                        )
+                      : null}
+                  </div>
+                ) : null}
+              </section>
+            ) : (
+              <div className="empty-section">
+                <p>{t.sectionsEmpty}</p>
+              </div>
+            )}
           </div>
         </main>
       )}
-      <footer>
+      <footer className="public-footer">
         <span>{t.end}</span>
         <p>
           © {new Date().getFullYear()} {site?.name} <span>·</span>{" "}
@@ -367,9 +432,41 @@ export function PublicView({
           )}
         </PublicModal>
       ) : null}
-    </>
+    </div>
   );
 }
+
+function EntryMedia({
+  entry,
+  media,
+  priority = false,
+}: {
+  entry: EntryData;
+  media: PublicData["media"];
+  priority?: boolean;
+}) {
+  if (entry.cover)
+    return (
+      <img
+        className="content-cover"
+        src={entry.cover}
+        alt={media[entry.cover.split("/").pop()!] || entry.title}
+        loading={priority ? "eager" : "lazy"}
+      />
+    );
+  return entry.visual ? <Visual kind={entry.visual} /> : null;
+}
+
+function EntryTags({ tags }: { tags: string[] }) {
+  return tags.length ? (
+    <div className="entry-tags">
+      {tags.map((tag) => (
+        <span key={tag}>{tag}</span>
+      ))}
+    </div>
+  ) : null;
+}
+
 function PublicModal({
   title,
   close,
@@ -383,11 +480,18 @@ function PublicModal({
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    ref.current?.showModal();
+    const opener =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const dialog = ref.current;
+    dialog?.showModal();
     const old = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
+      dialog?.close();
       document.body.style.overflow = old;
+      opener?.focus();
     };
   }, []);
   return (
@@ -397,7 +501,15 @@ function PublicModal({
       aria-labelledby="public-modal-title"
       onCancel={close}
       onClick={(e) => {
-        if (e.target === e.currentTarget) close();
+        if (e.target !== e.currentTarget) return;
+        const bounds = e.currentTarget.getBoundingClientRect();
+        if (
+          e.clientX < bounds.left ||
+          e.clientX > bounds.right ||
+          e.clientY < bounds.top ||
+          e.clientY > bounds.bottom
+        )
+          close();
       }}
     >
       <div className="modal-inner">

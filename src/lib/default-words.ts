@@ -18,4 +18,17 @@ export const defaultWords = {
   contactSub: "Have an idea, an opportunity, or just want to say hello?",
   cvTitle: "Curriculum vitae",
   downloadPdf: "Download PDF",
+  profileLabel: "Profile",
+  selectedWork: "Selected work",
+  workIntro: "From the interface to the infrastructure behind it.",
+  notebook: "From the notebook",
+  browseProjects: "Browse projects",
+  projectsEmpty:
+    "Projects are being prepared. Check back soon for a closer look at the work.",
+  experienceEmpty:
+    "Experience details are being prepared. Explore the projects for a closer look at the work.",
+  writingEmpty:
+    "New writing is on the way. Check back soon for notes from building.",
+  aboutEmpty: "More about this personal space is coming soon.",
+  sectionsEmpty: "More work and stories will be shared here soon.",
 };
