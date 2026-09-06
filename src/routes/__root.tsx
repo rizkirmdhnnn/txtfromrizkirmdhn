@@ -5,6 +5,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import stylesheet from "../styles.css?url";
+import { PublicMotionProvider } from "../components/public-motion";
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -46,7 +47,9 @@ function RootDocument() {
         <a className="skip" href="#main">
           Skip to content
         </a>
-        <Outlet />
+        <PublicMotionProvider>
+          <Outlet />
+        </PublicMotionProvider>
         <Scripts />
       </body>
     </html>

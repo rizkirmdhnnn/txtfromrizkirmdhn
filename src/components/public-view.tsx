@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { Visual } from "./visual";
+import { useCategoryMotion } from "./public-motion";
+import { createMotionScope, type MotionScope } from "../lib/motion";
 import { defaultWords } from "../lib/default-words";
 import { type PublicData, type EntryData, type Kind } from "../lib/cms";
 export type PublicNav = {
@@ -55,6 +57,9 @@ export function PublicView({
   const sections = site?.sections.filter((s) => s.visible) ?? [];
   const selected = sections.some((s) => s.key === tab) ? tab : sections[0]?.key;
   const entry = slug ? data.entries.find((e) => e.slug === slug) : undefined;
+  const { navRef, contentRef } = useCategoryMotion(
+    site && !entry ? selected : undefined,
+  );
   const cv = site?.cv ?? "";
   const projects = data.entries.filter((e) => e.category === "projects");
   const selectedEntries = data.entries.filter((e) => e.category === selected);
@@ -269,7 +274,11 @@ export function PublicView({
           </section>
           <div className="portfolio-content">
             {sections.length ? (
-              <nav className="tabs" aria-label="Portfolio categories">
+              <nav
+                ref={navRef}
+                className="tabs"
+                aria-label="Portfolio categories"
+              >
                 {sections.map((s) => (
                   <Fragment key={s.key}>
                     {link.tab(
@@ -284,94 +293,97 @@ export function PublicView({
                     )}
                   </Fragment>
                 ))}
+                <i className="category-indicator" aria-hidden="true" hidden />
               </nav>
             ) : null}
-            {selected === "projects" ? (
-              <section aria-labelledby="work-heading">
-                <div className="section-heading">
-                  <h2 id="work-heading">{t.selectedWork}</h2>
-                  <p>{t.workIntro}</p>
-                </div>
-                {featured ? (
-                  <>
-                    {projectCard(featured, true)}
-                    {otherProjects.length ? (
-                      <div className="work-grid">
-                        {otherProjects.map((e) => projectCard(e))}
-                      </div>
-                    ) : null}
-                  </>
-                ) : (
-                  <div className="empty-section">
-                    <p>{t.projectsEmpty}</p>
+            <div ref={contentRef} className="category-content">
+              {selected === "projects" ? (
+                <section aria-labelledby="work-heading">
+                  <div className="section-heading">
+                    <h2 id="work-heading">{t.selectedWork}</h2>
+                    <p>{t.workIntro}</p>
                   </div>
-                )}
-                {latestWriting ? (
-                  <aside className="latest-writing" aria-label={t.notebook}>
-                    <div>
-                      <span>{t.notebook}</span>
-                      {latestWriting.demo ? (
-                        <span className="demo-label">{t.demo}</span>
+                  {featured ? (
+                    <>
+                      {projectCard(featured, true)}
+                      {otherProjects.length ? (
+                        <div className="work-grid">
+                          {otherProjects.map((e) => projectCard(e))}
+                        </div>
                       ) : null}
-                      <h3>
-                        {entryLink(
-                          latestWriting,
-                          latestWriting.title,
-                          "work-title",
-                        )}
-                      </h3>
+                    </>
+                  ) : (
+                    <div className="empty-section">
+                      <p>{t.projectsEmpty}</p>
                     </div>
-                    {entryLink(
-                      latestWriting,
-                      <>
-                        {t.article}
-                        <ArrowUpRight size={16} aria-hidden="true" />
-                      </>,
-                      "read-link",
-                    )}
-                  </aside>
-                ) : null}
-              </section>
-            ) : selected ? (
-              <section aria-labelledby="section-heading">
-                <div className="section-heading">
-                  <h2 id="section-heading">
-                    {selected === "about"
-                      ? site.aboutTitle || t.about
-                      : t[selected]}
-                  </h2>
+                  )}
+                  {latestWriting ? (
+                    <aside className="latest-writing" aria-label={t.notebook}>
+                      <div>
+                        <span>{t.notebook}</span>
+                        {latestWriting.demo ? (
+                          <span className="demo-label">{t.demo}</span>
+                        ) : null}
+                        <h3>
+                          {entryLink(
+                            latestWriting,
+                            latestWriting.title,
+                            "work-title",
+                          )}
+                        </h3>
+                      </div>
+                      {entryLink(
+                        latestWriting,
+                        <>
+                          {t.article}
+                          <ArrowUpRight size={16} aria-hidden="true" />
+                        </>,
+                        "read-link",
+                      )}
+                    </aside>
+                  ) : null}
+                </section>
+              ) : selected ? (
+                <section aria-labelledby="section-heading">
+                  <div className="section-heading">
+                    <h2 id="section-heading">
+                      {selected === "about"
+                        ? site.aboutTitle || t.about
+                        : t[selected]}
+                    </h2>
+                  </div>
+                  {selected === "about" && site.aboutBody ? (
+                    <div className="prose about-intro">
+                      <ReactMarkdown>{site.aboutBody}</ReactMarkdown>
+                    </div>
+                  ) : null}
+                  {selectedEntries.length ? (
+                    <div className="content-list">
+                      {selectedEntries.map((e) => projectCard(e))}
+                    </div>
+                  ) : selected !== "about" || !site.aboutBody ? (
+                    <div className="empty-section">
+                      <p>{emptyCopy[selected]}</p>
+                      {sections.some((s) => s.key === "projects") &&
+                      projects.length
+                        ? link.tab(
+                            "projects",
+                            <>
+                              {t.browseProjects}
+                              <ArrowUpRight size={16} aria-hidden="true" />
+                            </>,
+                            false,
+                          )
+                        : null}
+                    </div>
+                  ) : null}
+                </section>
+              ) : (
+                <div className="empty-section">
+                  <p>{t.sectionsEmpty}</p>
                 </div>
-                {selected === "about" && site.aboutBody ? (
-                  <div className="prose about-intro">
-                    <ReactMarkdown>{site.aboutBody}</ReactMarkdown>
-                  </div>
-                ) : null}
-                {selectedEntries.length ? (
-                  <div className="content-list">
-                    {selectedEntries.map((e) => projectCard(e))}
-                  </div>
-                ) : selected !== "about" || !site.aboutBody ? (
-                  <div className="empty-section">
-                    <p>{emptyCopy[selected]}</p>
-                    {sections.some((s) => s.key === "projects") &&
-                    projects.length
-                      ? link.tab(
-                          "projects",
-                          <>
-                            {t.browseProjects}
-                            <ArrowUpRight size={16} aria-hidden="true" />
-                          </>,
-                          false,
-                        )
-                      : null}
-                  </div>
-                ) : null}
-              </section>
-            ) : (
-              <div className="empty-section">
-                <p>{t.sectionsEmpty}</p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </main>
       )}
@@ -454,7 +466,9 @@ function EntryMedia({
         loading={priority ? "eager" : "lazy"}
       />
     );
-  return entry.visual ? <Visual kind={entry.visual} /> : null;
+  return entry.visual ? (
+    <Visual kind={entry.visual} motionKey={entry.slug} />
+  ) : null;
 }
 
 function EntryTags({ tags }: { tags: string[] }) {
@@ -479,16 +493,50 @@ function PublicModal({
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const motion = useRef<MotionScope | null>(null);
+  const closing = useRef(false);
+  const mounted = useRef(false);
+  function requestClose() {
+    if (closing.current) return;
+    closing.current = true;
+    motion.current?.cancel();
+    const animation = motion.current?.animate(
+      ref.current,
+      [
+        { opacity: 1, transform: "translateY(0)" },
+        { opacity: 0, transform: "translateY(6px)" },
+      ],
+      { duration: 140 },
+    );
+    const finish = () => {
+      if (mounted.current) close();
+    };
+    if (animation) animation.finished.then(finish, finish);
+    else finish();
+  }
   useEffect(() => {
     const opener =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
     const dialog = ref.current;
+    mounted.current = true;
+    closing.current = false;
+    motion.current = createMotionScope();
     dialog?.showModal();
+    motion.current.animate(
+      dialog,
+      [
+        { opacity: 0, transform: "translateY(8px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ],
+      { duration: 220 },
+    );
     const old = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
+      mounted.current = false;
+      motion.current?.dispose();
       dialog?.close();
       document.body.style.overflow = old;
       opener?.focus();
@@ -499,7 +547,10 @@ function PublicModal({
       ref={ref}
       className="modal"
       aria-labelledby="public-modal-title"
-      onCancel={close}
+      onCancel={(event) => {
+        event.preventDefault();
+        requestClose();
+      }}
       onClick={(e) => {
         if (e.target !== e.currentTarget) return;
         const bounds = e.currentTarget.getBoundingClientRect();
@@ -509,14 +560,14 @@ function PublicModal({
           e.clientY < bounds.top ||
           e.clientY > bounds.bottom
         )
-          close();
+          requestClose();
       }}
     >
       <div className="modal-inner">
         <button
           className="icon-button modal-close"
           aria-label={closeLabel}
-          onClick={close}
+          onClick={requestClose}
         >
           <X size={20} />
         </button>

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { flushSync } from "react-dom";
+import { createThemeReveal } from "../lib/theme-reveal";
 
 type Theme = "system" | "light" | "dark";
 const key = "portfolio-theme";
@@ -15,6 +17,7 @@ function readTheme(): Theme {
 export function ThemeToggle() {
   const [dark, setDark] = useState(false);
   const preference = useRef<Theme>("system");
+  const reveal = useRef<ReturnType<typeof createThemeReveal> | null>(null);
   function apply(value: Theme) {
     preference.current = value;
     const resolved =
@@ -25,15 +28,25 @@ export function ThemeToggle() {
     setDark(resolved);
   }
   useEffect(() => {
+    reveal.current = createThemeReveal();
     apply(readTheme());
     const media = matchMedia("(prefers-color-scheme: dark)");
-    const onSystem = () => apply(preference.current);
+    const onSystem = () => {
+      if (preference.current !== "system") return;
+      reveal.current?.cancel();
+      apply("system");
+    };
     const onStorage = (event: StorageEvent) => {
-      if (event.key === key || event.key === null) apply(readTheme());
+      if (event.key === key || event.key === null) {
+        reveal.current?.cancel();
+        apply(readTheme());
+      }
     };
     media.addEventListener("change", onSystem);
     window.addEventListener("storage", onStorage);
     return () => {
+      reveal.current?.dispose();
+      reveal.current = null;
       media.removeEventListener("change", onSystem);
       window.removeEventListener("storage", onStorage);
     };
@@ -45,10 +58,19 @@ export function ThemeToggle() {
       type="button"
       aria-label={label}
       title={label}
-      onClick={() => {
+      onClick={(event) => {
         const next =
-          document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-        apply(next);
+          (preference.current === "system"
+            ? document.documentElement.dataset.theme
+            : preference.current) === "dark"
+            ? "light"
+            : "dark";
+        preference.current = next;
+        if (reveal.current)
+          reveal.current.change(event.currentTarget, () =>
+            flushSync(() => apply(next)),
+          );
+        else apply(next);
         try {
           localStorage.setItem(key, next);
         } catch {
@@ -56,11 +78,10 @@ export function ThemeToggle() {
         }
       }}
     >
-      {dark ? (
-        <Sun size={17} aria-hidden="true" />
-      ) : (
-        <Moon size={17} aria-hidden="true" />
-      )}
+      <span className="theme-glyph" aria-hidden="true">
+        <Sun className="theme-sun" size={18} />
+        <Moon className="theme-moon" size={18} />
+      </span>
     </button>
   );
 }

@@ -109,6 +109,64 @@ a:hover {
   color: var(--ink);
   background: var(--line);
 }
+.theme-glyph {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+}
+.theme-glyph svg {
+  grid-area: 1 / 1;
+}
+.theme-sun {
+  opacity: 0;
+  transform: rotate(-40deg) scale(0.5);
+}
+.theme-moon {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+:root[data-theme="dark"] .theme-sun {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+:root[data-theme="dark"] .theme-moon {
+  opacity: 0;
+  transform: rotate(40deg) scale(0.5);
+}
+:root[data-theme-reveal="true"]::view-transition-old(root),
+:root[data-theme-reveal="true"]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root[data-theme-reveal="true"]::view-transition-old(root) {
+  z-index: 1;
+}
+:root[data-theme-reveal="true"]::view-transition-new(root) {
+  z-index: 2;
+  animation: theme-reveal 400ms linear both;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0px at var(--theme-reveal-x) var(--theme-reveal-y));
+  }
+  to {
+    clip-path: circle(
+      var(--theme-reveal-radius) at var(--theme-reveal-x) var(--theme-reveal-y)
+    );
+  }
+}
+/* The captured page already has its final palette. Avoid repainting dozens
+   of independent color transitions underneath the expanding reveal. */
+:root[data-theme-reveal="true"] * {
+  transition: none !important;
+}
+:root[data-theme-reveal="true"]::view-transition-group(root) {
+  animation: none;
+}
+:root[data-theme-reveal="true"]::view-transition {
+  pointer-events: none;
+}
 .public-site {
   --muted: #626b77;
   --line: #dfe4ea;
@@ -325,6 +383,7 @@ a:hover {
   min-width: 0;
 }
 .tabs {
+  position: relative;
   display: flex;
   gap: 30px;
   border-bottom: 1px solid var(--line);
@@ -355,11 +414,38 @@ a:hover {
 .tabs button:focus-visible {
   outline-offset: -3px;
 }
-.tabs span {
+.tabs a > span,
+.tabs button > span {
   font-size: 12px;
   padding: 1px 7px;
   border-radius: 5px;
   background: var(--soft);
+}
+.tabs .category-indicator {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 2px;
+  background: var(--ink);
+  transform-origin: left;
+  pointer-events: none;
+}
+.tabs[data-motion-ready="true"] .active {
+  border-bottom-color: transparent;
+}
+.category-content {
+  min-width: 0;
+}
+.public-site .read-link > svg,
+.public-site .profile-actions .primary > svg {
+  transition: transform 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .public-site .read-link:hover > svg,
+  .public-site .profile-actions .primary:hover > svg {
+    transform: translate(3px, -3px);
+  }
 }
 .section-heading {
   margin: 30px 0 22px;
@@ -614,6 +700,31 @@ a:hover {
   left: 16px;
   text-align: right;
   font-size: 11px;
+}
+.mail-visual .visual-caption {
+  left: 108px;
+}
+.visual-replay {
+  position: absolute;
+  left: 12px;
+  bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+}
+.visual-replay:hover {
+  background: var(--paper);
+}
+.mail-chip > svg {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 .storage-visual {
   background: #edf1eb;
@@ -1053,8 +1164,13 @@ a:hover {
 }
 @media (prefers-reduced-motion: reduce) {
   * {
+    animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+  .public-site .read-link:hover > svg,
+  .public-site .profile-actions .primary:hover > svg {
+    transform: none;
   }
 }
 .preview-banner {
