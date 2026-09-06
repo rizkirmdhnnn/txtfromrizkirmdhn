@@ -6,7 +6,8 @@ import { PageHeader } from "../../../admin/page-header";
 import { useAdminData } from "../../../admin/data";
 import { sectionLabel } from "../../../admin/nav";
 import { useDocumentAction } from "../../../admin/use-document-action";
-import type { Kind } from "../../../lib/cms";
+import { ItemManager } from "../../../admin/item-manager";
+import { isSimpleKind, type Kind } from "../../../lib/cms";
 
 export const Route = createFileRoute("/admin/$kind/")({
   validateSearch: (s: Record<string, unknown>): { q?: string } => ({
@@ -16,11 +17,13 @@ export const Route = createFileRoute("/admin/$kind/")({
 });
 
 function ContentPage() {
-  const { documents } = useAdminData();
+  const { documents, media } = useAdminData();
   const kind = Route.useParams().kind as Kind;
   const { q } = Route.useSearch();
   const navigate = Route.useNavigate();
   const { error, setError, act } = useDocumentAction();
+  if (isSimpleKind(kind))
+    return <ItemManager kind={kind} documents={documents} media={media} />;
   return (
     <>
       <PageHeader

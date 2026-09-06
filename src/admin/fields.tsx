@@ -6,12 +6,14 @@ export function Field({
   onChange,
   multiline = false,
   type = "text",
+  list,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   multiline?: boolean;
   type?: string;
+  list?: string;
 }) {
   // Nilai lokal menahan kursor supaya tidak melompat saat draft di atas
   // dirender ulang sementara pengguna masih mengetik.
@@ -40,28 +42,42 @@ export function Field({
       {multiline ? (
         <textarea {...control} />
       ) : (
-        <input type={type} {...control} />
+        <input type={type} list={list} {...control} />
       )}
     </label>
   );
 }
+export const IMAGE_ACCEPT = "image/png,image/jpeg,image/webp,image/gif";
 export function AssetField({
   label,
   value,
   onChange,
   media,
   pdf = false,
+  onUpload,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   media: MediaItem[];
   pdf?: boolean;
+  // Mengunggah file lalu mengembalikan URL /api/media/<id> yang sudah ada di
+  // daftar `media` (pemanggil menyegarkan data lebih dulu), supaya <select>
+  // tidak sempat menunjuk option yang belum ada.
+  onUpload?: (file: File) => Promise<string>;
 }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  // Bukan <label> pembungkus: tombol Upload di dalamnya juga sebuah <label>,
+  // dan label bersarang membuat klik tombol ikut membuka <select>.
   return (
-    <label className="cms-field">
+    <div className="cms-field">
       <span>{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)}>
+      <select
+        aria-label={label}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
         <option value="">None</option>
         {media
           .filter((m) =>
@@ -73,9 +89,37 @@ export function AssetField({
             </option>
           ))}
       </select>
+      {onUpload && !pdf ? (
+        <label className="cms-button file-button asset-upload">
+          {uploading ? "Uploading…" : "Upload"}
+          <input
+            type="file"
+            accept={IMAGE_ACCEPT}
+            disabled={uploading}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = "";
+              if (!file) return;
+              setUploading(true);
+              setError("");
+              onUpload(file)
+                .then((url) => onChange(url))
+                .catch((e) =>
+                  setError(e instanceof Error ? e.message : "Upload failed."),
+                )
+                .finally(() => setUploading(false));
+            }}
+          />
+        </label>
+      ) : null}
+      {error ? (
+        <small className="asset-error" role="alert">
+          {error}
+        </small>
+      ) : null}
       {value && !pdf ? (
         <img className="asset-thumb" src={value} alt="Selected image preview" />
       ) : null}
-    </label>
+    </div>
   );
 }

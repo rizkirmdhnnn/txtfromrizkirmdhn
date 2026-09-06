@@ -3,6 +3,7 @@ import { defaultWords } from "../lib/default-words";
 import { splitList } from "../lib/text";
 import { AssetField, Field } from "./fields";
 import { categoryNames } from "./edit-helpers";
+import { uploadImageFiles } from "./image-upload";
 
 const profileFields = [
   { key: "headline", label: "Headline" },
@@ -20,14 +21,21 @@ const profileFields = [
 export function SiteForm({
   draft,
   media,
+  onMediaUploaded,
   onChange,
 }: {
   draft: SiteData;
   media: MediaItem[];
+  onMediaUploaded: () => void | Promise<void>;
   onChange: (draft: SiteData) => void;
 }) {
   const edit = <K extends keyof SiteData>(key: K, value: SiteData[K]) =>
     onChange({ ...draft, [key]: value });
+  const upload = async (file: File) => {
+    const [item] = await uploadImageFiles([file]);
+    await onMediaUploaded();
+    return `/api/media/${item.id}`;
+  };
   const move = (index: number, offset: number) => {
     const sections = [...draft.sections];
     [sections[index + offset], sections[index]] = [
@@ -51,6 +59,7 @@ export function SiteForm({
             value={draft.icon ?? ""}
             onChange={(v) => edit("icon", v)}
             media={media}
+            onUpload={upload}
           />
           <Field
             label="Name"
@@ -72,6 +81,7 @@ export function SiteForm({
             value={draft.avatar}
             onChange={(v) => edit("avatar", v)}
             media={media}
+            onUpload={upload}
           />
         </div>
         <Field

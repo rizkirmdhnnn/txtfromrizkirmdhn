@@ -3,4 +3,6 @@ export const categoryNames = {
   experience: "Experience",
   writing: "Writing",
   about: "About & certifications",
+  setup: "Setup",
+  gallery: "Gallery",
 };

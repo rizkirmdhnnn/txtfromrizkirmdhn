@@ -3,4 +3,6 @@ export const tabPaths = {
   experience: "/experience",
   writing: "/writing",
   about: "/about",
+  setup: "/setup",
+  gallery: "/gallery",
 } as const;

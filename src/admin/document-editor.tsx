@@ -331,6 +331,7 @@ export function DocumentEditor({
               <SiteForm
                 draft={draft as SiteData}
                 media={media}
+                onMediaUploaded={() => refresh()}
                 onChange={setDraft}
               />
             ) : (

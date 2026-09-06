@@ -1,9 +1,14 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { DocumentEditor } from "../../../admin/document-editor";
 import { useAdminData, useRefresh } from "../../../admin/data";
-import type { Kind } from "../../../lib/cms";
+import { isSimpleKind, type Kind } from "../../../lib/cms";
 
 export const Route = createFileRoute("/admin/$kind/$id")({
+  // Setup dan Gallery diedit di tempat pada halaman daftarnya.
+  beforeLoad: ({ params }) => {
+    if (isSimpleKind(params.kind))
+      throw redirect({ to: "/admin/$kind", params: { kind: params.kind } });
+  },
   component: EditDocumentPage,
 });
 

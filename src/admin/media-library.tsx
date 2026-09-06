@@ -2,7 +2,8 @@ import { useState } from "react";
 import { FileText } from "lucide-react";
 import type { MediaItem } from "../lib/cms";
 import { api } from "./client";
-import { Field } from "./fields";
+import { Field, IMAGE_ACCEPT } from "./fields";
+import { uploadImageFiles } from "./image-upload";
 import { Notice } from "./notice";
 import { useAsyncAction } from "./use-async-action";
 
@@ -28,15 +29,18 @@ export function MediaLibrary({
             type="file"
             multiple
             disabled={busy}
-            accept="image/png,image/jpeg,image/webp,image/gif,application/pdf"
+            accept={`${IMAGE_ACCEPT},application/pdf`}
             onChange={(e) => {
               const files = [...(e.target.files ?? [])];
               void runAndRefresh(async () => {
                 for (const file of files) {
-                  if (
-                    file.size >
-                    (file.type === "application/pdf" ? 20 : 10) * 1024 * 1024
-                  )
+                  // Gambar lewat jalur yang sama dengan editor dan formulir,
+                  // termasuk pengecilan otomatis untuk foto besar.
+                  if (file.type !== "application/pdf") {
+                    await uploadImageFiles([file]);
+                    continue;
+                  }
+                  if (file.size > 20 * 1024 * 1024)
                     throw new Error("File exceeds the size limit");
                   await api("media", {
                     method: "POST",
@@ -56,7 +60,8 @@ export function MediaLibrary({
           />
         </label>
         <span className="cms-description">
-          Images up to 10 MB · PDFs up to 20 MB
+          Images up to 10 MB (large photos are resized automatically) · PDFs up
+          to 20 MB
         </span>
       </div>
       <Notice>{message}</Notice>

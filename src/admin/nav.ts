@@ -6,6 +6,8 @@ import {
   FileText,
   Award,
   Image,
+  Images,
+  Monitor,
   Settings,
   Trash2,
 } from "lucide-react";
@@ -18,6 +20,8 @@ export const nav = [
   { id: "experience", label: "Experience", Icon: Briefcase },
   { id: "writing", label: "Writing", Icon: FileText },
   { id: "about", label: "About & certifications", Icon: Award },
+  { id: "setup", label: "Setup", Icon: Monitor },
+  { id: "gallery", label: "Gallery", Icon: Images },
   { id: "media", label: "Media library", Icon: Image },
   { id: "settings", label: "Settings", Icon: Settings },
   { id: "trash", label: "Trash", Icon: Trash2 },

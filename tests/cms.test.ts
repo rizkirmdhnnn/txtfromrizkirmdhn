@@ -35,6 +35,7 @@ beforeAll(async () => {
     "0001_cms.sql",
     "0002_mutation_guard.sql",
     "0003_english_media.sql",
+    "0004_documents_kind_open.sql",
   ]) {
     const sql = await readFile(`migrations/${file}`, "utf8");
     for (const statement of sql.split(";").filter((s) => s.trim()))
@@ -521,5 +522,62 @@ describe("maintenance mode", () => {
         env,
       ),
     ).rejects.toThrow();
+  });
+});
+describe("setup and gallery kinds", () => {
+  it("saves and publishes setup items, but refuses a gallery item without a photo", async () => {
+    const gear = emptyEntry("setup");
+    gear.slug = "monitor";
+    gear.title = "Monitor";
+    gear.group = "Hardware";
+    const gearId = crypto.randomUUID();
+    let d = await saveDocument(env, gearId, {
+      kind: "setup",
+      draft: gear,
+      version: 0,
+    });
+    d = (await documentAction(env, gearId, "publish", d.version)) as typeof d;
+    const published = (await publicData(env)).entries.find(
+      (e) => e.slug === "monitor",
+    );
+    expect(published).toMatchObject({ category: "setup", group: "Hardware" });
+
+    const photo = emptyEntry("gallery");
+    photo.slug = "desk-at-night";
+    photo.title = "Desk at night";
+    const photoId = crypto.randomUUID();
+    let p = await saveDocument(env, photoId, {
+      kind: "gallery",
+      draft: photo,
+      version: 0,
+    });
+    await expect(
+      documentAction(env, photoId, "publish", p.version),
+    ).rejects.toMatchObject({ status: 400 });
+    const asset = crypto.randomUUID();
+    await env.MEDIA.put(asset, "\x89PNG\r\n\x1a\ndemo");
+    await env.DB.prepare("INSERT INTO media(id,name,type,size) VALUES(?,?,?,?)")
+      .bind(asset, "desk.png", "image/png", 12)
+      .run();
+    p = await saveDocument(env, photoId, {
+      kind: "gallery",
+      draft: { ...photo, cover: `/api/media/${asset}` },
+      version: p.version,
+    });
+    p = (await documentAction(env, photoId, "publish", p.version)) as typeof p;
+    expect(
+      (await publicData(env)).entries.find((e) => e.slug === "desk-at-night"),
+    ).toMatchObject({ category: "gallery", cover: `/api/media/${asset}` });
+    // Dokumen dari versi sebelum field `group` ada tetap terbaca.
+    await env.DB.prepare("UPDATE documents SET draft=? WHERE id=?")
+      .bind(JSON.stringify({ ...gear, group: undefined }), gearId)
+      .run();
+    expect(JSON.parse((await getDocument(env, gearId)).draft).group).toBe(
+      undefined,
+    );
+    expect(
+      (await publicData(env, true)).entries.find((e) => e.slug === "monitor")
+        ?.group,
+    ).toBe("");
   });
 });

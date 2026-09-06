@@ -7,6 +7,8 @@ export const adminSections = [
   "experience",
   "writing",
   "about",
+  "setup",
+  "gallery",
   "media",
   "settings",
   "trash",

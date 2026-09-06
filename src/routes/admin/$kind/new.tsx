@@ -1,10 +1,20 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { DocumentEditor } from "../../../admin/document-editor";
 import { useAdminData } from "../../../admin/data";
-import { emptyEntry, type CmsDocument, type Kind } from "../../../lib/cms";
+import {
+  emptyEntry,
+  isSimpleKind,
+  type CmsDocument,
+  type Kind,
+} from "../../../lib/cms";
 
 export const Route = createFileRoute("/admin/$kind/new")({
+  // Setup dan Gallery dibuat langsung dari halaman daftarnya.
+  beforeLoad: ({ params }) => {
+    if (isSimpleKind(params.kind))
+      throw redirect({ to: "/admin/$kind", params: { kind: params.kind } });
+  },
   component: NewDocumentPage,
 });
 

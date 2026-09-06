@@ -1,6 +1,40 @@
 import { z } from "zod";
-export const kinds = ["projects", "experience", "writing", "about"] as const;
+export const kinds = [
+  "projects",
+  "experience",
+  "writing",
+  "about",
+  "setup",
+  "gallery",
+] as const;
 export type Kind = (typeof kinds)[number];
+// Kind yang dikelola dari satu halaman ringkas di admin (foto/nama, catatan,
+// link), bukan lewat editor dokumen penuh.
+export const simpleKinds = ["setup", "gallery"] as const;
+export type SimpleKind = (typeof simpleKinds)[number];
+export function isSimpleKind(kind: string): kind is SimpleKind {
+  return (simpleKinds as readonly string[]).includes(kind);
+}
+export type SectionSetting = { key: Kind; visible: boolean };
+// Dokumen site yang tersimpan berasal dari versi dengan jumlah kind lebih
+// sedikit. Daripada menolak dokumen itu (site menjadi null dan halaman publik
+// kosong), urutan lama dipertahankan dan kind baru ditambahkan di akhir dalam
+// keadaan tersembunyi, sehingga tab baru tidak muncul sebelum diaktifkan.
+export function normalizeSections(
+  input: ReadonlyArray<{ key: string; visible: boolean }>,
+): SectionSetting[] {
+  const seen = new Set<string>();
+  const sections: SectionSetting[] = [];
+  for (const section of input) {
+    if (!(kinds as readonly string[]).includes(section.key)) continue;
+    if (seen.has(section.key)) continue;
+    seen.add(section.key);
+    sections.push({ key: section.key as Kind, visible: section.visible });
+  }
+  for (const key of kinds)
+    if (!seen.has(key)) sections.push({ key, visible: false });
+  return sections;
+}
 const text = z.string().max(2000);
 const asset = z.string().regex(/^$|^\/api\/media\/[a-zA-Z0-9-]+$/);
 const link = z
@@ -29,6 +63,9 @@ export const entrySchema = z.object({
   visual: z.enum(["", "mail", "storage", "agent"]),
   repo: link,
   demoUrl: link,
+  // Kategori item Setup (Hardware, Software, …). Default kosong agar dokumen
+  // yang disimpan sebelum field ini ada tetap lolos validasi.
+  group: z.string().max(60).default(""),
   ...entryTextSchema.shape,
 });
 const copySchema = z.object({
@@ -58,10 +95,12 @@ export const siteSchema = z.object({
   linkedin: link,
   skills: z.array(z.string().max(80)).max(20),
   cv: asset,
+  setupCover: asset.default(""),
+  setupIntro: z.string().max(20000).default(""),
   sections: z
-    .array(z.object({ key: z.enum(kinds), visible: z.boolean() }))
-    .length(4)
-    .refine((v) => new Set(v.map((s) => s.key)).size === 4),
+    .array(z.object({ key: z.string().max(60), visible: z.boolean() }))
+    .max(50)
+    .transform(normalizeSections),
   ...copySchema.shape,
 });
 export type EntryData = z.infer<typeof entrySchema>;
@@ -135,6 +174,7 @@ export function emptyEntry(category: Kind): EntryData {
     visual: "",
     repo: "",
     demoUrl: "",
+    group: "",
     ...blank,
   };
 }

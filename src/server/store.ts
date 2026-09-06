@@ -138,6 +138,10 @@ export async function documentAction(
         throw new Response("Name is required", { status: 400 });
     } else if (!doc.draft.title.trim())
       throw new Response("Title is required", { status: 400 });
+    // Ubin galeri hanya menampilkan foto, jadi item tanpa foto akan menjadi
+    // kotak kosong di halaman publik.
+    if (doc.kind === "gallery" && !doc.draft.cover)
+      throw new Response("A photo is required", { status: 400 });
     for (const mediaId of mediaIds(doc.draft))
       if (
         !(await env.DB.prepare("SELECT id FROM media WHERE id=?")

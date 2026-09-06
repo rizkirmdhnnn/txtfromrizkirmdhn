@@ -2,6 +2,7 @@ import type { EntryData, MediaItem } from "../lib/cms";
 import { splitList } from "../lib/text";
 import { RichEditor } from "./editor";
 import { AssetField, Field } from "./fields";
+import { uploadImageFiles } from "./image-upload";
 
 export function EntryForm({
   draft,
@@ -24,6 +25,11 @@ export function EntryForm({
 }) {
   const edit = <K extends keyof EntryData>(key: K, value: EntryData[K]) =>
     onChange({ ...draft, [key]: value });
+  const upload = async (file: File) => {
+    const [item] = await uploadImageFiles([file]);
+    await onMediaUploaded();
+    return `/api/media/${item.id}`;
+  };
   return (
     <>
       <section className="cms-card">
@@ -102,6 +108,7 @@ export function EntryForm({
             value={draft.cover}
             onChange={(v) => edit("cover", v)}
             media={media}
+            onUpload={upload}
           />
           <label className="cms-field">
             <span>Concept illustration (without a cover)</span>

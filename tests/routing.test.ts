@@ -2,7 +2,13 @@ import { describe, it, expect } from "vitest";
 import { isKind, sectionFromPath } from "../src/lib/routing";
 import { tabPaths } from "../src/lib/tabs";
 import { entryMarkdown, splitFrontmatter } from "../src/lib/markdown";
-import { emptyEntry, kinds, mediaIds, siteSchema } from "../src/lib/cms";
+import {
+  emptyEntry,
+  kinds,
+  mediaIds,
+  normalizeSections,
+  siteSchema,
+} from "../src/lib/cms";
 import { defaultWords } from "../src/lib/default-words";
 
 describe("admin paths", () => {
@@ -127,6 +133,48 @@ describe("English URLs and metadata", () => {
       content: "https://portfolio.example/post/example",
     });
     expect(JSON.stringify(head)).not.toContain("hreflang");
+  });
+});
+
+describe("section settings from older profiles", () => {
+  it("keeps the stored order, hides kinds the profile has never seen, and drops junk", () => {
+    const stored = [
+      { key: "writing", visible: true },
+      { key: "projects", visible: false },
+      { key: "about", visible: true },
+      { key: "experience", visible: true },
+    ];
+    const sections = normalizeSections(stored);
+    expect(sections.map((s) => s.key)).toEqual([
+      "writing",
+      "projects",
+      "about",
+      "experience",
+      "setup",
+      "gallery",
+    ]);
+    expect(sections.filter((s) => !s.visible).map((s) => s.key)).toEqual([
+      "projects",
+      "setup",
+      "gallery",
+    ]);
+    expect(
+      normalizeSections([
+        { key: "legacy", visible: true },
+        { key: "gallery", visible: true },
+        { key: "gallery", visible: false },
+      ]).filter((s) => s.visible),
+    ).toEqual([{ key: "gallery", visible: true }]);
+    expect(normalizeSections([])).toHaveLength(kinds.length);
+  });
+
+  it("applies the same normalisation when a stored profile is parsed", () => {
+    const parsed = siteSchema.shape.sections.parse([
+      { key: "projects", visible: true },
+    ]);
+    expect(parsed).toHaveLength(kinds.length);
+    expect(parsed[0]).toEqual({ key: "projects", visible: true });
+    expect(parsed.find((s) => s.key === "setup")?.visible).toBe(false);
   });
 });
 

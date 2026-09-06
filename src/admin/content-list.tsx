@@ -36,11 +36,19 @@ export function ContentList({
       />
       <section className="cms-card content-list">
         {visible.map((d) => {
+          // Item Setup dan Gallery dikenali dari fotonya, bukan judulnya.
+          const thumb =
+            d.kind === "setup" || d.kind === "gallery" ? d.draft.cover : "";
           const body = (
             <>
-              <div>
-                <strong>{documentTitle(d)}</strong>
-                <small>/{documentSlug(d)}</small>
+              <div className="document-main">
+                {thumb ? (
+                  <img className="document-thumb" src={thumb} alt="" />
+                ) : null}
+                <div>
+                  <strong>{documentTitle(d)}</strong>
+                  <small>/{documentSlug(d)}</small>
+                </div>
               </div>
               <span className="cms-status">
                 {d.published ? "Published" : "Draft"}

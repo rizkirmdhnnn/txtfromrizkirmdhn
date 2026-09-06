@@ -3,6 +3,8 @@ export const defaultWords = {
   experience: "Experience",
   writing: "Writing",
   about: "About",
+  setup: "Setup",
+  gallery: "Gallery",
   space: "A personal space",
   contact: "Let’s connect",
   cv: "View CV",
@@ -30,5 +32,12 @@ export const defaultWords = {
   writingEmpty:
     "New writing is on the way. Check back soon for notes from building.",
   aboutEmpty: "More about this personal space is coming soon.",
+  setupEmpty:
+    "The setup is being documented. Check back soon for the gear and tools in use.",
+  galleryEmpty: "Photos are on the way. Check back soon.",
+  setupOther: "Other",
+  link: "Open link",
+  previousPhoto: "Previous photo",
+  nextPhoto: "Next photo",
   sectionsEmpty: "More work and stories will be shared here soon.",
 };

@@ -15,7 +15,9 @@ import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicAboutRouteImport } from './routes/_public/about'
 import { Route as PublicExperienceRouteImport } from './routes/_public/experience'
+import { Route as PublicGalleryRouteImport } from './routes/_public/gallery'
 import { Route as PublicProjectsRouteImport } from './routes/_public/projects'
+import { Route as PublicSetupRouteImport } from './routes/_public/setup'
 import { Route as PublicWritingRouteImport } from './routes/_public/writing'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminKindRouteRouteImport } from './routes/admin/$kind/route'
@@ -57,9 +59,19 @@ const PublicExperienceRoute = PublicExperienceRouteImport.update({
   path: '/experience',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const PublicGalleryRoute = PublicGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const PublicProjectsRoute = PublicProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicSetupRoute = PublicSetupRouteImport.update({
+  id: '/setup',
+  path: '/setup',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const PublicWritingRoute = PublicWritingRouteImport.update({
@@ -125,7 +137,9 @@ export interface FileRoutesByFullPath {
   '/admin/$kind': typeof AdminKindRouteRouteWithChildren
   '/about': typeof PublicAboutRoute
   '/experience': typeof PublicExperienceRoute
+  '/gallery': typeof PublicGalleryRoute
   '/projects': typeof PublicProjectsRoute
+  '/setup': typeof PublicSetupRoute
   '/writing': typeof PublicWritingRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -141,7 +155,9 @@ export interface FileRoutesByTo {
   '/preview': typeof PreviewRoute
   '/about': typeof PublicAboutRoute
   '/experience': typeof PublicExperienceRoute
+  '/gallery': typeof PublicGalleryRoute
   '/projects': typeof PublicProjectsRoute
+  '/setup': typeof PublicSetupRoute
   '/writing': typeof PublicWritingRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -162,7 +178,9 @@ export interface FileRoutesById {
   '/admin/$kind': typeof AdminKindRouteRouteWithChildren
   '/_public/about': typeof PublicAboutRoute
   '/_public/experience': typeof PublicExperienceRoute
+  '/_public/gallery': typeof PublicGalleryRoute
   '/_public/projects': typeof PublicProjectsRoute
+  '/_public/setup': typeof PublicSetupRoute
   '/_public/writing': typeof PublicWritingRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -184,7 +202,9 @@ export interface FileRouteTypes {
     | '/admin/$kind'
     | '/about'
     | '/experience'
+    | '/gallery'
     | '/projects'
+    | '/setup'
     | '/writing'
     | '/admin/media'
     | '/admin/profile'
@@ -200,7 +220,9 @@ export interface FileRouteTypes {
     | '/preview'
     | '/about'
     | '/experience'
+    | '/gallery'
     | '/projects'
+    | '/setup'
     | '/writing'
     | '/admin/media'
     | '/admin/profile'
@@ -220,7 +242,9 @@ export interface FileRouteTypes {
     | '/admin/$kind'
     | '/_public/about'
     | '/_public/experience'
+    | '/_public/gallery'
     | '/_public/projects'
+    | '/_public/setup'
     | '/_public/writing'
     | '/admin/media'
     | '/admin/profile'
@@ -285,11 +309,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicExperienceRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_public/gallery': {
+      id: '/_public/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof PublicGalleryRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/_public/projects': {
       id: '/_public/projects'
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof PublicProjectsRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/setup': {
+      id: '/_public/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof PublicSetupRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_public/writing': {
@@ -375,7 +413,9 @@ declare module '@tanstack/react-router' {
 interface PublicRouteRouteChildren {
   PublicAboutRoute: typeof PublicAboutRoute
   PublicExperienceRoute: typeof PublicExperienceRoute
+  PublicGalleryRoute: typeof PublicGalleryRoute
   PublicProjectsRoute: typeof PublicProjectsRoute
+  PublicSetupRoute: typeof PublicSetupRoute
   PublicWritingRoute: typeof PublicWritingRoute
   PublicIndexRoute: typeof PublicIndexRoute
 }
@@ -383,7 +423,9 @@ interface PublicRouteRouteChildren {
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicAboutRoute: PublicAboutRoute,
   PublicExperienceRoute: PublicExperienceRoute,
+  PublicGalleryRoute: PublicGalleryRoute,
   PublicProjectsRoute: PublicProjectsRoute,
+  PublicSetupRoute: PublicSetupRoute,
   PublicWritingRoute: PublicWritingRoute,
   PublicIndexRoute: PublicIndexRoute,
 }

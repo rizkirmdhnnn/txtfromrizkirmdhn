@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import {
@@ -8,7 +8,6 @@ import {
   Github,
   Linkedin,
   MapPin,
-  X,
   Mail,
   MessageCircle,
   Download,
@@ -16,7 +15,9 @@ import {
 import { ThemeToggle } from "./theme-toggle";
 import { Visual } from "./visual";
 import { useCategoryMotion } from "./public-motion";
-import { createMotionScope, type MotionScope } from "../lib/motion";
+import { PublicModal } from "./public-modal";
+import { GallerySection } from "./gallery-section";
+import { SetupSection } from "./setup-section";
 import { defaultWords } from "../lib/default-words";
 import { type PublicData, type EntryData, type Kind } from "../lib/cms";
 export type PublicNav = {
@@ -82,7 +83,24 @@ export function PublicView({
     experience: t.experienceEmpty,
     writing: t.writingEmpty,
     about: t.aboutEmpty,
+    setup: t.setupEmpty,
+    gallery: t.galleryEmpty,
   };
+  const emptyBlock = (kind: Kind) => (
+    <div className="empty-section">
+      <p>{emptyCopy[kind]}</p>
+      {sections.some((s) => s.key === "projects") && projects.length
+        ? link.tab(
+            "projects",
+            <>
+              {t.browseProjects}
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </>,
+            false,
+          )
+        : null}
+    </div>
+  );
   const entryLink = (
     e: EntryData,
     children: React.ReactNode,
@@ -196,7 +214,9 @@ export function PublicView({
                 target="_blank"
                 rel="noreferrer"
               >
-                {t.liveDemo}
+                {entry.category === "setup" || entry.category === "gallery"
+                  ? t.link
+                  : t.liveDemo}
                 <ArrowUpRight size={15} />
               </a>
             ) : null}
@@ -343,6 +363,21 @@ export function PublicView({
                     </aside>
                   ) : null}
                 </section>
+              ) : selected === "setup" ? (
+                <SetupSection
+                  site={site}
+                  entries={selectedEntries}
+                  media={data.media}
+                  t={t}
+                  empty={emptyBlock("setup")}
+                />
+              ) : selected === "gallery" ? (
+                <GallerySection
+                  entries={selectedEntries}
+                  media={data.media}
+                  t={t}
+                  empty={emptyBlock("gallery")}
+                />
               ) : selected ? (
                 <section aria-labelledby="section-heading">
                   <div className="section-heading">
@@ -362,20 +397,7 @@ export function PublicView({
                       {selectedEntries.map((e) => projectCard(e))}
                     </div>
                   ) : selected !== "about" || !site.aboutBody ? (
-                    <div className="empty-section">
-                      <p>{emptyCopy[selected]}</p>
-                      {sections.some((s) => s.key === "projects") &&
-                      projects.length
-                        ? link.tab(
-                            "projects",
-                            <>
-                              {t.browseProjects}
-                              <ArrowUpRight size={16} aria-hidden="true" />
-                            </>,
-                            false,
-                          )
-                        : null}
-                    </div>
+                    emptyBlock(selected)
                   ) : null}
                 </section>
               ) : (
@@ -460,7 +482,7 @@ function EntryMedia({
   if (entry.cover)
     return (
       <img
-        className="content-cover"
+        className={`content-cover${entry.category === "gallery" ? " photo" : ""}`}
         src={entry.cover}
         alt={media[entry.cover.split("/").pop()!] || entry.title}
         loading={priority ? "eager" : "lazy"}
@@ -479,101 +501,4 @@ function EntryTags({ tags }: { tags: string[] }) {
       ))}
     </div>
   ) : null;
-}
-
-function PublicModal({
-  title,
-  close,
-  closeLabel,
-  children,
-}: {
-  title: string;
-  close: () => void;
-  closeLabel: string;
-  children: React.ReactNode;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const motion = useRef<MotionScope | null>(null);
-  const closing = useRef(false);
-  const mounted = useRef(false);
-  function requestClose() {
-    if (closing.current) return;
-    closing.current = true;
-    motion.current?.cancel();
-    const animation = motion.current?.animate(
-      ref.current,
-      [
-        { opacity: 1, transform: "translateY(0)" },
-        { opacity: 0, transform: "translateY(6px)" },
-      ],
-      { duration: 140 },
-    );
-    const finish = () => {
-      if (mounted.current) close();
-    };
-    if (animation) animation.finished.then(finish, finish);
-    else finish();
-  }
-  useEffect(() => {
-    const opener =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    const dialog = ref.current;
-    mounted.current = true;
-    closing.current = false;
-    motion.current = createMotionScope();
-    dialog?.showModal();
-    motion.current.animate(
-      dialog,
-      [
-        { opacity: 0, transform: "translateY(8px)" },
-        { opacity: 1, transform: "translateY(0)" },
-      ],
-      { duration: 220 },
-    );
-    const old = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      mounted.current = false;
-      motion.current?.dispose();
-      dialog?.close();
-      document.body.style.overflow = old;
-      opener?.focus();
-    };
-  }, []);
-  return (
-    <dialog
-      ref={ref}
-      className="modal"
-      aria-labelledby="public-modal-title"
-      onCancel={(event) => {
-        event.preventDefault();
-        requestClose();
-      }}
-      onClick={(e) => {
-        if (e.target !== e.currentTarget) return;
-        const bounds = e.currentTarget.getBoundingClientRect();
-        if (
-          e.clientX < bounds.left ||
-          e.clientX > bounds.right ||
-          e.clientY < bounds.top ||
-          e.clientY > bounds.bottom
-        )
-          requestClose();
-      }}
-    >
-      <div className="modal-inner">
-        <button
-          className="icon-button modal-close"
-          aria-label={closeLabel}
-          onClick={requestClose}
-        >
-          <X size={20} />
-        </button>
-        <h2 id="public-modal-title">{title}</h2>
-        {children}
-      </div>
-    </dialog>
-  );
 }

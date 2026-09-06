@@ -24,6 +24,8 @@ function site(): SiteData {
     linkedin: "",
     skills: [],
     cv: "",
+    setupCover: "",
+    setupIntro: "",
     headline: "Fullstack & cloud",
     bio: "Building useful software.",
     note: "",
@@ -131,5 +133,78 @@ describe("public portfolio content", () => {
       "More about this personal space is coming soon.",
     );
     expect(render({ site: null })).toContain("Coming soon.");
+  });
+});
+
+describe("gallery and setup tabs", () => {
+  it("renders one photo tile per gallery item and keeps details out of the grid", () => {
+    const photos = [
+      { ...entry("Desk at night", "gallery"), cover: "/api/media/p-1" },
+      {
+        ...entry("Keyboard close-up", "gallery"),
+        cover: "/api/media/p-2",
+        summary: "Lubed switches.",
+      },
+    ];
+    const html = render({ entries: photos }, "gallery");
+    expect(html.match(/class="gallery-tile"/g)).toHaveLength(2);
+    expect(html).toContain('aria-label="Desk at night"');
+    expect(html).toContain('src="/api/media/p-1"');
+    expect(html).not.toContain("Lubed switches.");
+    expect(html).not.toContain("lightbox");
+    expect(render({}, "gallery")).toContain("Photos are on the way.");
+  });
+
+  it("renders setup as a spec sheet grouped by category, with only the desk photo as an image", () => {
+    const profile = site();
+    profile.setupCover = "/api/media/desk";
+    profile.setupIntro = "Where the work happens.";
+    const gear = [
+      {
+        ...entry("Monitor", "setup"),
+        group: "Hardware",
+        demoUrl: "https://example.com/monitor",
+        summary: "27 inch, 4K.",
+        cover: "/api/media/monitor",
+      },
+      { ...entry("VS Code", "setup"), group: "Software", body: "Extensions." },
+      { ...entry("Lamp", "setup") },
+    ];
+    const html = render({ site: profile, entries: gear }, "setup");
+    expect(html).toContain('src="/api/media/desk"');
+    expect(html).toContain("Where the work happens.");
+    expect(html.match(/class="spec-cat"/g)).toHaveLength(3);
+    expect(html.indexOf(">Hardware<")).toBeLessThan(html.indexOf(">Software<"));
+    expect(html).toContain(">Other<");
+    expect(html).toContain('href="https://example.com/monitor"');
+    expect(html).toContain("27 inch, 4K.");
+    // Foto per item dan catatan panjang sengaja tidak tampil di arah ini.
+    expect(html).not.toContain("/api/media/monitor");
+    expect(html).not.toContain("Read more");
+    expect(html).not.toContain("The setup is being documented");
+    const single = render({ entries: [gear[2]] }, "setup");
+    expect(single).toContain("spec-flat");
+    expect(single).not.toContain("spec-cat");
+    expect(render({}, "setup")).toContain("The setup is being documented");
+  });
+
+  it("hides the new tabs until they are enabled in the profile", () => {
+    const profile = site();
+    profile.sections = profile.sections.map((s) => ({
+      ...s,
+      visible: s.key !== "gallery" && s.key !== "setup",
+    }));
+    const html = render(
+      {
+        site: profile,
+        entries: [
+          { ...entry("Hidden photo", "gallery"), cover: "/api/media/h" },
+        ],
+      },
+      "gallery",
+    );
+    expect(html).not.toContain("gallery-tile");
+    expect(html).not.toContain(">Gallery<");
+    expect(html).toContain("Selected work");
   });
 });

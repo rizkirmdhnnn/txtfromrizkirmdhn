@@ -74,6 +74,17 @@ Dijalankan pada 5 September 2026. Langkah di bawah ini adalah catatan peristiwa 
 
 Rollback cutover: kembalikan blok `routes` ke konfigurasi utama, hapus route produksi, lalu `npm run build && npx wrangler deploy`. Data preview masih utuh per 5 September 2026.
 
+## 5. Migrasi skema produksi
+
+Tabel `d1_migrations` produksi ikut tersalin dari dump, jadi wrangler tahu migrasi mana yang sudah diterapkan. Setiap kali ada file baru di `migrations/`, jalankan **sebelum** deploy Worker:
+
+```sh
+npx wrangler d1 migrations list DB --env production --remote
+npx wrangler d1 migrations apply DB --env production --remote
+```
+
+Buat ekspor D1 dulu (`npx wrangler d1 export rizki-portfolio-english --remote --output backup.sql`). Migrasi `0004` membangun ulang tabel `documents` agar kolom `kind` menerima jenis konten baru (setup, gallery); tabel `revisions` dan `redirects` disalin dan dibuat ulang di migrasi yang sama supaya FK `ON DELETE CASCADE` tidak menyapu riwayat. Setelah deploy, aktifkan tab Setup dan Gallery di Profile & website → Section order & visibility, lalu Publish.
+
 ## Pemulihan dan rollback
 
 - Kesalahan konten: Riwayat revisi → Pulihkan → periksa draft → Publish. Sampah → Pulihkan tidak otomatis menerbitkan kembali.
