@@ -5,6 +5,7 @@ import { handleApi } from "./server/api";
 import { isLocal, requireAdmin } from "./server/auth";
 import { maintenanceGate } from "./server/maintenance";
 import { publicData } from "./server/store";
+import { ogResponse } from "./server/og";
 import { sitemapXml } from "./lib/sitemap";
 import { llmsTxt } from "./lib/llms";
 import { englishUrl } from "./lib/legacy-url";
@@ -67,6 +68,17 @@ export default createServerEntry({
             "Cache-Control": "public, max-age=3600",
           },
         });
+      }
+      if (url.pathname === "/og.png" || url.pathname.startsWith("/og/")) {
+        if (url.hostname !== env.PUBLIC_HOST && !isLocal(request))
+          throw new Response("Not found", { status: 404 });
+        // Slug mengikuti pola cms.ts: kebab-case [a-z0-9-].
+        const slug = url.pathname.match(
+          /^\/og\/([a-z0-9]+(?:-[a-z0-9]+)*)\.png$/,
+        )?.[1];
+        if (!slug && url.pathname !== "/og.png")
+          throw new Response("Not found", { status: 404 });
+        return await ogResponse(env, slug);
       }
       if (
         !isLocal(request) &&

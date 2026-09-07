@@ -51,7 +51,7 @@ Integration tests use isolated Miniflare D1/R2 storage, applying the files in `m
 - `migrations/`: versioned database schema.
 - `wrangler.jsonc`: preview resources and the production environment.
 
-Public API: `GET /api/public`, `GET|HEAD /api/media/:id`. Admin endpoints under `/api/admin/*` require owner authentication and validate the origin for writes. Public server functions read only published snapshots.
+Public API: `GET /api/public`, `GET|HEAD /api/media/:id`, `GET /og.png`, `GET /og/:slug.png`. The two `og` routes render 1200×630 PNG share cards on demand from published content and are cached for one hour; documents with a cover image keep using that image instead. Admin endpoints under `/api/admin/*` require owner authentication and validate the origin for writes. Public server functions read only published snapshots.
 
 ## Cloudflare
 

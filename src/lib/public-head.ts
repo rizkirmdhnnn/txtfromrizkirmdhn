@@ -1,4 +1,5 @@
 import type { Kind, PublicData, PublicEntry } from "./cms";
+import { OG_HEIGHT, OG_WIDTH } from "./og";
 import { defaultWords } from "./default-words";
 
 type HeadData = PublicData & { origin: string };
@@ -49,8 +50,11 @@ export function publicHead({
     "";
   const origin = data?.origin ?? "";
   const url = `${origin}${path}`;
-  const image = entry?.cover || copy?.avatar || "";
+  // og:image: cover eksplisit lebih dulu; tanpa cover (dan semua halaman
+  // non-entry) memakai kartu yang digenerate di /og (lihat server/og.ts).
+  const image = entry ? entry.cover || `/og/${entry.slug}.png` : "/og.png";
   const imageUrl = image ? `${origin}${image}` : "";
+  const dynamicImage = Boolean(imageUrl) && (!entry || !entry.cover);
   // Schema.org untuk rich results dan visibilitas di AI search (GEO).
   const graph: Record<string, unknown>[] = [];
   if (copy) {
@@ -107,6 +111,14 @@ export function publicHead({
             property: "og:image:alt",
             content: entry?.title || copy?.name || "Portfolio",
           },
+          ...(dynamicImage
+            ? [
+                { property: "og:image:type", content: "image/png" },
+                { property: "og:image:width", content: String(OG_WIDTH) },
+                { property: "og:image:height", content: String(OG_HEIGHT) },
+                { name: "twitter:image", content: imageUrl },
+              ]
+            : []),
         ]
       : []),
     ...(graph.length

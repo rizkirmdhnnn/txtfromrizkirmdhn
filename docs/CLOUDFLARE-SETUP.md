@@ -85,6 +85,26 @@ npx wrangler d1 migrations apply DB --env production --remote
 
 Buat ekspor D1 dulu (`npx wrangler d1 export rizki-portfolio-english --remote --output backup.sql`). Migrasi `0004` membangun ulang tabel `documents` agar kolom `kind` menerima jenis konten baru (setup, gallery); tabel `revisions` dan `redirects` disalin dan dibuat ulang di migrasi yang sama supaya FK `ON DELETE CASCADE` tidak menyapu riwayat. Setelah deploy, aktifkan tab Setup dan Gallery di Profile & website → Section order & visibility, lalu Publish.
 
+## 6. Kartu OG dan wasm
+
+`/og.png` dan `/og/<slug>.png` merender PNG 1200×630 di Worker dengan satori (markup → SVG) dan `@resvg/resvg-wasm` (SVG → PNG), memakai DM Sans yang disalin ke `src/assets/fonts/` (OFL). Respons di-cache satu jam seperti sitemap.
+
+Workers melarang kompilasi wasm saat runtime, jadi setiap wasm harus diimpor sebagai modul (`import wasm from "…wasm"`, diunggah sebagai `compiled-wasm`) — bukan data URL, `fetch`, atau file di disk. Karena itu satori dipakai lewat `satori/standalone` dengan `satori/yoga.wasm` yang di-init sendiri, bukan entry `satori` biasa yang memuat yoga dari base64.
+
+**satori dipin di `0.32.0`.** Sejak 0.33 satori memakai harfbuzzjs, yang memanggil `addFunction` emscripten dan membuat modul wasm baru saat runtime; Workers menolaknya dengan `CompileError: Wasm code generation disallowed by embedder`. Jangan naikkan versinya tanpa memverifikasi endpoint di runtime Worker.
+
+Vitest berjalan di Node, jadi test tidak menangkap batasan ini. Verifikasi manual setelah menyentuh satori, resvg, atau font:
+
+```sh
+npm run build
+npx wrangler dev -c dist/server/wrangler.json --persist-to .wrangler/state
+curl -H "Host: txtfromrizkirmdhn.my.id" -o card.png http://localhost:8787/og.png
+```
+
+Tanpa `--persist-to`, wrangler membuat database kosong di `dist/server/.wrangler` dan semua endpoint publik gagal 500. Header `Host` diperlukan karena route ini hanya melayani `PUBLIC_HOST` (bypass localhost hanya ada di build development).
+
+Ukuran bundle naik dari 3,05 MiB menjadi 6,42 MiB uncompressed (`npx wrangler deploy --dry-run`); batas Worker adalah 64 MiB uncompressed sejak 4 September 2026, jadi masih longgar.
+
 ## Pemulihan dan rollback
 
 - Kesalahan konten: Riwayat revisi → Pulihkan → periksa draft → Publish. Sampah → Pulihkan tidak otomatis menerbitkan kembali.

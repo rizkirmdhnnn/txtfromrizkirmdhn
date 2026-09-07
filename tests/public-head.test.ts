@@ -138,4 +138,64 @@ describe("publicHead", () => {
     const { meta } = head({ path: "/about", kind: "about" });
     expect(metaValue(meta, "property", "og:type")).toBe("website");
   });
+
+  it("points og:image at the generated card on section pages", () => {
+    const { meta } = head({ path: "/writing", kind: "writing" });
+    expect(metaValue(meta, "property", "og:image")).toBe(
+      "https://example.com/og.png",
+    );
+    expect(metaValue(meta, "property", "og:image:width")).toBe("1200");
+    expect(metaValue(meta, "property", "og:image:height")).toBe("630");
+    expect(metaValue(meta, "name", "twitter:image")).toBe(
+      "https://example.com/og.png",
+    );
+  });
+
+  it("uses the generated card for entries without a cover", () => {
+    const entry = {
+      ...emptyEntry("writing"),
+      slug: "post-title",
+      title: "Post title",
+    };
+    const { meta } = publicHead({
+      data: {
+        site: site(),
+        entries: [entry],
+        media: {},
+        preview: false,
+        origin: "https://example.com",
+      },
+      path: "/post/post-title",
+      entry,
+    });
+    expect(metaValue(meta, "property", "og:image")).toBe(
+      "https://example.com/og/post-title.png",
+    );
+    expect(metaValue(meta, "property", "og:image:type")).toBe("image/png");
+  });
+
+  it("keeps an explicit cover as og:image without dimension hints", () => {
+    const entry = {
+      ...emptyEntry("projects"),
+      slug: "covered",
+      title: "Covered",
+      cover: "/api/media/abc",
+    };
+    const { meta } = publicHead({
+      data: {
+        site: site(),
+        entries: [entry],
+        media: {},
+        preview: false,
+        origin: "https://example.com",
+      },
+      path: "/post/covered",
+      entry,
+    });
+    expect(metaValue(meta, "property", "og:image")).toBe(
+      "https://example.com/api/media/abc",
+    );
+    expect(metaValue(meta, "property", "og:image:width")).toBeUndefined();
+    expect(metaValue(meta, "name", "twitter:image")).toBeUndefined();
+  });
 });
