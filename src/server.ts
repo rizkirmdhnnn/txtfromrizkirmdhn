@@ -4,6 +4,9 @@ import { ZodError } from "zod";
 import { handleApi } from "./server/api";
 import { isLocal, requireAdmin } from "./server/auth";
 import { maintenanceGate } from "./server/maintenance";
+import { publicData } from "./server/store";
+import { sitemapXml } from "./lib/sitemap";
+import { llmsTxt } from "./lib/llms";
 import { englishUrl } from "./lib/legacy-url";
 export default createServerEntry({
   async fetch(request) {
@@ -26,8 +29,45 @@ export default createServerEntry({
         return await handleApi(request, env);
       if (url.pathname === "/robots.txt")
         return new Response(
-          `User-agent: *\n${url.hostname === env.ADMIN_HOST ? "Disallow: /" : "Disallow: /admin\nDisallow: /preview\nDisallow: /api/"}`,
+          url.hostname === env.ADMIN_HOST
+            ? "User-agent: *\nDisallow: /"
+            : // Bot training-only tetap diblokir di sini agar bisa mematikan
+              // "Managed robots.txt" Cloudflare (yang juga memblokir bot
+              // citation seperti ClaudeBot/GPTBot) tanpa kehilangan proteksi.
+              `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /preview\nDisallow: /api/\nSitemap: https://${env.PUBLIC_HOST}/sitemap.xml\n\nUser-agent: CCBot\nDisallow: /\n\nUser-agent: Bytespider\nDisallow: /\n\nUser-agent: Amazonbot\nDisallow: /\n\nUser-agent: Applebot-Extended\nDisallow: /\n\nUser-agent: meta-externalagent\nDisallow: /`,
+          { headers: { "Content-Type": "text/plain; charset=utf-8" } },
         );
+      if (url.pathname === "/sitemap.xml") {
+        if (url.hostname !== env.PUBLIC_HOST && !isLocal(request))
+          throw new Response("Not found", { status: 404 });
+        const [data, rows] = await Promise.all([
+          publicData(env),
+          env.DB.prepare(
+            "SELECT slug, updated_at FROM documents WHERE deleted=0 AND kind!='site' AND published IS NOT NULL",
+          ).all<{ slug: string; updated_at: string }>(),
+        ]);
+        const xml = sitemapXml(
+          env.PUBLIC_HOST,
+          data,
+          new Map(rows.results.map((r) => [r.slug, r.updated_at])),
+        );
+        return new Response(xml, {
+          headers: {
+            "Content-Type": "application/xml; charset=utf-8",
+            "Cache-Control": "public, max-age=3600",
+          },
+        });
+      }
+      if (url.pathname === "/llms.txt") {
+        if (url.hostname !== env.PUBLIC_HOST && !isLocal(request))
+          throw new Response("Not found", { status: 404 });
+        return new Response(llmsTxt(env.PUBLIC_HOST, await publicData(env)), {
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "public, max-age=3600",
+          },
+        });
+      }
       if (
         !isLocal(request) &&
         url.hostname !== env.PUBLIC_HOST &&

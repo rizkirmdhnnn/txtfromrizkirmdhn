@@ -43,9 +43,6 @@ export function GallerySection({
   }, [open, count]);
   return (
     <section aria-labelledby="gallery-heading">
-      <div className="section-heading">
-        <h2 id="gallery-heading">{t.gallery}</h2>
-      </div>
       {count ? (
         <div className="gallery-grid">
           {entries.map((entry, index) => (

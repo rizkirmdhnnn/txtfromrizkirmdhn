@@ -19,6 +19,7 @@ import { PublicModal } from "./public-modal";
 import { GallerySection } from "./gallery-section";
 import { SetupSection } from "./setup-section";
 import { defaultWords } from "../lib/default-words";
+import { formatDate } from "../lib/text";
 import { type PublicData, type EntryData, type Kind } from "../lib/cms";
 export type PublicNav = {
   tab: (kind: Kind, children: ReactNode, active: boolean) => ReactNode;
@@ -41,7 +42,7 @@ export function PublicView({
   onBack: () => void;
   nav?: PublicNav;
 }) {
-  const [modal, setModal] = useState<"contact" | "cv" | null>(null);
+  const [modal, setModal] = useState<"contact" | "cv" | "avatar" | null>(null);
   const link: PublicNav = nav ?? {
     tab: (kind, children, active) => (
       <button
@@ -126,7 +127,10 @@ export function PublicView({
       >
         <EntryMedia entry={e} media={data.media} priority={featuredCard} />
         <div className="work-info">
-          {e.pinned || e.demo || site?.words[e.category + "Label"] ? (
+          {e.pinned ||
+          e.demo ||
+          site?.words[e.category + "Label"] ||
+          e.category === "writing" ? (
             <div className="work-meta">
               {e.pinned ? <span>{t.pinned}</span> : null}
               {e.demo ? (
@@ -134,6 +138,9 @@ export function PublicView({
               ) : (
                 <span>{site?.words[e.category + "Label"]}</span>
               )}
+              {e.category === "writing" ? (
+                <time dateTime={e.date}>{formatDate(e.date)}</time>
+              ) : null}
             </div>
           ) : null}
           <h3>{entryLink(e, e.title, "work-title")}</h3>
@@ -183,6 +190,20 @@ export function PublicView({
             {entry.demo ? <span className="demo-label">{t.demo}</span> : null}
           </div>
           <h1>{entry.title}</h1>
+          <p className="detail-byline">
+            {t.by} <strong>{site.name}</strong>
+            <span aria-hidden="true"> · </span>
+            <time dateTime={entry.date}>{formatDate(entry.date)}</time>
+            {entry.updatedAt ? (
+              <>
+                <span aria-hidden="true"> · </span>
+                {t.updated}{" "}
+                <time dateTime={entry.updatedAt.slice(0, 10)}>
+                  {formatDate(entry.updatedAt)}
+                </time>
+              </>
+            ) : null}
+          </p>
           {entry.summary ? (
             <p className="detail-summary">{entry.summary}</p>
           ) : null}
@@ -227,19 +248,42 @@ export function PublicView({
           <section className="profile" aria-label={t.profileLabel}>
             <div className="identity">
               <div>
-                <h1>{site.name}</h1>
+                {selected === "projects" || !selected ? (
+                  <h1>{site.name}</h1>
+                ) : (
+                  <p className="identity-name">{site.name}</p>
+                )}
                 {site.handle ? <p className="handle">@{site.handle}</p> : null}
                 {site.headline ? (
                   <p className="specialty">{site.headline}</p>
                 ) : null}
               </div>
-              <img
-                className="avatar"
-                src={site.avatar || "/favicon.svg"}
-                alt={site.name}
-                width={86}
-                height={86}
-              />
+              {site.avatar ? (
+                <button
+                  type="button"
+                  className="avatar-button"
+                  aria-label={`${t.viewProfilePhoto}: ${site.name}`}
+                  aria-haspopup="dialog"
+                  title={t.viewProfilePhoto}
+                  onClick={() => setModal("avatar")}
+                >
+                  <img
+                    className="avatar"
+                    src={site.avatar}
+                    alt={site.name}
+                    width={86}
+                    height={86}
+                  />
+                </button>
+              ) : (
+                <img
+                  className="avatar"
+                  src="/favicon.svg"
+                  alt={site.name}
+                  width={86}
+                  height={86}
+                />
+              )}
             </div>
             {site.bio ? <p className="bio">{site.bio}</p> : null}
             {site.note ? <p className="bio-note">{site.note}</p> : null}
@@ -364,28 +408,38 @@ export function PublicView({
                   ) : null}
                 </section>
               ) : selected === "setup" ? (
-                <SetupSection
-                  site={site}
-                  entries={selectedEntries}
-                  media={data.media}
-                  t={t}
-                  empty={emptyBlock("setup")}
-                />
+                <>
+                  <div className="section-heading">
+                    <h1 id="setup-heading">{t.setup}</h1>
+                  </div>
+                  <SetupSection
+                    site={site}
+                    entries={selectedEntries}
+                    media={data.media}
+                    t={t}
+                    empty={emptyBlock("setup")}
+                  />
+                </>
               ) : selected === "gallery" ? (
-                <GallerySection
-                  entries={selectedEntries}
-                  media={data.media}
-                  t={t}
-                  empty={emptyBlock("gallery")}
-                />
+                <>
+                  <div className="section-heading">
+                    <h1 id="gallery-heading">{t.gallery}</h1>
+                  </div>
+                  <GallerySection
+                    entries={selectedEntries}
+                    media={data.media}
+                    t={t}
+                    empty={emptyBlock("gallery")}
+                  />
+                </>
               ) : selected ? (
                 <section aria-labelledby="section-heading">
                   <div className="section-heading">
-                    <h2 id="section-heading">
+                    <h1 id="section-heading">
                       {selected === "about"
                         ? site.aboutTitle || t.about
                         : t[selected]}
-                    </h2>
+                    </h1>
                   </div>
                   {selected === "about" && site.aboutBody ? (
                     <div className="prose about-intro">
@@ -423,11 +477,20 @@ export function PublicView({
       </footer>
       {modal && site ? (
         <PublicModal
-          title={modal === "contact" ? t.contact : t.cvTitle}
+          title={
+            modal === "avatar"
+              ? site.name
+              : modal === "contact"
+                ? t.contact
+                : t.cvTitle
+          }
+          className={modal === "avatar" ? "modal avatar-modal" : "modal"}
           close={() => setModal(null)}
           closeLabel={t.close}
         >
-          {modal === "contact" ? (
+          {modal === "avatar" ? (
+            <img className="profile-photo" src={site.avatar} alt={site.name} />
+          ) : modal === "contact" ? (
             <>
               <p className="muted">{t.contactSub}</p>
               <div className="channels">

@@ -122,9 +122,16 @@ export async function mediaResponse(request: Request, env: Env, id: string) {
     rangeRequest ? { range: rangeRequest } : undefined,
   );
   if (!obj) throw new Response("File not found", { status: 404 });
+  // Media yang sudah tampil di konten terpublikasi aman di-cache lama: objek
+  // R2 immutable (upload selalu membuat id baru, delete menghapus objeknya).
+  // Media yang belum terpublikasi (draft/admin) tetap no-store agar tidak
+  // lolos melewati pengecekan admin lewat cache.
   const headers = new Headers({
     "Content-Type": row.type,
-    "Cache-Control": "no-store",
+    "Cache-Control": published
+      ? "public, max-age=31536000, immutable"
+      : "no-store",
+    ETag: obj.httpEtag,
     "X-Content-Type-Options": "nosniff",
     "Accept-Ranges": "bytes",
     "Content-Disposition": `${new URL(request.url).searchParams.has("download") ? "attachment" : "inline"}; filename*=UTF-8''${encodeURIComponent(row.name)}`,

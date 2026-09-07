@@ -35,9 +35,6 @@ export function SetupSection({
   const hasIntro = Boolean(site.setupCover || site.setupIntro.trim());
   return (
     <section aria-labelledby="setup-heading">
-      <div className="section-heading">
-        <h2 id="setup-heading">{t.setup}</h2>
-      </div>
       {site.setupCover ? (
         <img
           className="content-cover setup-cover"

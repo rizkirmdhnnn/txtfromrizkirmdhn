@@ -7,6 +7,7 @@ export const Route = createFileRoute("/_public/gallery")({
     publicHead({
       data: publicLoaderData(matches),
       path: "/gallery",
+      kind: "gallery",
     }),
   component: () => <PublicPage tab="gallery" />,
 });

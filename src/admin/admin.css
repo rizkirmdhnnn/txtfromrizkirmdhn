@@ -198,6 +198,21 @@
 .cms-card[open] summary {
   margin-bottom: 25px;
 }
+.seo-sections {
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.seo-section {
+  margin: 18px 0;
+}
+.seo-section h3 {
+  margin: 0 0 8px;
+  text-transform: capitalize;
+}
+.seo-section .cms-field {
+  margin-bottom: 10px;
+}
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

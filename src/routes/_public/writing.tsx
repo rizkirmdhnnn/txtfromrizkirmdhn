@@ -7,6 +7,7 @@ export const Route = createFileRoute("/_public/writing")({
     publicHead({
       data: publicLoaderData(matches),
       path: "/writing",
+      kind: "writing",
     }),
   component: () => <PublicPage tab="writing" />,
 });

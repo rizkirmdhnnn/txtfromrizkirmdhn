@@ -46,6 +46,7 @@ export const Route = createFileRoute("/post/$slug")({
         entry?.seoTitle ||
         `${entry?.title ?? "Portfolio"} — ${loaderData?.site?.name ?? ""}`,
       description: entry?.seoDescription || entry?.summary || "",
+      entry,
     });
   },
   component: Post,

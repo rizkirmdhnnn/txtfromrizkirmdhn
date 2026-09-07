@@ -48,6 +48,15 @@ export function useCategoryMotion(category: string | undefined) {
     function measure(animate = false) {
       const active = nav!.querySelector<HTMLElement>("[aria-current='page']");
       if (!active) return;
+      const navRect = nav!.getBoundingClientRect();
+      const activeRect = active.getBoundingClientRect();
+      if (
+        activeRect.left < navRect.left ||
+        activeRect.right > navRect.right
+      ) {
+        // Pastikan tab aktif tetap terlihat pada strip yang bisa digulir.
+        active.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
       const rect = active.getBoundingClientRect(),
         container = nav!.getBoundingClientRect();
       const next = {

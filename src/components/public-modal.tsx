@@ -22,14 +22,18 @@ export function PublicModal({
   function requestClose() {
     if (closing.current) return;
     closing.current = true;
+    const dialog = ref.current;
+    const computed = dialog ? getComputedStyle(dialog) : null;
+    const fromOpacity = computed?.opacity ?? "1";
+    const fromTransform = computed?.transform ?? "none";
     motion.current?.cancel();
     const animation = motion.current?.animate(
-      ref.current,
+      dialog,
       [
-        { opacity: 1, transform: "translateY(0)" },
+        { opacity: fromOpacity, transform: fromTransform },
         { opacity: 0, transform: "translateY(6px)" },
       ],
-      { duration: 140 },
+      { duration: 140, fill: "forwards" },
     );
     const finish = () => {
       if (mounted.current) close();

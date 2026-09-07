@@ -7,6 +7,7 @@ export const Route = createFileRoute("/_public/setup")({
     publicHead({
       data: publicLoaderData(matches),
       path: "/setup",
+      kind: "setup",
     }),
   component: () => <PublicPage tab="setup" />,
 });

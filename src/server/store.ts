@@ -19,7 +19,10 @@ export async function publicData(
   const field = preview ? "draft" : "published";
   const entries = results
     .filter((r) => r.kind !== "site")
-    .map((r) => entrySchema.parse(JSON.parse(r[field]!)))
+    .map((r) => ({
+      ...entrySchema.parse(JSON.parse(r[field]!)),
+      updatedAt: r.updated_at,
+    }))
     .sort(
       (a, b) =>
         Number(b.pinned) - Number(a.pinned) ||

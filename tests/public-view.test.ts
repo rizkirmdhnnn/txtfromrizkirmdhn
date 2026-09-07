@@ -36,6 +36,7 @@ function site(): SiteData {
     seoDescription: "",
     sections: kinds.map((key) => ({ key, visible: true })),
     words: {},
+    sectionSeo: {},
   };
 }
 
@@ -133,6 +134,37 @@ describe("public portfolio content", () => {
       "More about this personal space is coming soon.",
     );
     expect(render({ site: null })).toContain("Coming soon.");
+  });
+  it("shows the publish date on writing cards", () => {
+    const html = render(
+      { entries: [{ ...entry("Dated note", "writing"), date: "2026-09-01" }] },
+      "writing",
+    );
+    expect(html).toContain("Sep 1, 2026");
+  });
+
+  it("shows the author byline with publish and update dates on post details", () => {
+    const post = {
+      ...entry("Dated post", "writing"),
+      slug: "dated-post",
+      date: "2026-09-01",
+      updatedAt: "2026-09-03T10:00:00.000Z",
+    };
+    const html = renderToStaticMarkup(
+      createElement(PublicView, {
+        data: { site: site(), entries: [post], media: {}, preview: true },
+        tab: "writing",
+        slug: "dated-post",
+        onTab() {},
+        onPost() {},
+        onBack() {},
+      }),
+    );
+    expect(html).toContain("By");
+    expect(html).toContain("Portfolio owner");
+    expect(html).toContain("Sep 1, 2026");
+    expect(html).toContain("Updated");
+    expect(html).toContain("Sep 3, 2026");
   });
 });
 

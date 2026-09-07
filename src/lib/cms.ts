@@ -68,6 +68,22 @@ export const entrySchema = z.object({
   group: z.string().max(60).default(""),
   ...entryTextSchema.shape,
 });
+// SEO per halaman section (Experience, Writing, …). Kosong = fallback otomatis
+// dari label section + nama situs, sehingga dokumen lama tetap valid.
+const sectionSeoEntry = z.object({
+  seoTitle: text.default(""),
+  seoDescription: text.default(""),
+});
+const sectionSeoSchema = z
+  .object({
+    projects: sectionSeoEntry.optional(),
+    experience: sectionSeoEntry.optional(),
+    writing: sectionSeoEntry.optional(),
+    about: sectionSeoEntry.optional(),
+    setup: sectionSeoEntry.optional(),
+    gallery: sectionSeoEntry.optional(),
+  })
+  .default({});
 const copySchema = z.object({
   headline: text,
   bio: text,
@@ -78,6 +94,7 @@ const copySchema = z.object({
   seoTitle: text,
   seoDescription: text,
   words: z.record(z.string().max(60), z.string().max(2000)),
+  sectionSeo: sectionSeoSchema,
 });
 export const siteSchema = z.object({
   name: text,
@@ -135,9 +152,12 @@ export type MediaItem = {
   alt: string;
   created_at: string;
 };
+// Entry publik membawa updated_at dokumen untuk sinyal freshness (tanggal
+// terlihat, dateModified schema) tanpa query tambahan di halaman.
+export type PublicEntry = EntryData & { updatedAt?: string };
 export type PublicData = {
   site: SiteData | null;
-  entries: EntryData[];
+  entries: PublicEntry[];
   media: Record<string, string>;
   preview: boolean;
 };
