@@ -1,67 +1,31 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "rizki-portfolio-preview",
-  "main": "src/server.ts",
-  "compatibility_date": "2026-09-05",
-  "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": false,
-  "preview_urls": false,
-  "routes": [],
-  "observability": { "enabled": true },
-  "vars": {
-    "PUBLIC_HOST": "txtfromrizkirmdhn.my.id",
-    "ADMIN_HOST": "admin.txtfromrizkirmdhn.my.id",
-    "OWNER_EMAIL": "achmadrizkiramadhan0101@gmail.com",
-    "ACCESS_TEAM_DOMAIN": "rizkirmdhn.cloudflareaccess.com",
-    "ACCESS_AUD": "09d658c56c9a0a3b335624bb5eaf2be296a89c655c80ca5c129b0cb54673d0c0",
-    "CF_ACCOUNT_ID": "4a273df5ad27c77f3a28a6d0bbcf770f",
-    "ANALYTICS_SITE_TAG": "",
-    "ANALYTICS_BEACON_TOKEN": "",
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "rizki-portfolio-preview",
-      "database_id": "cc415328-cdcc-4cf4-8449-42f401c41ecd",
-      "migrations_dir": "migrations",
-    },
-  ],
-  "r2_buckets": [
-    { "binding": "MEDIA", "bucket_name": "rizki-portfolio-preview-media" },
-  ],
-  "env": {
-    "production": {
-      "name": "rizki-portfolio",
-      "routes": [
-        { "pattern": "admin.txtfromrizkirmdhn.my.id", "custom_domain": true },
-        {
-          "pattern": "txtfromrizkirmdhn.my.id/*",
-          "zone_name": "txtfromrizkirmdhn.my.id",
-        },
-      ],
-      "workers_dev": false,
-      "preview_urls": false,
-      "vars": {
-        "PUBLIC_HOST": "txtfromrizkirmdhn.my.id",
-        "ADMIN_HOST": "admin.txtfromrizkirmdhn.my.id",
-        "OWNER_EMAIL": "achmadrizkiramadhan0101@gmail.com",
-        "ACCESS_TEAM_DOMAIN": "rizkirmdhn.cloudflareaccess.com",
-        "ACCESS_AUD": "09d658c56c9a0a3b335624bb5eaf2be296a89c655c80ca5c129b0cb54673d0c0",
-        "CF_ACCOUNT_ID": "4a273df5ad27c77f3a28a6d0bbcf770f",
-        "ANALYTICS_SITE_TAG": "0540126c3fcd437493b69ef2746c9df8",
-        "ANALYTICS_BEACON_TOKEN": "3a30f1f363af4559b7af85eb66f0f9d1",
-      },
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "rizki-portfolio-english",
-          "database_id": "97df1c8a-33e8-4183-9ac9-3d19a19dc6b4",
-          "migrations_dir": "migrations",
-        },
-      ],
-      "r2_buckets": [
-        { "binding": "MEDIA", "bucket_name": "rizki-portfolio-media" },
-      ],
-    },
-  },
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "rizki-portfolio-emdash-staging",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-09-05",
+	"compatibility_flags": ["nodejs_compat"],
+	"workers_dev": true,
+	"preview_urls": false,
+	"observability": { "enabled": true },
+	"vars": {
+		"ANALYTICS_BEACON_TOKEN": "3a30f1f363af4559b7af85eb66f0f9d1",
+		"EMDASH_SITE_URL": "https://rizki-portfolio-emdash-staging.rizkirmdhn.workers.dev"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "rizki-portfolio-emdash-staging",
+			"database_id": "29ed66b0-ca37-4f2b-97d1-276ee688a80b"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "rizki-portfolio-emdash-media-staging"
+		}
+	],
+	"kv_namespaces": [
+		{ "binding": "SESSION", "id": "c2f74d62a5824f4fb494629fb58b057f" }
+	],
+	"images": { "binding": "IMAGES" }
 }

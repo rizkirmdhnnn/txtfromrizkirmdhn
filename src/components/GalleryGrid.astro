@@ -1,0 +1,134 @@
+---
+import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "@lucide/astro";
+import { Image } from "emdash/ui";
+import { imageAlt, resolveImageUrl } from "../lib/content";
+
+interface Props {
+	entries: any[];
+	t: Record<string, string>;
+}
+
+const { entries, t } = Astro.props;
+const emdash = Astro.locals.emdash;
+const items = entries
+	.filter((entry) => entry.data.cover)
+	.map((entry) => ({
+		entry,
+		photo: {
+			title: entry.data.title || "",
+			summary: entry.data.summary || "",
+			link: entry.data.link || "",
+			alt: imageAlt(entry.data.cover, entry.data.title),
+			src: resolveImageUrl(entry.data.cover, emdash),
+		},
+	}));
+const photos = items.map((item) => item.photo);
+---
+
+{
+	photos.length > 0 ? (
+		<div class="gallery-grid">
+			{items.map(({ entry, photo }, index) => (
+				<button
+					type="button"
+					class="gallery-tile"
+					aria-label={photo.title}
+					data-gallery-index={index}
+				>
+					<Image image={entry.data.cover} alt={photo.alt} loading="lazy" />
+				</button>
+			))}
+		</div>
+	) : (
+		<slot name="empty" />
+	)
+}
+
+<dialog class="modal lightbox" data-gallery-dialog aria-label={t.gallery}>
+	<div class="modal-inner">
+		<button class="icon-button modal-close" data-gallery-close aria-label={t.close}>
+			<X size={20} />
+		</button>
+		<div data-gallery-content></div>
+	</div>
+</dialog>
+
+<script type="application/json" data-gallery-data set:html={JSON.stringify(photos)}></script>
+
+<script>
+	const dialog = document.querySelector<HTMLDialogElement>("[data-gallery-dialog]");
+	const content = document.querySelector<HTMLElement>("[data-gallery-content]");
+	const data = document.querySelector<HTMLScriptElement>("[data-gallery-data]");
+	const photos: Array<{ title: string; summary: string; link: string; alt: string; src: string }> =
+		data?.textContent ? JSON.parse(data.textContent) : [];
+	const words = {
+		close: "Close",
+		link: "Open link",
+		previous: "Previous photo",
+		next: "Next photo",
+	};
+	let index = 0;
+
+	const escapeHtml = (value: string) =>
+		value.replace(/[&<>"']/g, (character) =>
+			({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character] || character,
+		);
+	const safeHref = (value: string) => {
+		try {
+			const url = new URL(value);
+			return url.protocol === "https:" || url.protocol === "http:" ? url.href : "";
+		} catch {
+			return "";
+		}
+	};
+
+	function render() {
+		if (!dialog || !content || photos.length === 0) return;
+		const photo = photos[index];
+		const link = safeHref(photo.link);
+		content.innerHTML = `
+			<figure class="lightbox-photo"><img src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.alt)}" decoding="async" /></figure>
+			<h2>${escapeHtml(photo.title)}</h2>
+			<div class="lightbox-info">
+				${photo.summary ? `<p class="work-summary">${escapeHtml(photo.summary)}</p>` : ""}
+				${link ? `<a class="button" href="${escapeHtml(link)}" target="_blank" rel="noreferrer">${words.link}</a>` : ""}
+				${photos.length > 1 ? `<div class="lightbox-nav"><button type="button" class="icon-button" data-gallery-prev aria-label="${words.previous}">‹</button><button type="button" class="icon-button" data-gallery-next aria-label="${words.next}">›</button><span>${index + 1} / ${photos.length}</span></div>` : ""}
+			</div>
+		`;
+		content.querySelector("[data-gallery-prev]")?.addEventListener("click", () => {
+			index = (index - 1 + photos.length) % photos.length;
+			render();
+		});
+		content.querySelector("[data-gallery-next]")?.addEventListener("click", () => {
+			index = (index + 1) % photos.length;
+			render();
+		});
+	}
+
+	document.querySelectorAll<HTMLElement>("[data-gallery-index]").forEach((tile) => {
+		tile.addEventListener("click", () => {
+			index = Number(tile.dataset.galleryIndex || 0);
+			render();
+			dialog?.showModal();
+		});
+	});
+
+	dialog?.addEventListener("click", (event) => {
+		if (event.target === dialog) dialog.close();
+	});
+	document.querySelectorAll<HTMLElement>("[data-gallery-close]").forEach((button) => {
+		button.addEventListener("click", () => dialog?.close());
+	});
+	window.addEventListener("keydown", (event) => {
+		if (!dialog?.open) return;
+		if (event.key === "Escape") dialog.close();
+		if (event.key === "ArrowLeft" && photos.length > 1) {
+			index = (index - 1 + photos.length) % photos.length;
+			render();
+		}
+		if (event.key === "ArrowRight" && photos.length > 1) {
+			index = (index + 1) % photos.length;
+			render();
+		}
+	});
+</script>

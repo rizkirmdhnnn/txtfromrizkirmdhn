@@ -1,0 +1,102 @@
+---
+import { Check, Cloud, Folder, Mail, RotateCcw, Terminal } from "@lucide/astro";
+
+interface Props {
+	kind?: string | null;
+}
+
+const kind = Astro.props.kind || "";
+---
+
+{
+	kind === "mail" ? (
+		<div class="project-visual mail-visual" aria-label="Mailriz concept illustration" data-visual>
+			<div class="visual-copy">
+				<span class="project-brand">
+					<Mail size={18} />
+					mailriz
+				</span>
+				<strong>{"Many addresses.\nOne home."}</strong>
+				<span>{"Email on your own domain."}</span>
+			</div>
+			<div class="mail-stack">
+				<div class="mail-chip">
+					<span class="chip-icon">s</span>shop@your.domain
+					<Check size={12} />
+				</div>
+				<div class="mail-chip">
+					<span class="chip-icon">w</span>work@your.domain
+					<Check size={12} />
+				</div>
+				<div class="mail-chip">
+					<span class="chip-icon">h</span>hello@your.domain
+					<Check size={12} />
+				</div>
+				<div class="inbox-pill">
+					<Mail size={13} />
+					{"Your one inbox"}
+				</div>
+			</div>
+			<span class="visual-caption">{"Concept illustration"} / Cloudflare</span>
+			<button type="button" class="visual-replay" data-visual-replay aria-label="Replay Mailriz animation">
+				<RotateCcw size={14} aria-hidden="true" />
+				Replay
+			</button>
+		</div>
+	) : kind === "storage" ? (
+		<div class="project-visual storage-visual">
+			<div class="visual-copy">
+				<span class="project-brand">
+					<Cloud size={18} />
+					R2 × macOS
+				</span>
+				<strong>{"Cloud,\na little closer."}</strong>
+				<span>JuiceFS / Redis / Docker</span>
+			</div>
+			<div class="folder-art">
+				<Folder size={76} stroke-width={1} />
+				<span>cloud-drive</span>
+				<span class="sync">
+					<Check size={11} />
+					Connected via SMB
+				</span>
+			</div>
+			<span class="visual-caption">{"Concept illustration"}</span>
+		</div>
+	) : kind === "agent" ? (
+		<div class="agent-visual">
+			<Terminal size={22} />
+			<code>agent.task.complete</code>
+			<span>
+				<Check size={13} /> notification sent
+			</span>
+		</div>
+	) : null
+}
+
+<script>
+	const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+	document.querySelectorAll<HTMLElement>("[data-visual-replay]").forEach((button) => {
+		button.addEventListener("click", () => {
+			const visual = button.closest<HTMLElement>("[data-visual]");
+			if (!visual || reduce.matches) return;
+			visual.querySelectorAll<HTMLElement>(".mail-chip").forEach((chip, index) => {
+				chip.animate(
+					[
+						{ opacity: 0, transform: "translateX(16px)" },
+						{ opacity: 1, transform: "translateX(0)" },
+					],
+					{ duration: 360, delay: index * 75, fill: "backwards" },
+				);
+			});
+			visual.querySelector<HTMLElement>(".inbox-pill")?.animate(
+				[
+					{ opacity: 0.4, transform: "translateY(-4px) scale(.98)" },
+					{ opacity: 1, transform: "translateY(0) scale(1.04)", offset: 0.6 },
+					{ opacity: 1, transform: "translateY(0) scale(1)" },
+				],
+				{ duration: 300, delay: 500 },
+			);
+		});
+	});
+</script>

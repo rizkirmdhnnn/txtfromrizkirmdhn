@@ -1,0 +1,3633 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "Achmad Rizki Ramadhan",
+    "description": "Personal portfolio and writing",
+    "author": "Achmad Rizki Ramadhan"
+  },
+  "settings": {
+    "title": "Achmad Rizki Ramadhan",
+    "tagline": "Backend, cloud & AI",
+    "url": "https://txtfromrizkirmdhn.my.id",
+    "locale": "en",
+    "seo": {
+      "titleSeparator": "—"
+    }
+  },
+  "collections": [
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "labelSingular": "Project",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "seo"
+      ],
+      "urlPattern": "/post/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "summary",
+          "label": "Summary",
+          "type": "text",
+          "searchable": true
+        },
+        {
+          "slug": "body",
+          "label": "Body",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "pinned",
+          "label": "Featured project",
+          "type": "boolean"
+        },
+        {
+          "slug": "demo",
+          "label": "Demo content",
+          "type": "boolean"
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "integer"
+        },
+        {
+          "slug": "cover",
+          "label": "Cover image",
+          "type": "image"
+        },
+        {
+          "slug": "visual",
+          "label": "Visual",
+          "type": "select",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mail",
+              "label": "Mail"
+            },
+            {
+              "value": "storage",
+              "label": "Storage"
+            },
+            {
+              "value": "agent",
+              "label": "Agent"
+            }
+          ]
+        },
+        {
+          "slug": "repo",
+          "label": "Repository URL",
+          "type": "url"
+        },
+        {
+          "slug": "demo_url",
+          "label": "Demo URL",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "slug": "experience",
+      "label": "Experience",
+      "labelSingular": "Experience entry",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "urlPattern": "/post/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "summary",
+          "label": "Summary",
+          "type": "text",
+          "searchable": true
+        },
+        {
+          "slug": "body",
+          "label": "Body",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "integer"
+        },
+        {
+          "slug": "cover",
+          "label": "Cover image",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "slug": "writing",
+      "label": "Writing",
+      "labelSingular": "Article",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "seo"
+      ],
+      "urlPattern": "/post/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "summary",
+          "label": "Summary",
+          "type": "text",
+          "searchable": true
+        },
+        {
+          "slug": "body",
+          "label": "Body",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "integer"
+        },
+        {
+          "slug": "cover",
+          "label": "Cover image",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "slug": "about",
+      "label": "About",
+      "labelSingular": "About entry",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "urlPattern": "/post/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "summary",
+          "label": "Summary",
+          "type": "text",
+          "searchable": true
+        },
+        {
+          "slug": "body",
+          "label": "Body",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "integer"
+        },
+        {
+          "slug": "cover",
+          "label": "Cover image",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "slug": "setup",
+      "label": "Setup",
+      "labelSingular": "Setup item",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "urlPattern": "/post/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "group",
+          "label": "Group",
+          "type": "string"
+        },
+        {
+          "slug": "summary",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "body",
+          "label": "Notes",
+          "type": "portableText"
+        },
+        {
+          "slug": "link",
+          "label": "Link",
+          "type": "url"
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "slug": "gallery",
+      "label": "Gallery",
+      "labelSingular": "Photo",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "urlPattern": "/post/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "summary",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "cover",
+          "label": "Photo",
+          "type": "image",
+          "required": true
+        },
+        {
+          "slug": "link",
+          "label": "Link",
+          "type": "url"
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "integer"
+        },
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "datetime"
+        }
+      ]
+    },
+    {
+      "slug": "profile",
+      "label": "Profile & website",
+      "labelSingular": "Profile",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview"
+      ],
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "brand",
+          "label": "Monogram",
+          "type": "string"
+        },
+        {
+          "slug": "handle",
+          "label": "Handle",
+          "type": "string"
+        },
+        {
+          "slug": "headline",
+          "label": "Headline",
+          "type": "string"
+        },
+        {
+          "slug": "bio",
+          "label": "Bio",
+          "type": "text"
+        },
+        {
+          "slug": "note",
+          "label": "Note",
+          "type": "text"
+        },
+        {
+          "slug": "location",
+          "label": "Location",
+          "type": "string"
+        },
+        {
+          "slug": "email",
+          "label": "Email",
+          "type": "string"
+        },
+        {
+          "slug": "whatsapp",
+          "label": "WhatsApp",
+          "type": "string"
+        },
+        {
+          "slug": "github",
+          "label": "GitHub",
+          "type": "url"
+        },
+        {
+          "slug": "linkedin",
+          "label": "LinkedIn",
+          "type": "url"
+        },
+        {
+          "slug": "skills",
+          "label": "Skills",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "name",
+                "label": "Skill",
+                "type": "string",
+                "required": true
+              }
+            ]
+          }
+        },
+        {
+          "slug": "avatar",
+          "label": "Avatar",
+          "type": "image"
+        },
+        {
+          "slug": "cv",
+          "label": "CV",
+          "type": "file"
+        },
+        {
+          "slug": "about_title",
+          "label": "About title",
+          "type": "string"
+        },
+        {
+          "slug": "about_body",
+          "label": "About body",
+          "type": "portableText"
+        },
+        {
+          "slug": "setup_intro",
+          "label": "Setup intro",
+          "type": "portableText"
+        },
+        {
+          "slug": "setup_cover",
+          "label": "Setup desk photo",
+          "type": "image"
+        },
+        {
+          "slug": "gallery_intro",
+          "label": "Gallery intro",
+          "type": "portableText"
+        },
+        {
+          "slug": "footer",
+          "label": "Footer",
+          "type": "string"
+        },
+        {
+          "slug": "seo_title",
+          "label": "SEO title",
+          "type": "string"
+        },
+        {
+          "slug": "seo_description",
+          "label": "SEO description",
+          "type": "text"
+        },
+        {
+          "slug": "copy",
+          "label": "UI copy overrides",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "key",
+                "label": "Key",
+                "type": "string",
+                "required": true
+              },
+              {
+                "slug": "value",
+                "label": "Value",
+                "type": "text"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "sections",
+          "label": "Sections",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "key",
+                "label": "Section",
+                "type": "select",
+                "required": true,
+                "options": [
+                  {
+                    "value": "projects",
+                    "label": "Projects"
+                  },
+                  {
+                    "value": "experience",
+                    "label": "Experience"
+                  },
+                  {
+                    "value": "writing",
+                    "label": "Writing"
+                  },
+                  {
+                    "value": "about",
+                    "label": "About"
+                  },
+                  {
+                    "value": "setup",
+                    "label": "Setup"
+                  },
+                  {
+                    "value": "gallery",
+                    "label": "Gallery"
+                  }
+                ]
+              },
+              {
+                "slug": "label",
+                "label": "Label",
+                "type": "string",
+                "required": true
+              },
+              {
+                "slug": "visible",
+                "label": "Visible",
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "maintenance_enabled",
+          "label": "Maintenance mode",
+          "type": "boolean"
+        },
+        {
+          "slug": "maintenance_title",
+          "label": "Maintenance title",
+          "type": "string"
+        },
+        {
+          "slug": "maintenance_body",
+          "label": "Maintenance body",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "taxonomies": [
+    {
+      "name": "tag",
+      "label": "Tags",
+      "labelSingular": "Tag",
+      "hierarchical": false,
+      "collections": [
+        "projects",
+        "experience",
+        "writing",
+        "about"
+      ],
+      "terms": [
+        {
+          "slug": "google-cloud",
+          "label": "Google Cloud"
+        },
+        {
+          "slug": "bangkit-academy",
+          "label": "Bangkit Academy"
+        },
+        {
+          "slug": "openwrt",
+          "label": "OpenWrt"
+        },
+        {
+          "slug": "orange-pi",
+          "label": "Orange Pi"
+        },
+        {
+          "slug": "kernel",
+          "label": "Kernel"
+        },
+        {
+          "slug": "luci",
+          "label": "LuCI"
+        },
+        {
+          "slug": "computer-vision",
+          "label": "Computer Vision"
+        },
+        {
+          "slug": "python",
+          "label": "Python"
+        },
+        {
+          "slug": "kotlin",
+          "label": "Kotlin"
+        },
+        {
+          "slug": "iot",
+          "label": "IoT"
+        },
+        {
+          "slug": "cloudflare-workers",
+          "label": "Cloudflare Workers"
+        },
+        {
+          "slug": "d1",
+          "label": "D1"
+        },
+        {
+          "slug": "r2",
+          "label": "R2"
+        },
+        {
+          "slug": "typescript",
+          "label": "TypeScript"
+        },
+        {
+          "slug": "hono",
+          "label": "Hono"
+        },
+        {
+          "slug": "cloudflare-r2",
+          "label": "Cloudflare R2"
+        },
+        {
+          "slug": "juicefs",
+          "label": "JuiceFS"
+        },
+        {
+          "slug": "docker",
+          "label": "Docker"
+        },
+        {
+          "slug": "macos",
+          "label": "macOS"
+        },
+        {
+          "slug": "ai-agent",
+          "label": "AI agent"
+        },
+        {
+          "slug": "ntfy",
+          "label": "ntfy"
+        },
+        {
+          "slug": "webhook",
+          "label": "Webhook"
+        },
+        {
+          "slug": "linux",
+          "label": "Linux"
+        },
+        {
+          "slug": "networking",
+          "label": "Networking"
+        },
+        {
+          "slug": "troubleshooting",
+          "label": "Troubleshooting"
+        },
+        {
+          "slug": "devops",
+          "label": "DevOps"
+        },
+        {
+          "slug": "cicd",
+          "label": "CI/CD"
+        },
+        {
+          "slug": "bash",
+          "label": "Bash"
+        },
+        {
+          "slug": "mengajar",
+          "label": "Mengajar"
+        },
+        {
+          "slug": "amikom",
+          "label": "AMIKOM"
+        },
+        {
+          "slug": "svelte",
+          "label": "Svelte"
+        },
+        {
+          "slug": "sveltekit",
+          "label": "SvelteKit"
+        },
+        {
+          "slug": "rag",
+          "label": "RAG"
+        },
+        {
+          "slug": "cloudflare-ai",
+          "label": "Cloudflare AI"
+        },
+        {
+          "slug": "golang",
+          "label": "Golang"
+        },
+        {
+          "slug": "postgresql",
+          "label": "PostgreSQL"
+        },
+        {
+          "slug": "fastapi",
+          "label": "FastAPI"
+        },
+        {
+          "slug": "bangkit",
+          "label": "Bangkit"
+        },
+        {
+          "slug": "nextjs",
+          "label": "Next.js"
+        },
+        {
+          "slug": "go",
+          "label": "Go"
+        },
+        {
+          "slug": "wails",
+          "label": "Wails"
+        },
+        {
+          "slug": "react",
+          "label": "React"
+        },
+        {
+          "slug": "email",
+          "label": "Email"
+        },
+        {
+          "slug": "cloudflare",
+          "label": "Cloudflare"
+        },
+        {
+          "slug": "privasi",
+          "label": "Privasi"
+        },
+        {
+          "slug": "homelab",
+          "label": "Homelab"
+        },
+        {
+          "slug": "proxmox",
+          "label": "Proxmox"
+        },
+        {
+          "slug": "self-hosted",
+          "label": "Self-hosted"
+        },
+        {
+          "slug": "peta",
+          "label": "Peta"
+        },
+        {
+          "slug": "tcx",
+          "label": "TCX"
+        },
+        {
+          "slug": "produk",
+          "label": "Produk"
+        },
+        {
+          "slug": "device-tree",
+          "label": "Device Tree"
+        }
+      ]
+    }
+  ],
+  "content": {
+    "projects": [
+      {
+        "id": "seed-projects-mailriz",
+        "slug": "mailriz",
+        "status": "published",
+        "data": {
+          "title": "Mailriz",
+          "summary": "One inbox. Unlimited addresses.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "c845651370a7",
+                  "text": "The problem",
+                  "marks": []
+                }
+              ],
+              "_key": "a07acc0dec9a",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "67b10f2cd3b2",
+                  "text": "Every new service asks for an email address. Use your main one and the inbox fills up while your trail spreads everywhere. Use a third-party alias service and the address is not really yours — if they shut down, it goes with them.",
+                  "marks": []
+                }
+              ],
+              "_key": "f54ed3562688",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "006b331ad48e",
+                  "text": "What I built",
+                  "marks": []
+                }
+              ],
+              "_key": "b5f7f94f811b",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "5d39977afb8b",
+                  "text": "Persistent email aliases on your own domain, running entirely on Cloudflare. Create as many addresses as you need, have them all land in one inbox, and because the domain is yours, the addresses last as long as the domain does.",
+                  "marks": []
+                }
+              ],
+              "_key": "fef8ae4e8acd",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "355e880aaab4",
+                  "text": "How it works",
+                  "marks": []
+                }
+              ],
+              "_key": "70d729c872e7",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "40d52277e720",
+                  "text": "Cloudflare Email Routing receives the mail, a Worker processes it, D1 stores the alias mapping, and R2 holds attachments. React on the front, Hono for the API, TypeScript throughout. No server to maintain.",
+                  "marks": []
+                }
+              ],
+              "_key": "39dec95be6b7",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "294bd13d694b",
+                  "text": "Open source, and 27 stars on GitHub so far.",
+                  "marks": []
+                }
+              ],
+              "_key": "ea0c3bf286f7",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-09-02T00:00:00.000Z",
+          "order": 1,
+          "pinned": true,
+          "demo": false,
+          "visual": "mail",
+          "repo": "https://github.com/rizkirmdhnnn/mailriz",
+          "demo_url": "https://rizkirmdhnnn.github.io/mailriz/"
+        },
+        "taxonomies": {
+          "tag": [
+            "cloudflare-workers",
+            "d1",
+            "r2",
+            "typescript",
+            "hono"
+          ]
+        }
+      },
+      {
+        "id": "seed-projects-juicefs-r2-macos",
+        "slug": "juicefs-r2-macos",
+        "status": "published",
+        "data": {
+          "title": "R2, meet Finder.",
+          "summary": "Cloud storage that behaves like a local folder.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "a13a6b4ff725",
+                  "text": "The problem",
+                  "marks": []
+                }
+              ],
+              "_key": "16c2da95445a",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "99460bbef659",
+                  "text": "Cloudflare R2 is cheap and fast, but using it from macOS usually means macFUSE — which demands a kernel extension, security approvals, and a reboot.",
+                  "marks": []
+                }
+              ],
+              "_key": "6be27e96aa8f",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "3f767c49668b",
+                  "text": "What I built",
+                  "marks": []
+                }
+              ],
+              "_key": "3da51db31d75",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "8060ba3ce832",
+                  "text": "A POSIX file system on top of R2, mounted in Finder over SMB. No macFUSE, no kernel extension, no reboot.",
+                  "marks": []
+                }
+              ],
+              "_key": "1c07eef0d271",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "37a5cc1b72c1",
+                  "text": "How it works",
+                  "marks": []
+                }
+              ],
+              "_key": "379a18df7a79",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "2a7cbe16ebcf",
+                  "text": "JuiceFS provides the POSIX layer over R2 objects, Redis holds the metadata, and Samba inside Docker exposes the result as an ordinary network share that Finder picks up directly.",
+                  "marks": []
+                }
+              ],
+              "_key": "22835364aa88",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "613e5dae7963",
+                  "text": "The outcome is an object bucket that looks and behaves like a folder in the Finder sidebar.",
+                  "marks": []
+                }
+              ],
+              "_key": "2bd50742c7a5",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-07-28T00:00:00.000Z",
+          "order": 8,
+          "pinned": false,
+          "demo": false,
+          "visual": "storage",
+          "repo": "https://github.com/rizkirmdhnnn/juicefs-r2-macos"
+        },
+        "taxonomies": {
+          "tag": [
+            "cloudflare-r2",
+            "juicefs",
+            "docker",
+            "macos"
+          ]
+        }
+      },
+      {
+        "id": "seed-projects-dsh-tool-notify",
+        "slug": "dsh-tool-notify",
+        "status": "published",
+        "data": {
+          "title": "A little signal from your AI.",
+          "summary": "A notification when your agent finishes.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "23009c9ec7db",
+                  "text": "The problem",
+                  "marks": []
+                }
+              ],
+              "_key": "be5e9257ab6d",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "3e5627bd5d97",
+                  "text": "An agent running a long task leaves you waiting without knowing when it ends, so the terminal keeps pulling your attention back.",
+                  "marks": []
+                }
+              ],
+              "_key": "e9b63bfa7276",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "e5e3d648eb40",
+                  "text": "What I built",
+                  "marks": []
+                }
+              ],
+              "_key": "a7a770736870",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "063bfb542e64",
+                  "text": "A DeepSeek Harness plugin that gives the agent a tool to notify you itself when a task completes — to ntfy, or to any webhook.",
+                  "marks": []
+                }
+              ],
+              "_key": "23b191ecfccd",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "a1f4b0ba2219",
+                  "text": "Small, but it changes how you work: long tasks can be left alone, and the notice comes to you.",
+                  "marks": []
+                }
+              ],
+              "_key": "4d53b3f0a960",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-08-14T00:00:00.000Z",
+          "order": 9,
+          "pinned": false,
+          "demo": false,
+          "visual": "agent",
+          "repo": "https://github.com/rizkirmdhnnn/dsh-tool-notify"
+        },
+        "taxonomies": {
+          "tag": [
+            "typescript",
+            "ai-agent",
+            "ntfy",
+            "webhook"
+          ]
+        }
+      },
+      {
+        "id": "proj-svelte-mastery",
+        "slug": "svelte-mastery",
+        "status": "published",
+        "data": {
+          "title": "Svelte Mastery",
+          "summary": "Svelte documentation in Indonesian, with a chatbot that understands it.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "14bb4c469831",
+                  "text": "Why I built it",
+                  "marks": []
+                }
+              ],
+              "_key": "225a0e0b1491",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "5be15bba5dd6",
+                  "text": "I wanted to learn Svelte. Reading the docs and then forgetting them felt wasteful, so I chose to learn by building the place to learn it.",
+                  "marks": []
+                }
+              ],
+              "_key": "90f4f61ff041",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "361cec2ac7de",
+                  "text": "What came out",
+                  "marks": []
+                }
+              ],
+              "_key": "fc325468eb27",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "0ba4b3b3c46e",
+                  "text": "178 modules mirroring the official Svelte 5, SvelteKit 2, and ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "aea12d3c5a68",
+                  "text": "sv",
+                  "marks": [
+                    "code"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "efbc059ab807",
+                  "text": " CLI documentation in Indonesian, with a playground that runs in the browser and comparisons against React, Vue, Next, and Nest.",
+                  "marks": []
+                }
+              ],
+              "_key": "ef64803b23bc",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "8523b77ab61c",
+                  "text": "There is also \"Tanya Svelte\", a chatbot that answers questions about the material and can run on models from Cloudflare, Gemini, or Groq.",
+                  "marks": []
+                }
+              ],
+              "_key": "83dd36eb0731",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "969d5843fb74",
+                  "text": "What I took from it",
+                  "marks": []
+                }
+              ],
+              "_key": "66d806e299c2",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "a3063ec3dc3a",
+                  "text": "The process was the valuable part. Building this is where I actually understood RAG, Workers AI, and Vectorize — things I had previously only known by name.",
+                  "marks": []
+                }
+              ],
+              "_key": "44850252a1b3",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-06-07T00:00:00.000Z",
+          "order": 2,
+          "pinned": false,
+          "demo": false,
+          "visual": "none",
+          "repo": "https://github.com/rizkirmdhnnn/svelte-mastery",
+          "demo_url": "https://svelte-mastery.rizpedia.com"
+        },
+        "taxonomies": {
+          "tag": [
+            "svelte",
+            "sveltekit",
+            "rag",
+            "cloudflare-ai"
+          ]
+        }
+      },
+      {
+        "id": "proj-sweetlife",
+        "slug": "sweetlife",
+        "status": "published",
+        "data": {
+          "title": "SweetLife",
+          "summary": "A diabetes-friendly lifestyle companion, built with a Bangkit team.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "d1446ef2f8fc",
+                  "text": "The context",
+                  "marks": []
+                }
+              ],
+              "_key": "17c6b3a5f1aa",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "3a1898842bc1",
+                  "text": "A Bangkit Academy 2024 capstone project with team C242-PS144, a programme backed by Google, Tokopedia, Gojek, and Traveloka. Seven people across three tracks: machine learning, cloud computing, and mobile development.",
+                  "marks": []
+                }
+              ],
+              "_key": "6248ab719efc",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "c5bbd7543727",
+                  "text": "My part",
+                  "marks": []
+                }
+              ],
+              "_key": "3085e1e1f5ba",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "afa29b74c1e4",
+                  "text": "I was in the Cloud Computing cohort, on backend and infrastructure:",
+                  "marks": []
+                }
+              ],
+              "_key": "5325a42bc235",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "a1a484aa687c",
+                  "text": "Designed and built the REST API the mobile app consumes.",
+                  "marks": []
+                }
+              ],
+              "_key": "c56825ebb084",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "c711961bbb97",
+                  "text": "Set up the health recommendation model service so the app could call it.",
+                  "marks": []
+                }
+              ],
+              "_key": "60743ff8f1b1",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "55fc9748d1b3",
+                  "text": "Kept the system scalable and secure through a clean architecture on Google Cloud.",
+                  "marks": []
+                }
+              ],
+              "_key": "fbd83ecb3105",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "65d876bc5358",
+                  "text": "The app",
+                  "marks": []
+                }
+              ],
+              "_key": "03b1a860a373",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "991dde3e19c3",
+                  "text": "SweetLife helps people manage their health with tailored recommendations for nutrition, activity, and daily habits — designed around a diabetes-friendly lifestyle.",
+                  "marks": []
+                }
+              ],
+              "_key": "040085027042",
+              "markDefs": []
+            }
+          ],
+          "date": "2024-12-01T00:00:00.000Z",
+          "order": 4,
+          "pinned": false,
+          "demo": false,
+          "visual": "none",
+          "repo": "https://github.com/SweetLife-Core/SweetLifeApp"
+        },
+        "taxonomies": {
+          "tag": [
+            "golang",
+            "postgresql",
+            "google-cloud",
+            "fastapi",
+            "bangkit"
+          ]
+        }
+      },
+      {
+        "id": "proj-mutiarapc",
+        "slug": "mutiarapc",
+        "status": "published",
+        "data": {
+          "title": "Mutiarapc",
+          "summary": "A tutoring business that stopped running on paper.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "3128f18c3f94",
+                  "text": "The problem",
+                  "marks": []
+                }
+              ],
+              "_key": "3999f3fcb816",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "9ecfc32154c4",
+                  "text": "A private tutoring business ran scheduling, attendance, tutor pay, and invoicing on manual records. Every schedule change meant copying it out again, and every invoice meant recalculating.",
+                  "marks": []
+                }
+              ],
+              "_key": "ec36d8bcdb6c",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "6c2ebffb3d89",
+                  "text": "What I built",
+                  "marks": []
+                }
+              ],
+              "_key": "daec0923f639",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "1905d960c3b2",
+                  "text": "A mobile-first platform that runs the whole operation in one place, from class scheduling to invoices.",
+                  "marks": []
+                }
+              ],
+              "_key": "cb7f01fff6b8",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "b8e267537486",
+                  "text": "A recurring schedule engine that handles substitute tutors.",
+                  "marks": []
+                }
+              ],
+              "_key": "e39c8918a4a1",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "a2f860829886",
+                  "text": "Automatic tutor pay calculation, wired straight to attendance.",
+                  "marks": []
+                }
+              ],
+              "_key": "d60e547362e0",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "f7f2dbe60fe1",
+                  "text": "Invoice and PDF generation with no manual step.",
+                  "marks": []
+                }
+              ],
+              "_key": "aa8687c1a684",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "ecf822bdb8c7",
+                  "text": "The outcome",
+                  "marks": []
+                }
+              ],
+              "_key": "dd43b53438ab",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "101d28501e58",
+                  "text": "Paper recordkeeping was replaced by a single source of truth. Arithmetic errors dropped, and the admin time that used to go into copying data went elsewhere.",
+                  "marks": []
+                }
+              ],
+              "_key": "cc799b8ad275",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "a9ad7867a171",
+                  "text": "Freelance work; the repository is private and belongs to the client.",
+                  "marks": []
+                }
+              ],
+              "_key": "27efd5bcfdea",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-03-01T00:00:00.000Z",
+          "order": 5,
+          "pinned": false,
+          "demo": false,
+          "visual": "none"
+        },
+        "taxonomies": {
+          "tag": [
+            "nextjs",
+            "typescript",
+            "postgresql",
+            "cloudflare-r2"
+          ]
+        }
+      },
+      {
+        "id": "proj-lamboserver",
+        "slug": "lamboserver",
+        "status": "published",
+        "data": {
+          "title": "LamboServer",
+          "summary": "Managing a local dev environment without touching the terminal.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "99200f9f5cf2",
+                  "text": "The problem",
+                  "marks": []
+                }
+              ],
+              "_key": "24419fa7e67d",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "97688d6ab071",
+                  "text": "Starting and stopping Nginx, MySQL, PHP, and PostgreSQL on macOS means remembering a different command for each service, and checking them one by one when something is not running.",
+                  "marks": []
+                }
+              ],
+              "_key": "35ff66180820",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "ceea3d903b91",
+                  "text": "What I built",
+                  "marks": []
+                }
+              ],
+              "_key": "5c9144a23ddb",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "2996425c9c89",
+                  "text": "A native macOS desktop app that starts, stops, and monitors all of those services from one place.",
+                  "marks": []
+                }
+              ],
+              "_key": "7626cb1bbb95",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "b84161e350ec",
+                  "text": "The interesting decision",
+                  "marks": []
+                }
+              ],
+              "_key": "4d930ec1e1a2",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "e9e1ae56245d",
+                  "text": "The core is a unified service registry in Go. Every service is driven through the same interface, so adding a new one never touches the core logic.",
+                  "marks": []
+                }
+              ],
+              "_key": "044f80d6bf75",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "9e648042006b",
+                  "text": "Shipped as a self-contained ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "bba07ae7c305",
+                  "text": ".dmg",
+                  "marks": [
+                    "code"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "cd1d477fcb86",
+                  "text": " installer with a guided first run, so it works without manual configuration.",
+                  "marks": []
+                }
+              ],
+              "_key": "a6fc3bcea096",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "7dd55c531486",
+                  "text": "Built with Go, TypeScript, React, and Wails v2.",
+                  "marks": []
+                }
+              ],
+              "_key": "47d6277b9bef",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-04-18T00:00:00.000Z",
+          "order": 6,
+          "pinned": false,
+          "demo": false,
+          "visual": "none",
+          "repo": "https://github.com/rizkirmdhnnn/lamboserver"
+        },
+        "taxonomies": {
+          "tag": [
+            "go",
+            "wails",
+            "react",
+            "macos"
+          ]
+        }
+      },
+      {
+        "id": "proj-fakepace",
+        "slug": "fakepace",
+        "status": "published",
+        "data": {
+          "title": "Fakepace",
+          "summary": "Draw a running route, set the pace, export it as TCX.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "4526c1425ed3",
+                  "text": "Where it came from",
+                  "marks": []
+                }
+              ],
+              "_key": "1609255c70da",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "07ec08bfef9a",
+                  "text": "It started as a joke on Threads about people paying someone else to fill in their Strava. If that market exists, the tool may as well exist too.",
+                  "marks": []
+                }
+              ],
+              "_key": "247649de6f47",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "5a6c4d2415a0",
+                  "text": "What it does",
+                  "marks": []
+                }
+              ],
+              "_key": "a2ba59d169d5",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "cd42ab7117c9",
+                  "text": "Fakepace lets you draw a route on a map, set pace and elevation, add simulated heart rate, then download a TCX file ready to upload to Strava or Garmin Connect.",
+                  "marks": []
+                }
+              ],
+              "_key": "045984a29beb",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "b55a876a0a1a",
+                  "text": "The interesting parts to build",
+                  "marks": []
+                }
+              ],
+              "_key": "6a9b6e325267",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "eb2db8d5bdf7",
+                  "text": "Routes that snap to real roads.",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "26cb4c531d10",
+                  "text": " A drawn line is fitted to actual streets rather than straight segments between points.",
+                  "marks": []
+                }
+              ],
+              "_key": "d9e9aee5d09d",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "51df0e840f67",
+                  "text": "Pace and elevation that hold up.",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "366f29320481",
+                  "text": " The generated numbers have to stay consistent across the route, including on climbs.",
+                  "marks": []
+                }
+              ],
+              "_key": "312b9baceb62",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "b69611b40377",
+                  "text": "TCX that platforms accept.",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "14d590607427",
+                  "text": " The format is fussy; a file that drifts slightly gets rejected.",
+                  "marks": []
+                }
+              ],
+              "_key": "0211efcebb51",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "e6fc8f68ce45",
+                  "text": "Status",
+                  "marks": []
+                }
+              ],
+              "_key": "61e79919c551",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "42060adfcf42",
+                  "text": "A live, paid product starting at IDR 5,000 per file, with its own guides and articles. The traffic is real.",
+                  "marks": []
+                }
+              ],
+              "_key": "7a77b5a45987",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-08-16T00:00:00.000Z",
+          "order": 3,
+          "pinned": false,
+          "demo": false,
+          "visual": "none",
+          "demo_url": "https://fakepace.run"
+        },
+        "taxonomies": {
+          "tag": [
+            "nextjs",
+            "peta",
+            "tcx",
+            "produk"
+          ]
+        }
+      },
+      {
+        "id": "proj-openwrt-opiz3",
+        "slug": "openwrt-orange-pi-zero-3",
+        "status": "published",
+        "data": {
+          "title": "OpenWrt for the Orange Pi Zero 3",
+          "summary": "Fixing Wi-Fi that would not register, then writing the theme too.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "be58a377d0d6",
+                  "text": "The problem",
+                  "marks": []
+                }
+              ],
+              "_key": "cc00c4879762",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "3ac342d43359",
+                  "text": "The Orange Pi Zero 3 uses a Unisoc UWE5622 (AW859A) Wi-Fi chip, whose OpenWrt support is not mature. On the images going around, the radio comes up but the LuCI Wi-Fi page stays empty.",
+                  "marks": []
+                }
+              ],
+              "_key": "9b4aa2de568e",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "765662692d20",
+                  "text": "What I did",
+                  "marks": []
+                }
+              ],
+              "_key": "1e5da8a8d578",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "baba18ec767b",
+                  "text": "A driver and firmware for the UWE5622, plus a device tree patch so the board is described correctly.",
+                  "marks": []
+                }
+              ],
+              "_key": "5eb98632ab41",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "104f54b18897",
+                  "text": "An implementation of ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "d5f5cc84cc18",
+                  "text": ".dump_station",
+                  "marks": [
+                    "code"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "a1ee71fbfbf7",
+                  "text": ", the piece that lets LuCI ask the driver for client status so the Wi-Fi page finally fills in.",
+                  "marks": []
+                }
+              ],
+              "_key": "51361f7ee327",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "86a76a8e0680",
+                  "text": "luci-theme-opizwrt",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "b4c83a3ba8e6",
+                  "text": ", a LuCI theme with a real dark mode and its own login page.",
+                  "marks": []
+                }
+              ],
+              "_key": "6f8054e8b858",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "0bf26ff4a6a7",
+                  "text": "Why it is public",
+                  "marks": []
+                }
+              ],
+              "_key": "a6556375e548",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "6ab5ae6b5516",
+                  "text": "Debugging at this level costs a full build, flash, and boot cycle per guess. Both repositories are open source so the next person with the same board does not have to repeat it.",
+                  "marks": []
+                }
+              ],
+              "_key": "a62ae4673ee8",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-09-02T00:00:00.000Z",
+          "order": 7,
+          "pinned": false,
+          "demo": false,
+          "visual": "none",
+          "repo": "https://github.com/rizkirmdhnnn/openwrt-orangepi-zero3-wifi"
+        },
+        "taxonomies": {
+          "tag": [
+            "openwrt",
+            "kernel",
+            "device-tree",
+            "luci"
+          ]
+        }
+      }
+    ],
+    "experience": [
+      {
+        "id": "seed-experience-fullstack",
+        "slug": "ai-engineer-lantabura",
+        "status": "published",
+        "data": {
+          "title": "AI Engineer · PT. Lantabura Media",
+          "summary": "Computer vision, dataset preparation, and systems that connect field devices.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "2a93ac44c958",
+                  "text": "Contract · Sleman, Yogyakarta · June 2026 – present",
+                  "marks": []
+                }
+              ],
+              "_key": "dc1b7f20048e",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "80b2df5a43c2",
+                  "text": "What I do",
+                  "marks": []
+                }
+              ],
+              "_key": "fa6fcb146b83",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "6949b60de1d7",
+                  "text": "Build and maintain computer vision pipelines, from dataset preparation to models running inside the product.",
+                  "marks": []
+                }
+              ],
+              "_key": "d4b22a35a2df",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "827f64f4cf9c",
+                  "text": "Set up semi-automatic annotation tooling on top of CVAT so labelling is no longer fully manual.",
+                  "marks": []
+                }
+              ],
+              "_key": "0acb487b012f",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "c1de3fc16330",
+                  "text": "Work on the backend and dashboard for systems that connect field devices to the services behind them.",
+                  "marks": []
+                }
+              ],
+              "_key": "b587a01a6a92",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "2f5535b0b29c",
+                  "text": "Product details are kept off this page while the work is still internal.",
+                  "marks": []
+                }
+              ],
+              "_key": "4e3c59b61558",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-06-01T00:00:00.000Z",
+          "order": 1
+        },
+        "taxonomies": {
+          "tag": [
+            "computer-vision",
+            "python",
+            "kotlin",
+            "iot"
+          ]
+        }
+      },
+      {
+        "id": "exp-technical-support-amikom",
+        "slug": "technical-support-amikom",
+        "status": "published",
+        "data": {
+          "title": "Technical Support · Technical Services Unit",
+          "summary": "Keeping 23 lab computers ready for teaching.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "b28defe0bb1d",
+                  "text": "Universitas AMIKOM Yogyakarta · Sleman · August 2025 – June 2026",
+                  "marks": []
+                }
+              ],
+              "_key": "2e88897c62a8",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "0d322eca88ca",
+                  "text": "What I did",
+                  "marks": []
+                }
+              ],
+              "_key": "ec7d3e1a47aa",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "c2bd13fd77e0",
+                  "text": "Maintained 23 lab computers and their network so classes ran without interruption.",
+                  "marks": []
+                }
+              ],
+              "_key": "8b8279ff91fb",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "f0980ded1ab6",
+                  "text": "Diagnosed hardware, software, and connectivity faults to cut downtime during lab sessions.",
+                  "marks": []
+                }
+              ],
+              "_key": "5b0baf5e5f58",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "61e00b438300",
+                  "text": "Installed and configured programming environments, databases, and microcontroller tooling, supporting lecturers and students in real time.",
+                  "marks": []
+                }
+              ],
+              "_key": "49b8e8f47c92",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "6bec867a4169",
+                  "text": "The job taught me that whether a room is ready is part of whether a session teaches anything.",
+                  "marks": []
+                }
+              ],
+              "_key": "c1916fd2f0e1",
+              "markDefs": []
+            }
+          ],
+          "date": "2025-08-27T00:00:00.000Z",
+          "order": 2
+        },
+        "taxonomies": {
+          "tag": [
+            "linux",
+            "networking",
+            "troubleshooting"
+          ]
+        }
+      },
+      {
+        "id": "exp-forum-asisten",
+        "slug": "asisten-laboratorium",
+        "status": "published",
+        "data": {
+          "title": "Laboratory Assistant · Forum Asisten",
+          "summary": "Mentoring 150+ students in DevOps, data structures, and programming.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "0b6375ceca45",
+                  "text": "Universitas AMIKOM Yogyakarta · January 2024 – July 2025",
+                  "marks": []
+                }
+              ],
+              "_key": "60d492ca3c80",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "601d890c0291",
+                  "text": "What I did",
+                  "marks": []
+                }
+              ],
+              "_key": "38c2ac71e04e",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "1cf126c28dbf",
+                  "text": "DevOps & infrastructure.",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "0739ae972c6a",
+                  "text": " Mentored students in DevOps and operating systems: CI/CD workflows, Bash scripting, and environment setup.",
+                  "marks": []
+                }
+              ],
+              "_key": "3bae8068fb05",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "54ce4752f754",
+                  "text": "Backend & data structures.",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "5f587788ada8",
+                  "text": " Guided 150+ students through structured programming and core data structures.",
+                  "marks": []
+                }
+              ],
+              "_key": "a12a716bd019",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "15bba1c156b9",
+                  "text": "Technical troubleshooting.",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "afe338070977",
+                  "text": " Managed lab servers, led code walkthroughs, and resolved application and infrastructure bugs.",
+                  "marks": []
+                }
+              ],
+              "_key": "59fa3ca430d8",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "24fac83a292c",
+                  "text": "Two years of teaching changed how I write code: if it is hard to explain, it usually is not right yet.",
+                  "marks": []
+                }
+              ],
+              "_key": "54c72e31fea8",
+              "markDefs": []
+            }
+          ],
+          "date": "2024-01-01T00:00:00.000Z",
+          "order": 3
+        },
+        "taxonomies": {
+          "tag": [
+            "devops",
+            "cicd",
+            "bash",
+            "mengajar"
+          ]
+        }
+      }
+    ],
+    "writing": [
+      {
+        "id": "seed-writing-small-reliable-systems",
+        "slug": "wifi-yang-tidak-mau-muncul",
+        "status": "published",
+        "data": {
+          "title": "The Wi-Fi that would not show up",
+          "summary": "Building my own OpenWrt image because someone else's build hid the Wi-Fi.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "d2b1d015bab6",
+                  "text": "I was running OpenWrt on an Orange Pi Zero 3 using an image someone else had built. Everything worked except one thing: the Wi-Fi page in LuCI was empty. The hardware was there, but the interface would not show it.",
+                  "marks": []
+                }
+              ],
+              "_key": "433a35d59163",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "65ed6abe7dc1",
+                  "text": "Finding where it broke",
+                  "marks": []
+                }
+              ],
+              "_key": "a37faca5cba3",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "5472929bd1b5",
+                  "text": "The board's Wi-Fi chip is a Unisoc UWE5622 (AW859A) — not a chip with mature OpenWrt support. The problem turned out to be layered: the driver, the firmware, and a device tree that did not describe the hardware correctly.",
+                  "marks": []
+                }
+              ],
+              "_key": "262e15d762c9",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "cd67edd08df8",
+                  "text": "The specific reason the LuCI page stayed empty was ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "3878b44d8b95",
+                  "text": ".dump_station",
+                  "marks": [
+                    "code"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "11fc8868f16b",
+                  "text": ". Without that implementation, LuCI has no way to ask the driver about client status, so the Wi-Fi page has nothing to render even while the radio is up.",
+                  "marks": []
+                }
+              ],
+              "_key": "12a1576163be",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "6c81350d9bc1",
+                  "text": "The process was tedious",
+                  "marks": []
+                }
+              ],
+              "_key": "c27415cac3bd",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "75117d2239b7",
+                  "text": "Debugging at this level means building an image, flashing it, booting the board, looking at the result, and starting over. There is no shortcut — every guess costs a full cycle.",
+                  "marks": []
+                }
+              ],
+              "_key": "24a2e554ee2a",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "ad400a3c7215",
+                  "text": "What came out",
+                  "marks": []
+                }
+              ],
+              "_key": "15d0a6832861",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "dffdd74928da",
+                  "text": "A driver, firmware, and device tree patch that make the Wi-Fi work, plus a ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "b45b95fc3e37",
+                  "text": ".dump_station",
+                  "marks": [
+                    "code"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "a50ecddf2804",
+                  "text": " implementation so the LuCI Wi-Fi page finally fills in. All of it is on GitHub, so the next person with the same board does not have to repeat the same cycle.",
+                  "marks": []
+                }
+              ],
+              "_key": "9c8637430615",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "47a583ff409f",
+                  "text": "And since I was already in there, I built my own LuCI theme.",
+                  "marks": []
+                }
+              ],
+              "_key": "4e20a81ab617",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-09-02T00:00:00.000Z",
+          "order": 1
+        },
+        "taxonomies": {
+          "tag": [
+            "openwrt",
+            "orange-pi",
+            "kernel",
+            "luci"
+          ]
+        }
+      },
+      {
+        "id": "writing-kenapa-alias-email",
+        "slug": "kenapa-alias-email",
+        "status": "published",
+        "data": {
+          "title": "Every service wants an email, and my inbox pays for it",
+          "summary": "A small frustration that turned into Mailriz.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "21940cf5f704",
+                  "text": "Every time I sign up for something new, I am asked for an email address. I hand over the same one, and slowly my inbox fills with things I never asked for.",
+                  "marks": []
+                }
+              ],
+              "_key": "61c7676dc023",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "4aee44a77ab3",
+                  "text": "Why aliases",
+                  "marks": []
+                }
+              ],
+              "_key": "21cfc3569680",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "bca81d546a93",
+                  "text": "If every service gets its own address, two things immediately improve. Spam becomes traceable — if an address I only ever used in one place suddenly gets busy, I know exactly who leaked it. And that address can be switched off without disturbing anything else.",
+                  "marks": []
+                }
+              ],
+              "_key": "2419da00b9d6",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "9236ab193a61",
+                  "text": "Why not an existing service",
+                  "marks": []
+                }
+              ],
+              "_key": "7f4c1537548f",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "ad5268956b54",
+                  "text": "Third-party alias services solve the problem but move the dependency. The addresses live on their domain. If the service shuts down or changes its pricing, every address goes with it.",
+                  "marks": []
+                }
+              ],
+              "_key": "977f10a230d5",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "e7919f4dd743",
+                  "text": "If the aliases are on your own domain, they last as long as the domain does.",
+                  "marks": []
+                }
+              ],
+              "_key": "e1213f278349",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "715c944f1762",
+                  "text": "What I ended up building",
+                  "marks": []
+                }
+              ],
+              "_key": "cf5b02aa253b",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "eeabfc399bd4",
+                  "text": "Mailriz: unlimited aliases on your own domain, all landing in one inbox, running entirely on Cloudflare with no server to maintain.",
+                  "marks": []
+                }
+              ],
+              "_key": "1530ec8a4364",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "8454dc15952a",
+                  "text": "I shared it thinking it was only my problem. It turned out plenty of people felt the same.",
+                  "marks": []
+                }
+              ],
+              "_key": "36045518967f",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-08-16T00:00:00.000Z",
+          "order": 2
+        },
+        "taxonomies": {
+          "tag": [
+            "email",
+            "cloudflare",
+            "privasi"
+          ]
+        }
+      },
+      {
+        "id": "writing-server-kecil-kecilan",
+        "slug": "server-kecil-kecilan",
+        "status": "published",
+        "data": {
+          "title": "A small server on my desk",
+          "summary": "Why I run Proxmox at home.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "83551e8c1f80",
+                  "text": "In the corner of my desk there is an untidy pile: one machine running Proxmox, a few small boards, loose hard drives, and more cables than I remember owning.",
+                  "marks": []
+                }
+              ],
+              "_key": "262050077b36",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "46a492d3d12b",
+                  "text": "Why bother",
+                  "marks": []
+                }
+              ],
+              "_key": "f8abc8398b7c",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "e9940a6a951b",
+                  "text": "The cloud makes almost everything easy, and that is exactly the problem when the goal is to learn. When a provider handles networking, storage, and recovery for you, you never really meet the parts that can break.",
+                  "marks": []
+                }
+              ],
+              "_key": "f55703fb3650",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "04babe4e1f58",
+                  "text": "A homelab reverses that. Nobody handles anything for you.",
+                  "marks": []
+                }
+              ],
+              "_key": "934f441d3c74",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "c727427b68f8",
+                  "text": "What I got out of it",
+                  "marks": []
+                }
+              ],
+              "_key": "e5a5246801f0",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "245fb17d2d1a",
+                  "text": "A lot of what I now do at work I met here first — virtualisation, networking, storage, and the habit of proving something can be restored before calling it done.",
+                  "marks": []
+                }
+              ],
+              "_key": "990f9d92964b",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "152d764ac8cb",
+                  "text": "As a bonus, it is the safest place to break things.",
+                  "marks": []
+                }
+              ],
+              "_key": "a77af00d33c5",
+              "markDefs": []
+            }
+          ],
+          "date": "2026-09-03T00:00:00.000Z",
+          "order": 3
+        },
+        "taxonomies": {
+          "tag": [
+            "homelab",
+            "proxmox",
+            "self-hosted"
+          ]
+        }
+      }
+    ],
+    "about": [
+      {
+        "id": "seed-about-certifications",
+        "slug": "certifications",
+        "status": "published",
+        "data": {
+          "title": "Certifications & awards",
+          "summary": "Bangkit Academy, Google Cloud, and first place at AMICTA in the AI category.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "c93d64b0f269",
+                  "text": "Awards",
+                  "marks": []
+                }
+              ],
+              "_key": "9c2c8224422b",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "74539e7c956e",
+                  "text": "AMICTA — 1st place, Artificial Intelligence category",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "7e7e602aa737",
+                  "text": ", January 2025.",
+                  "marks": []
+                }
+              ],
+              "_key": "353cbe810844",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "b9d162c3c324",
+                  "text": "Programmes & certifications",
+                  "marks": []
+                }
+              ],
+              "_key": "56ca5a594e6a",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "711ccb737bb6",
+                  "text": "Bangkit Academy 2024",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "cf9531abdd5d",
+                  "text": " — Cloud Computing Cohort, graduated December 2024. ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "3e187f5efc19",
+                  "text": "BA24/GRAD/XXIV-01/C183B4KY0060",
+                  "marks": [
+                    "code"
+                  ]
+                }
+              ],
+              "_key": "0b78dd6afee8",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "d2417d8ef329",
+                  "text": "Dicoding",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "1ec60ffa9600",
+                  "text": " — Becoming a Google Cloud Engineer, November 2024. ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "d8d22fac401c",
+                  "text": "NVP74362WPR0",
+                  "marks": [
+                    "code"
+                  ]
+                }
+              ],
+              "_key": "f50a562a6949",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "2388738adadd",
+                  "text": "Google Cloud Computing Foundations Certificate",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "69f945d13a61",
+                  "text": ", October 2024.",
+                  "marks": []
+                }
+              ],
+              "_key": "06eb68ea51c5",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "1cde7212bc46",
+                  "text": "JuaraGCP Season 11",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "a8b0231c1406",
+                  "text": " — Google Cloud Self-Study Program, March 2025.",
+                  "marks": []
+                }
+              ],
+              "_key": "4a4b8a05ab95",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "1193c6e1b1b2",
+                  "text": "Forum Asisten",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "bfc1ec515686",
+                  "text": " — Teaching Assistant Certificate, July 2025. ",
+                  "marks": []
+                },
+                {
+                  "_type": "span",
+                  "_key": "e507d638aedc",
+                  "text": "012/FA/D3TI/AMIKOM/012/2024.2025",
+                  "marks": [
+                    "code"
+                  ]
+                }
+              ],
+              "_key": "e017a4aabadd",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "2a155e1ea8f0",
+                  "text": "Google Cloud skill badges",
+                  "marks": []
+                }
+              ],
+              "_key": "62fc8617b0bd",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "6fe83bbd6177",
+                  "text": "Nine badges across January–February 2025, mostly around AI and data security:",
+                  "marks": []
+                }
+              ],
+              "_key": "c04854fbede2",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "e89b0bedd484",
+                  "text": "Prompt Design in Vertex AI",
+                  "marks": []
+                }
+              ],
+              "_key": "d0e933da87ea",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "e98ae2f721d3",
+                  "text": "Build Real World AI Applications with Gemini and Imagen",
+                  "marks": []
+                }
+              ],
+              "_key": "5fe59869836c",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "5472f684065d",
+                  "text": "Develop GenAI Apps with Gemini and Streamlit",
+                  "marks": []
+                }
+              ],
+              "_key": "e62985dabc8c",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "bd3ba7bc6bf4",
+                  "text": "Automate Data Capture at Scale with Document AI",
+                  "marks": []
+                }
+              ],
+              "_key": "81576452aeb1",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "77e19b8f2d0a",
+                  "text": "Cloud Speech API: 3 Ways",
+                  "marks": []
+                }
+              ],
+              "_key": "3a7ce69e48c2",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "17aa296f37be",
+                  "text": "Protect Sensitive Data with Data Loss Prevention",
+                  "marks": []
+                }
+              ],
+              "_key": "1bb58c015468",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "3c245fbb2452",
+                  "text": "Secure Software Delivery",
+                  "marks": []
+                }
+              ],
+              "_key": "a4e48a94f658",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "734dff124996",
+                  "text": "Secure BigLake Data",
+                  "marks": []
+                }
+              ],
+              "_key": "81145f3ee2ac",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "25c36a7fc3e9",
+                  "text": "The Basics of Google Cloud Compute",
+                  "marks": []
+                }
+              ],
+              "_key": "f90d3eff9966",
+              "markDefs": [],
+              "listItem": "bullet",
+              "level": 1
+            }
+          ],
+          "date": "2025-07-01T00:00:00.000Z",
+          "order": 1
+        },
+        "taxonomies": {
+          "tag": [
+            "google-cloud",
+            "bangkit-academy"
+          ]
+        }
+      },
+      {
+        "id": "about-pendidikan",
+        "slug": "pendidikan",
+        "status": "published",
+        "data": {
+          "title": "Education",
+          "summary": "BSc in Computer Science at Universitas AMIKOM Yogyakarta.",
+          "body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "9b242b69b876",
+                  "text": "Universitas AMIKOM Yogyakarta",
+                  "marks": [
+                    "strong"
+                  ]
+                },
+                {
+                  "_type": "span",
+                  "_key": "afeb4fc5156c",
+                  "text": " — BSc in Computer Science, September 2022 to present. GPA 3.86.",
+                  "marks": []
+                }
+              ],
+              "_key": "c6c0b972bbc6",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "3361a98e233e",
+                  "text": "My thesis in progress works with book reviews as its data source, which also produced a scraping tool of my own once the existing ones turned out not to fit.",
+                  "marks": []
+                }
+              ],
+              "_key": "8c8a62e74196",
+              "markDefs": []
+            }
+          ],
+          "date": "2022-09-01T00:00:00.000Z",
+          "order": 2
+        },
+        "taxonomies": {
+          "tag": [
+            "amikom"
+          ]
+        }
+      }
+    ],
+    "setup": [],
+    "gallery": [
+      {
+        "id": "5a9aa68f-9455-4e2d-948b-82245dfeaf48",
+        "slug": "136748-90c1d3",
+        "status": "published",
+        "data": {
+          "title": "136748",
+          "summary": "",
+          "cover": {
+            "$media": {
+              "url": "https://txtfromrizkirmdhn.my.id/api/media/bb42ae15-4734-489f-b223-8832285d2f8d",
+              "alt": "136748",
+              "filename": "136748.webp"
+            }
+          },
+          "order": 0,
+          "date": "2026-09-06T00:00:00.000Z"
+        }
+      }
+    ],
+    "profile": [
+      {
+        "id": "profile",
+        "slug": "profile",
+        "status": "published",
+        "data": {
+          "name": "Achmad Rizki Ramadhan",
+          "brand": "ar",
+          "handle": "rizkirmdhnnn",
+          "headline": "Backend, cloud & AI",
+          "bio": "An AI engineer who came up through backend. I build APIs, keep cloud infrastructure healthy, and get models working inside products people actually use.",
+          "note": "From a small idea to something that works.",
+          "location": "Yogyakarta, Indonesia",
+          "email": "achmadrizkiramadhan0101@gmail.com",
+          "whatsapp": "6285878816956",
+          "github": "https://github.com/rizkirmdhnnn",
+          "linkedin": "https://www.linkedin.com/in/achmadrizkirmdhn/",
+          "skills": [
+            {
+              "name": "Backend engineering"
+            },
+            {
+              "name": "Cloud & DevOps"
+            },
+            {
+              "name": "AI engineering"
+            }
+          ],
+          "avatar": {
+            "$media": {
+              "url": "https://txtfromrizkirmdhn.my.id/api/media/c612447b-ef14-4000-9a44-b8dfcface2db",
+              "alt": "Achmad Rizki Ramadhan",
+              "filename": "avatar.jpg"
+            }
+          },
+          "cv": {
+            "$media": {
+              "url": "https://txtfromrizkirmdhn.my.id/api/media/8109e225-3224-41a1-9d45-63d4259d0745",
+              "alt": "Curriculum vitae",
+              "filename": "CV Rizki Ramadhan En.pdf"
+            }
+          },
+          "about_title": "Hi, I'm Rizki.",
+          "about_body": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "5d0904294258",
+                  "text": "I'm an AI Engineer at PT. Lantabura Media, working on computer vision, dataset preparation, and the systems that connect field devices to the services behind them.",
+                  "marks": []
+                }
+              ],
+              "_key": "9ae4abcea17f",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "ca8d95a05461",
+                  "text": "I came up through backend. Two years as a lab assistant on campus teaching DevOps, data structures, and programming to more than 150 students — and finding out that explaining something repeatedly is the fastest way to understand it yourself. I graduated from Bangkit Academy 2024 in the Cloud Computing cohort and carried that interest on into Google Cloud.",
+                  "marks": []
+                }
+              ],
+              "_key": "01a2b8eec577",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "f45aa552226c",
+                  "text": "What I build outside work usually starts from my own need: email aliases that never expire, R2 mounted in Finder, Svelte documentation in Indonesian because none existed. Most of it is open source on GitHub.",
+                  "marks": []
+                }
+              ],
+              "_key": "409511fc3bb1",
+              "markDefs": []
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "_key": "d950cc244181",
+                  "text": "I'm finishing my thesis at Universitas AMIKOM Yogyakarta, and building Snivy — a no-code platform for assembling AI agents.",
+                  "marks": []
+                }
+              ],
+              "_key": "78819cee6230",
+              "markDefs": []
+            }
+          ],
+          "setup_intro": [],
+          "gallery_intro": [],
+          "footer": "Made with curiosity.",
+          "seo_title": "Achmad Rizki Ramadhan — Fullstack & Cloud",
+          "seo_description": "Building applications, connecting cloud infrastructure, and solving problems with AI.",
+          "copy": [
+            {
+              "key": "projects",
+              "value": "Projects"
+            },
+            {
+              "key": "experience",
+              "value": "Experience"
+            },
+            {
+              "key": "writing",
+              "value": "Writing"
+            },
+            {
+              "key": "about",
+              "value": "About"
+            },
+            {
+              "key": "contact",
+              "value": "Let’s connect"
+            },
+            {
+              "key": "cv",
+              "value": "View CV"
+            },
+            {
+              "key": "bio",
+              "value": "Building applications, connecting cloud infrastructure, and solving problems with AI."
+            },
+            {
+              "key": "note",
+              "value": "From a small idea to something that works."
+            },
+            {
+              "key": "pinned",
+              "value": "Featured project"
+            },
+            {
+              "key": "read",
+              "value": "Explore project"
+            },
+            {
+              "key": "article",
+              "value": "Read more"
+            },
+            {
+              "key": "demo",
+              "value": "Demo content"
+            },
+            {
+              "key": "back",
+              "value": "Back to profile"
+            },
+            {
+              "key": "built",
+              "value": "Made with curiosity."
+            },
+            {
+              "key": "end",
+              "value": "Always building. Always learning."
+            },
+            {
+              "key": "source",
+              "value": "View repository"
+            },
+            {
+              "key": "close",
+              "value": "Close"
+            },
+            {
+              "key": "contactSub",
+              "value": "Have an idea, an opportunity, or just want to say hello?"
+            },
+            {
+              "key": "unavailable",
+              "value": "Coming soon"
+            },
+            {
+              "key": "cvTitle",
+              "value": "Curriculum vitae"
+            },
+            {
+              "key": "cvNote",
+              "value": "Demo preview based on profile information. A complete CV is coming soon."
+            },
+            {
+              "key": "download",
+              "value": "Download demo PDF"
+            },
+            {
+              "key": "space",
+              "value": "A personal space"
+            },
+            {
+              "key": "downloadPdf",
+              "value": "Download PDF"
+            },
+            {
+              "key": "liveDemo",
+              "value": "Live demo"
+            },
+            {
+              "key": "projectsLabel",
+              "value": "Open source"
+            }
+          ],
+          "sections": [
+            {
+              "key": "projects",
+              "label": "Projects",
+              "visible": true
+            },
+            {
+              "key": "experience",
+              "label": "Experience",
+              "visible": true
+            },
+            {
+              "key": "writing",
+              "label": "Writing",
+              "visible": true
+            },
+            {
+              "key": "about",
+              "label": "About",
+              "visible": true
+            },
+            {
+              "key": "setup",
+              "label": "Setup",
+              "visible": true
+            },
+            {
+              "key": "gallery",
+              "label": "Gallery",
+              "visible": true
+            }
+          ],
+          "maintenance_enabled": false
+        }
+      }
+    ]
+  }
+}

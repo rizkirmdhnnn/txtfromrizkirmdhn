@@ -1,0 +1,31 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "rizki-portfolio-emdash-staging",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-09-05",
+	"compatibility_flags": ["nodejs_compat"],
+	"workers_dev": true,
+	"preview_urls": false,
+	"observability": { "enabled": true },
+	"vars": {
+		"ANALYTICS_BEACON_TOKEN": "3a30f1f363af4559b7af85eb66f0f9d1",
+		"EMDASH_SITE_URL": "https://rizki-portfolio-emdash-staging.rizkirmdhn.workers.dev"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "rizki-portfolio-emdash-staging",
+			"database_id": "29ed66b0-ca37-4f2b-97d1-276ee688a80b"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "rizki-portfolio-emdash-media-staging"
+		}
+	],
+	"kv_namespaces": [
+		{ "binding": "SESSION", "id": "c2f74d62a5824f4fb494629fb58b057f" }
+	],
+	"images": { "binding": "IMAGES" }
+}

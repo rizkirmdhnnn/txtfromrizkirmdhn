@@ -1,0 +1,150 @@
+---
+import Base from "../layouts/Base.astro";
+import PortfolioLayout from "./PortfolioLayout.astro";
+import SectionHeading from "./SectionHeading.astro";
+import WorkCard from "./WorkCard.astro";
+import SetupSpec from "./SetupSpec.astro";
+import GalleryGrid from "./GalleryGrid.astro";
+import EmptyState from "./EmptyState.astro";
+import { PortableText } from "emdash/ui";
+import {
+	getCopy,
+	getProfile,
+	getSectionEntries,
+	getSectionLabel,
+	visibleSections,
+	type SectionKey,
+} from "../lib/content";
+import { words } from "../lib/copy";
+
+interface Props {
+	section: SectionKey;
+}
+
+const { section } = Astro.props;
+const profile = await getProfile();
+
+if (!profile) {
+	// No profile yet: render the same quiet placeholder the original site used.
+	// The layout still provides the document head and theme.
+} else if (!visibleSections(profile).some((item) => item.key === section)) {
+	return Astro.redirect("/", 301);
+}
+
+const t = words(getCopy(profile));
+const projects = await getSectionEntries("projects");
+const entries = section === "projects" ? projects : await getSectionEntries(section);
+const writing =
+	section === "projects"
+		? await getSectionEntries("writing")
+		: [];
+const latestWriting = writing.length
+	? [...writing].sort((a, b) =>
+			String(b.data.date || "").localeCompare(String(a.data.date || "")),
+		)[0]
+	: undefined;
+const label = profile ? getSectionLabel(profile, section) : t[section];
+const name = profile?.data.name || "Portfolio";
+const pageTitle =
+	section === "projects"
+		? profile?.data.seo_title || name
+		: `${label} — ${name}`;
+const description =
+	profile?.data.seo_description || profile?.data.bio || "";
+const featured =
+	projects.find((entry) => entry.data.pinned) || projects[0];
+const otherProjects = projects.filter((entry) => entry !== featured);
+---
+
+<Base
+	title={pageTitle}
+	pageTitle={pageTitle}
+	description={description}
+	image="/og.png"
+	canonical={new URL(Astro.url.pathname, Astro.url.origin).href}
+>
+	{
+		profile ? (
+			<PortfolioLayout profile={profile} active={section} counts={{ projects: projects.length }}>
+				{section === "projects" ? (
+					<section aria-labelledby="work-heading">
+						<SectionHeading title={t.selectedWork} intro={t.workIntro} level="h2" id="work-heading" />
+						{featured ? (
+							<>
+								<WorkCard entry={featured} collection="projects" t={t} featured />
+								{otherProjects.length > 0 && (
+									<div class="work-grid">
+										{otherProjects.map((entry) => (
+											<WorkCard entry={entry} collection="projects" t={t} />
+										))}
+									</div>
+								)}
+							</>
+						) : (
+							<EmptyState text={t.projectsEmpty} />
+						)}
+						{latestWriting && (
+							<aside class="latest-writing" aria-label={t.notebook}>
+								<div>
+									<span>{t.notebook}</span>
+									{latestWriting.data.demo && <span class="demo-label">{t.demo}</span>}
+									<h3>
+										<a class="work-title" href={`/post/${latestWriting.id}`}>
+											{latestWriting.data.title}
+										</a>
+									</h3>
+								</div>
+								<a class="read-link" href={`/post/${latestWriting.id}`}>
+									{t.article}
+								</a>
+							</aside>
+						)}
+					</section>
+				) : section === "setup" ? (
+					<>
+						<SectionHeading title={t.setup} level="h1" id="setup-heading" />
+						<SetupSpec entries={entries} profile={profile} t={t}>
+							<EmptyState slot="empty" text={t.setupEmpty} />
+						</SetupSpec>
+					</>
+				) : section === "gallery" ? (
+					<>
+						<SectionHeading title={t.gallery} level="h1" id="gallery-heading" />
+						<GalleryGrid entries={entries} t={t}>
+							<EmptyState slot="empty" text={t.galleryEmpty} />
+						</GalleryGrid>
+					</>
+				) : (
+					<section aria-labelledby="section-heading">
+						<SectionHeading
+							title={section === "about" ? profile.data.about_title || t.about : label}
+							level="h1"
+							id="section-heading"
+						/>
+						{section === "about" &&
+							Array.isArray(profile.data.about_body) &&
+							profile.data.about_body.length > 0 && (
+								<div class="prose about-intro">
+									<PortableText value={profile.data.about_body} />
+								</div>
+							)}
+						{entries.length > 0 ? (
+							<div class="content-list">
+								{entries.map((entry) => (
+									<WorkCard entry={entry} collection={section} t={t} />
+								))}
+							</div>
+						) : section !== "about" || !profile.data.about_body ? (
+							<EmptyState text={t[`${section}Empty`] || t.sectionsEmpty} />
+						) : null}
+					</section>
+				)}
+			</PortfolioLayout>
+		) : (
+			<main id="main" class="page empty-public">
+				<h1>{"Coming soon."}</h1>
+				<p>{"This personal space is being prepared."}</p>
+			</main>
+		)
+	}
+</Base>

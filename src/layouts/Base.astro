@@ -1,0 +1,223 @@
+---
+import { getSiteSettings } from "emdash";
+import { EmDashBodyEnd, EmDashBodyStart, EmDashHead } from "emdash/ui";
+import { createPublicPageContext } from "emdash/page";
+import { ArrowUpRight } from "@lucide/astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import {
+	getCopy,
+	getProfile,
+	getSkills,
+	getSectionLabel,
+	imageUrl,
+	visibleSections,
+} from "../lib/content";
+import { words } from "../lib/copy";
+import "../styles/public.css";
+
+interface Props {
+	title?: string;
+	pageTitle?: string;
+	description?: string | null;
+	image?: string | null;
+	canonical?: string | null;
+	robots?: string | null;
+	type?: "website" | "article";
+	content?: { collection: string; id: string; slug?: string | null };
+}
+
+const {
+	title,
+	pageTitle,
+	description,
+	image,
+	canonical,
+	robots,
+	type = "website",
+	content,
+} = Astro.props;
+
+const [profile, settings] = await Promise.all([getProfile(), getSiteSettings()]);
+const t = words(getCopy(profile));
+const siteName = profile?.data.name || settings?.title || "Portfolio";
+const fullTitle = title || siteName;
+const canonicalUrl =
+	canonical ?? new URL(Astro.url.pathname, Astro.url.origin).href;
+const absoluteImage = image
+	? new URL(image, Astro.url.origin).href
+	: null;
+
+const pageCtx = createPublicPageContext({
+	Astro,
+	kind: content ? "content" : "custom",
+	pageType: type,
+	title: fullTitle,
+	pageTitle: pageTitle || fullTitle,
+	description: description || settings?.tagline || "",
+	canonical: canonicalUrl,
+	image: absoluteImage,
+	content,
+	seo: { ogImage: absoluteImage, robots },
+	siteName,
+});
+
+const isLoggedIn = Boolean(Astro.locals.user);
+const analyticsToken = import.meta.env.PROD
+	? (await import("../lib/cloudflare-env")).runtimeEnv().ANALYTICS_BEACON_TOKEN || ""
+	: "";
+const isAdminPath = Astro.url.pathname.startsWith("/_emdash");
+const github = profile?.data.github || "";
+const footer = profile?.data.footer || t.end;
+const brand = profile?.data.brand || "ar";
+const sections = visibleSections(profile);
+
+const personJsonLd = profile
+	? {
+			"@context": "https://schema.org",
+			"@type": "Person",
+			"@id": `${Astro.url.origin}/#person`,
+			name: siteName,
+			url: `${Astro.url.origin}/`,
+			headline: profile.data.headline || undefined,
+			image: profile.data.avatar?.src
+				? new URL(profile.data.avatar.src, Astro.url.origin).href
+				: undefined,
+			email: profile.data.email || undefined,
+			sameAs: [profile.data.github, profile.data.linkedin].filter(Boolean),
+		}
+	: null;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{fullTitle}</title>
+		<EmDashHead page={pageCtx} />
+		{personJsonLd && (
+			<script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
+		)}
+		<link rel="icon" href="/favicon.svg" />
+		{analyticsToken && !isAdminPath && (
+			<script
+				defer
+				src="https://static.cloudflareinsights.com/beacon.min.js"
+				data-cf-beacon={JSON.stringify({ token: analyticsToken })}
+			/>
+		)}
+		<script is:inline>
+			(function () {
+				var stored = null;
+				try {
+					stored = localStorage.getItem("portfolio-theme");
+				} catch (_) {}
+				var system = matchMedia("(prefers-color-scheme: dark)").matches
+					? "dark"
+					: "light";
+				var theme = stored === "light" || stored === "dark" ? stored : system;
+				document.documentElement.dataset.theme = theme;
+			})();
+		</script>
+	</head>
+	<body>
+		<EmDashBodyStart page={pageCtx} />
+		<div class="public-site">
+			<a class="skip" href="#main">Skip to content</a>
+			<header class="topbar">
+				<a class="monogram" href="/" aria-label={t.back}>
+					{brand}<span>.</span>
+				</a>
+				<span class="top-label">{t.space}</span>
+				<div class="header-tools">
+					<ThemeToggle />
+				</div>
+			</header>
+
+			<slot />
+
+			<footer class="public-footer">
+				<span>{t.end}</span>
+				<p>
+					© {new Date().getFullYear()}{" "}
+					{siteName}
+					<span> · </span>
+					{footer}
+				</p>
+				{
+					github && (
+						<a href={github} target="_blank" rel="noreferrer">
+							GitHub <ArrowUpRight size={11} />
+						</a>
+					)
+				}
+			</footer>
+		</div>
+		<EmDashBodyEnd page={pageCtx} />
+
+		<script>
+			const root = document.documentElement;
+			const buttons = document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]");
+			const media = matchMedia("(prefers-color-scheme: dark)");
+
+			function currentTheme(): string {
+				try {
+					return localStorage.getItem("portfolio-theme") || "system";
+				} catch {
+					return "system";
+				}
+			}
+
+			function resolve(theme: string): "light" | "dark" {
+				if (theme === "light" || theme === "dark") return theme;
+				return media.matches ? "dark" : "light";
+			}
+
+			function apply(theme: string) {
+				root.dataset.theme = resolve(theme);
+				buttons.forEach((button) => {
+					button.setAttribute(
+						"aria-label",
+						root.dataset.theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
+					);
+					button.title = button.getAttribute("aria-label") || "";
+				});
+			}
+
+			buttons.forEach((button) => {
+				button.addEventListener("click", (event) => {
+					const next = root.dataset.theme === "dark" ? "light" : "dark";
+					try {
+						localStorage.setItem("portfolio-theme", next);
+					} catch {}
+					const update = () => apply(next);
+					if (!document.startViewTransition || media.matches === undefined) {
+						update();
+						return;
+					}
+					const rect = button.getBoundingClientRect();
+					const x = rect.left + rect.width / 2;
+					const y = rect.top + rect.height / 2;
+					root.style.setProperty("--theme-reveal-x", `${(x / innerWidth) * 100}%`);
+					root.style.setProperty("--theme-reveal-y", `${(y / innerHeight) * 100}%`);
+					const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+					const diagonal = Math.hypot(innerWidth, innerHeight) / Math.SQRT2;
+					root.style.setProperty("--theme-reveal-radius", `${(Math.ceil(radius) / diagonal) * 100}%`);
+					root.dataset.themeReveal = "true";
+					const transition = document.startViewTransition(update);
+					transition.finished.finally(() => {
+						delete root.dataset.themeReveal;
+						root.style.removeProperty("--theme-reveal-x");
+						root.style.removeProperty("--theme-reveal-y");
+						root.style.removeProperty("--theme-reveal-radius");
+					});
+				});
+			});
+
+			media.addEventListener("change", () => {
+				if (currentTheme() === "system") apply("system");
+			});
+			apply(currentTheme());
+		</script>
+	</body>
+</html>

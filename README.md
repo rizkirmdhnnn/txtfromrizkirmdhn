@@ -1,60 +1,58 @@
-# Rizki Portfolio & Personal Studio
+# Rizki Portfolio — EmDash
 
-An English-language portfolio and private CMS built with TanStack Start, Cloudflare Workers, D1, R2, and Access. The dashboard manages the profile, projects, experience, writing, certifications, setup (gear and tools), a photo gallery, media, CV, SEO, section order, and website copy.
+Personal portfolio and writing site built with Astro 7 and [EmDash](https://github.com/emdash-cms/emdash), deployed to Cloudflare Workers with D1 and R2.
+
+## URLs
+
+- Production: https://txtfromrizkirmdhn.my.id
+- Admin: https://txtfromrizkirmdhn.my.id/_emdash/admin
+- Staging: https://rizki-portfolio-emdash-staging.rizkirmdhn.workers.dev
+
+## Content model
+
+Collections: `projects`, `experience`, `writing`, `about`, `setup`, `gallery`, and a single `profile` entry. Tags use the `tag` taxonomy.
+
+The seed lives at `seed/seed.json`. A one-off converted copy of the legacy content is at `migration/seed-with-content.json`.
 
 ## Local development
 
-Node.js 22.13+; tested with Node 24. The offline content migration uses Node's SQLite API.
-
-```sh
+```bash
 npm install
-cp .dev.vars.example .dev.vars
-npm run cf:typegen
-npm run db:migrate
+npx emdash seed migration/seed-with-content.json --database ./data.db
 npm run dev
 ```
 
-The dashboard is at `/admin`, private saved-draft preview at `/preview`, and the public website at `/`. A freshly migrated database is empty, so the public website shows a placeholder until you create a profile in the dashboard and publish it. There is no seed step: all content lives in D1 and is authored through `/admin`.
+Astro dev uses SQLite (`data.db`) and local uploads. Production builds use the Cloudflare D1/R2 bindings in `wrangler.production.jsonc`.
 
-Local owner access is enabled only in development builds on localhost/127.0.0.1. Deployment builds require Cloudflare Access on the admin hostname.
+## Build and deploy
 
-## Managing content
+Staging:
 
-Choose a section → Add content/edit → Save draft → Preview → Publish. Saving never changes published content. Concurrent edits are rejected when the document version is stale.
-
-The editor supports visual editing and Markdown, media images, code blocks, quotes, and links. Each document has one English title, summary, body, and set of SEO fields. Markdown import/export uses one `.md` file per document, without language metadata.
-
-Profile & website contains global content settings and a single CV. The media library supports images up to 10 MB and PDFs up to 20 MB, with one English alt text per image. Photos larger than 2400 px or 1.5 MB are resized to WebP in the browser before upload. Files referenced by content or revisions cannot be permanently deleted.
-
-Setup and Gallery are managed on one page each instead of the full editor. Every gear item or photo is still one document with the usual draft and published snapshots, but edits save automatically and each row has its own Publish button; "Publish all" appears when more than one row has unpublished changes. Gallery: "Add photos" uploads and creates one draft per photo, each with a title, description, and link; photos open in a lightbox on the website. Setup: "Add item" creates a row with a group, name, description, and link, rendered publicly as a spec sheet grouped by category; the desk photo and intro at the top of that page live in the profile document and have their own Publish button. Both tabs stay hidden on the website until they are enabled under Section order & visibility in Profile & website and the profile is published.
-
-Restoring a revision changes only the draft. Restoring trash does not republish content. Settings provides maintenance controls and a version 2 ZIP backup of documents, revisions, redirects, maintenance settings, Markdown, and media. Integration credentials are excluded.
-
-There is no language switcher or AI translation integration. Visitors can use Google Translate or their browser's translation feature. Public links containing an old `lang` query redirect to the same address without that parameter.
-
-## Validation
-
-```sh
-npm run typecheck
-npm run test
-npm run build
+```bash
+cp wrangler.staging.jsonc wrangler.jsonc
+NODE_ENV=production npm run build
+npx wrangler deploy
+cp wrangler.staging.jsonc wrangler.jsonc
 ```
 
-Integration tests use isolated Miniflare D1/R2 storage, applying the files in `migrations/` in order. The test environment must permit local ports. Coverage spans publication boundaries, revisions, owner authentication, media protection, stale data, and maintenance mode.
+Production:
 
-## Structure
+```bash
+cp wrangler.production.jsonc wrangler.jsonc
+NODE_ENV=production npm run build
+npx wrangler deploy
+cp wrangler.staging.jsonc wrangler.jsonc
+```
 
-- `src/admin/`: dashboard, editor, media, and statistics.
-- `src/server/`: authentication, D1 storage, API, R2 files, and statistics.
-- `src/components/public-view.tsx`: shared website and preview presentation.
-- `src/lib/cms.ts`: shared data types and validation.
-- `migrations/`: versioned database schema.
-- `wrangler.jsonc`: preview resources and the production environment.
+`wrangler.production.jsonc` contains the production route, D1/R2/KV bindings, and cron trigger. Keep `wrangler.jsonc` pointing at staging for day-to-day work.
 
-Public API: `GET /api/public`, `GET|HEAD /api/media/:id`, `GET /og.png`, `GET /og/:slug.png`. The two `og` routes render 1200×630 PNG share cards on demand from published content and are cached for one hour; documents with a cover image keep using that image instead. Admin endpoints under `/api/admin/*` require owner authentication and validate the origin for writes. Public server functions read only published snapshots.
+## Migration and OG images
 
-## Cloudflare
+- `migration/build-content.mjs` converts the legacy D1 export into an EmDash seed.
+- `migration/build-d1-import.mjs` creates SQL files for importing the local SQLite database into D1.
+- `scripts/generate-og.mjs` pre-generates OG PNGs into `public/og-cache`; with `OG_UPLOAD=1` it also uploads them to R2.
+- `docs/EMDASH-MIGRATION-PLAN.md` records the migration plan and decisions.
 
-Production uses Worker `rizki-portfolio` with its own database and bucket. The public domain serves published content; the dashboard uses Google sign-in through Cloudflare Access. Deployment, analytics, and recovery notes are in [the Cloudflare setup guide](docs/CLOUDFLARE-SETUP.md).
+## Admin auth
 
-Build output is in `dist/`. Keep `.dev.vars` and build output out of Git. Vite may copy development secrets to `dist/server/.dev.vars` for local preview; do not distribute the build directory as a public archive.
+Admin uses EmDash passkey auth. Cloudflare Access is not used for the EmDash admin.

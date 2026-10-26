@@ -1,0 +1,75 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import { Image } from "emdash/ui";
+import Visual from "./Visual.astro";
+import {
+	entryTags,
+	formatDate,
+	imageAlt,
+	type SectionKey,
+} from "../lib/content";
+
+interface Props {
+	entry: any;
+	collection: SectionKey;
+	t: Record<string, string>;
+	featured?: boolean;
+}
+
+const { entry, collection, t, featured = false } = Astro.props;
+const cover = entry.data.cover;
+const tags = entryTags(entry);
+const href = `/post/${entry.id}`;
+const label =
+	entry.data.demo
+		? t.demo
+		: collection === "projects"
+			? t.projectsLabel
+			: t[collection] || "";
+---
+
+<article class={`work-card${featured ? " featured-work" : ""}`}>
+	{
+		cover ? (
+			<Image
+				image={cover}
+				class={`content-cover${collection === "gallery" ? " photo" : ""}`}
+				alt={imageAlt(cover, entry.data.title)}
+				priority={featured}
+				loading={featured ? "eager" : "lazy"}
+			/>
+		) : (
+			<Visual kind={entry.data.visual} />
+		)
+	}
+	<div class="work-info">
+		{
+			(entry.data.pinned || entry.data.demo || label || collection === "writing") && (
+				<div class="work-meta">
+					{entry.data.pinned && <span>{t.pinned}</span>}
+					{entry.data.demo ? <span class="demo-label">{t.demo}</span> : label ? <span>{label}</span> : null}
+					{collection === "writing" && entry.data.date && (
+						<time datetime={entry.data.date}>{formatDate(entry.data.date)}</time>
+					)}
+				</div>
+			)
+		}
+		<h3>
+			<a class="work-title" href={href}>{entry.data.title}</a>
+		</h3>
+		{entry.data.summary && <p class="work-summary">{entry.data.summary}</p>}
+		{
+			tags.length > 0 && (
+				<div class="entry-tags">
+					{tags.map((tag) => (
+						<span>{tag}</span>
+					))}
+				</div>
+			)
+		}
+		<a class="read-link" href={href}>
+			{collection === "projects" ? t.read : t.article}
+			<ArrowUpRight size={16} aria-hidden="true" />
+		</a>
+	</div>
+</article>

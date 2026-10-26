@@ -1,0 +1,227 @@
+---
+import {
+	ArrowUpRight,
+	Download,
+	FileText,
+	Link2,
+	Mail,
+	MapPin,
+	MessageCircle,
+	X,
+} from "@lucide/astro";
+import { Image } from "emdash/ui";
+import {
+	getSkills,
+	getCopy,
+	getProfileSections,
+	type ProfileEntry,
+} from "../lib/content";
+import { words } from "../lib/copy";
+
+interface Props {
+	profile: ProfileEntry;
+}
+
+const { profile } = Astro.props;
+const t = words(getCopy(profile));
+const skills = getSkills(profile);
+const sections = getProfileSections(profile).filter((section) => section.visible);
+const avatar = profile.data.avatar || null;
+const name = profile.data.name || "Portfolio";
+const cv = profile.data.cv;
+const storageKey = cv?.meta?.storageKey;
+const cvUrl =
+	cv?.url ||
+	(storageKey ? Astro.locals.emdash?.getPublicMediaUrl?.(storageKey) : "") ||
+	cv?.src ||
+	"";
+const hasContact = Boolean(
+	profile.data.email || profile.data.github || profile.data.linkedin || profile.data.whatsapp,
+);
+---
+
+<section class="profile" aria-label={t.profileLabel}>
+	<div class="identity">
+		<div>
+			<h1>{name}</h1>
+			{profile.data.handle && <p class="handle">@{profile.data.handle}</p>}
+			{profile.data.headline && <p class="specialty">{profile.data.headline}</p>}
+		</div>
+		{
+			avatar ? (
+				<button
+					type="button"
+					class="avatar-button"
+					aria-label={`${t.viewProfilePhoto}: ${name}`}
+					aria-haspopup="dialog"
+					data-open-dialog="avatar-dialog"
+				>
+					<Image class="avatar" image={avatar} alt={name} width={86} height={86} />
+				</button>
+			) : (
+				<img class="avatar" src="/favicon.svg" alt={name} width="86" height="86" />
+			)
+		}
+	</div>
+
+	{profile.data.bio && <p class="bio">{profile.data.bio}</p>}
+	{profile.data.note && <p class="bio-note">{profile.data.note}</p>}
+	{
+		profile.data.location && (
+			<div class="location">
+				<MapPin size={16} aria-hidden="true" />
+				{profile.data.location}
+			</div>
+		)
+	}
+
+	{
+		(hasContact || cvUrl) && (
+			<div class="profile-actions">
+				{hasContact && (
+					<button class="button primary" type="button" data-open-dialog="contact-dialog">
+						{t.contact}
+						<ArrowUpRight size={17} aria-hidden="true" />
+					</button>
+				)}
+				{cvUrl && (
+					<button class="button" type="button" data-open-dialog="cv-dialog">
+						<FileText size={16} aria-hidden="true" />
+						{t.cv}
+					</button>
+				)}
+			</div>
+		)
+	}
+
+	{
+		skills.length > 0 && (
+			<ul class="focus-tags">
+				{skills.map((skill) => (
+					<li>{skill}</li>
+				))}
+			</ul>
+		)
+	}
+
+	{
+		(profile.data.github || profile.data.linkedin) && (
+			<div class="profile-socials">
+				{profile.data.github && (
+					<a href={profile.data.github} target="_blank" rel="noreferrer">
+						GitHub <ArrowUpRight size={14} aria-hidden="true" />
+					</a>
+				)}
+				{profile.data.linkedin && (
+					<a href={profile.data.linkedin} target="_blank" rel="noreferrer">
+						LinkedIn <ArrowUpRight size={14} aria-hidden="true" />
+					</a>
+				)}
+			</div>
+		)
+	}
+</section>
+
+<dialog id="contact-dialog" class="modal" aria-labelledby="contact-title">
+	<div class="modal-inner">
+		<button class="icon-button modal-close" aria-label={t.close} data-close-dialog>
+			<X size={20} />
+		</button>
+		<h2 id="contact-title">{t.contact}</h2>
+		<p class="muted">{t.contactSub}</p>
+		<div class="channels">
+			{profile.data.email && (
+				<a href={`mailto:${profile.data.email}`}>
+					<Mail size={20} />
+					<strong>Email</strong>
+					<ArrowUpRight size={16} />
+				</a>
+			)}
+			{profile.data.linkedin && (
+				<a href={profile.data.linkedin} target="_blank" rel="noreferrer">
+					<Link2 size={20} />
+					<strong>LinkedIn</strong>
+					<ArrowUpRight size={16} />
+				</a>
+			)}
+			{profile.data.github && (
+				<a href={profile.data.github} target="_blank" rel="noreferrer">
+					<Link2 size={20} />
+					<strong>GitHub</strong>
+					<ArrowUpRight size={16} />
+				</a>
+			)}
+			{profile.data.whatsapp && (
+				<a href={`https://wa.me/${profile.data.whatsapp}`} target="_blank" rel="noreferrer">
+					<MessageCircle size={20} />
+					<strong>WhatsApp</strong>
+					<ArrowUpRight size={16} />
+				</a>
+			)}
+		</div>
+	</div>
+</dialog>
+
+{
+	avatar && (
+		<dialog id="avatar-dialog" class="modal avatar-modal" aria-label={name}>
+			<div class="modal-inner">
+				<button class="icon-button modal-close" aria-label={t.close} data-close-dialog>
+					<X size={20} />
+				</button>
+				<h2>{name}</h2>
+				<Image class="profile-photo" image={avatar} alt={name} />
+			</div>
+		</dialog>
+	)
+}
+
+{
+	cvUrl && (
+		<dialog id="cv-dialog" class="modal" aria-labelledby="cv-title">
+			<div class="modal-inner">
+				<button class="icon-button modal-close" aria-label={t.close} data-close-dialog>
+					<X size={20} />
+				</button>
+				<h2 id="cv-title">{t.cvTitle}</h2>
+				<iframe
+					class="cv-frame"
+					data-cv-src="/cv"
+					title={t.cvTitle}
+					loading="lazy"
+				></iframe>
+				<a class="button primary" href={`${cvUrl}?download=1`}>
+					<Download size={16} />
+					{t.downloadPdf}
+				</a>
+			</div>
+		</dialog>
+	)
+}
+
+<script>
+	const dialogs = document.querySelectorAll<HTMLDialogElement>("dialog[id$='-dialog']");
+	document.querySelectorAll<HTMLElement>("[data-open-dialog]").forEach((button) => {
+		button.addEventListener("click", () => {
+			const dialog = document.getElementById(button.dataset.openDialog || "");
+			if (!(dialog instanceof HTMLDialogElement)) return;
+			const frame = dialog.querySelector<HTMLIFrameElement>("iframe[data-cv-src]");
+			if (frame && !frame.getAttribute("src")) {
+				frame.setAttribute("src", frame.dataset.cvSrc || "");
+			}
+			dialog.showModal();
+		});
+	});
+	dialogs.forEach((dialog) => {
+		dialog.addEventListener("click", (event) => {
+			if (event.target === dialog) dialog.close();
+		});
+		dialog.querySelectorAll<HTMLElement>("[data-close-dialog]").forEach((button) => {
+			button.addEventListener("click", () => dialog.close());
+		});
+		dialog.addEventListener("close", () => {
+			const frame = dialog.querySelector<HTMLIFrameElement>("iframe[data-cv-src]");
+			frame?.removeAttribute("src");
+		});
+	});
+</script>

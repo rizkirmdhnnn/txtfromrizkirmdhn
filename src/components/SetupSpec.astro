@@ -1,0 +1,77 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import { Image, PortableText } from "emdash/ui";
+import { imageAlt } from "../lib/content";
+
+interface Props {
+	entries: any[];
+	profile: any;
+	t: Record<string, string>;
+}
+
+const { entries, profile, t } = Astro.props;
+const groups: Array<{ name: string; items: any[] }> = [];
+for (const entry of entries) {
+	const name = (entry.data.group || "").trim();
+	let group = groups.find((item) => item.name === name);
+	if (!group) {
+		group = { name, items: [] };
+		groups.push(group);
+	}
+	group.items.push(entry);
+}
+const labelled = groups.some((group) => group.name);
+const cover = profile?.data?.setup_cover;
+const intro = profile?.data?.setup_intro;
+const hasIntro = Boolean(cover || (Array.isArray(intro) && intro.length));
+---
+
+<section aria-labelledby="setup-heading">
+	{
+		cover && (
+			<Image
+				image={cover}
+				class="content-cover setup-cover"
+				alt={imageAlt(cover, t.setup)}
+				priority
+			/>
+		)
+	}
+	{
+		Array.isArray(intro) && intro.length > 0 && (
+			<div class="prose about-intro">
+				<PortableText value={intro} />
+			</div>
+		)
+	}
+	{
+		entries.length > 0 ? (
+			<div class={`spec${labelled ? "" : " spec-flat"}`}>
+				{groups.map((group) => (
+					<>
+						{labelled && <div class="spec-cat">{group.name || t.setupOther}</div>}
+						<div class="spec-items">
+							{group.items.map((entry) => (
+								<div class="spec-row">
+									<strong>
+										{entry.data.link ? (
+											<a href={entry.data.link} target="_blank" rel="noreferrer">
+												{entry.data.title}
+												<ArrowUpRight size={14} aria-hidden="true" />
+											</a>
+										) : (
+											entry.data.title
+										)}
+									</strong>
+									{entry.data.summary && <span>{entry.data.summary}</span>}
+								</div>
+							))}
+						</div>
+					</>
+				))}
+			</div>
+		) : hasIntro ? null : (
+			<slot name="empty" />
+		)
+	}
+</section>

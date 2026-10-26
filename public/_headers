@@ -1,3 +1,0 @@
-# Asset Vite ber-hash pada namanya, jadi aman di-cache permanen.
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable

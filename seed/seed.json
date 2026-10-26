@@ -1,0 +1,210 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "Achmad Rizki Ramadhan",
+		"description": "Personal portfolio and writing",
+		"author": "Achmad Rizki Ramadhan"
+	},
+	"settings": {
+		"title": "Achmad Rizki Ramadhan",
+		"tagline": "Backend, cloud & AI",
+		"url": "https://txtfromrizkirmdhn.my.id",
+		"locale": "en",
+		"seo": {
+			"titleSeparator": "—"
+		}
+	},
+	"collections": [
+		{
+			"slug": "projects",
+			"label": "Projects",
+			"labelSingular": "Project",
+			"supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+			"urlPattern": "/post/{slug}",
+			"fields": [
+				{ "slug": "title", "label": "Title", "type": "string", "required": true, "searchable": true },
+				{ "slug": "summary", "label": "Summary", "type": "text", "searchable": true },
+				{ "slug": "body", "label": "Body", "type": "portableText", "searchable": true },
+				{ "slug": "date", "label": "Date", "type": "datetime", "required": true },
+				{ "slug": "pinned", "label": "Featured project", "type": "boolean" },
+				{ "slug": "demo", "label": "Demo content", "type": "boolean" },
+				{ "slug": "order", "label": "Order", "type": "integer" },
+				{ "slug": "cover", "label": "Cover image", "type": "image" },
+				{
+					"slug": "visual",
+					"label": "Visual",
+					"type": "select",
+					"options": [
+						{ "value": "none", "label": "None" },
+						{ "value": "mail", "label": "Mail" },
+						{ "value": "storage", "label": "Storage" },
+						{ "value": "agent", "label": "Agent" }
+					]
+				},
+				{ "slug": "repo", "label": "Repository URL", "type": "url" },
+				{ "slug": "demo_url", "label": "Demo URL", "type": "url" }
+			]
+		},
+		{
+			"slug": "experience",
+			"label": "Experience",
+			"labelSingular": "Experience entry",
+			"supports": ["drafts", "revisions", "preview", "seo"],
+			"urlPattern": "/post/{slug}",
+			"fields": [
+				{ "slug": "title", "label": "Title", "type": "string", "required": true, "searchable": true },
+				{ "slug": "summary", "label": "Summary", "type": "text", "searchable": true },
+				{ "slug": "body", "label": "Body", "type": "portableText", "searchable": true },
+				{ "slug": "date", "label": "Date", "type": "datetime", "required": true },
+				{ "slug": "order", "label": "Order", "type": "integer" },
+				{ "slug": "cover", "label": "Cover image", "type": "image" }
+			]
+		},
+		{
+			"slug": "writing",
+			"label": "Writing",
+			"labelSingular": "Article",
+			"supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+			"urlPattern": "/post/{slug}",
+			"fields": [
+				{ "slug": "title", "label": "Title", "type": "string", "required": true, "searchable": true },
+				{ "slug": "summary", "label": "Summary", "type": "text", "searchable": true },
+				{ "slug": "body", "label": "Body", "type": "portableText", "searchable": true },
+				{ "slug": "date", "label": "Date", "type": "datetime", "required": true },
+				{ "slug": "order", "label": "Order", "type": "integer" },
+				{ "slug": "cover", "label": "Cover image", "type": "image" }
+			]
+		},
+		{
+			"slug": "about",
+			"label": "About",
+			"labelSingular": "About entry",
+			"supports": ["drafts", "revisions", "preview", "seo"],
+			"urlPattern": "/post/{slug}",
+			"fields": [
+				{ "slug": "title", "label": "Title", "type": "string", "required": true, "searchable": true },
+				{ "slug": "summary", "label": "Summary", "type": "text", "searchable": true },
+				{ "slug": "body", "label": "Body", "type": "portableText", "searchable": true },
+				{ "slug": "date", "label": "Date", "type": "datetime", "required": true },
+				{ "slug": "order", "label": "Order", "type": "integer" },
+				{ "slug": "cover", "label": "Cover image", "type": "image" }
+			]
+		},
+		{
+			"slug": "setup",
+			"label": "Setup",
+			"labelSingular": "Setup item",
+			"supports": ["drafts", "revisions", "preview", "seo"],
+			"urlPattern": "/post/{slug}",
+			"fields": [
+				{ "slug": "title", "label": "Name", "type": "string", "required": true, "searchable": true },
+				{ "slug": "group", "label": "Group", "type": "string" },
+				{ "slug": "summary", "label": "Description", "type": "text" },
+				{ "slug": "body", "label": "Notes", "type": "portableText" },
+				{ "slug": "link", "label": "Link", "type": "url" },
+				{ "slug": "order", "label": "Order", "type": "integer" }
+			]
+		},
+		{
+			"slug": "gallery",
+			"label": "Gallery",
+			"labelSingular": "Photo",
+			"supports": ["drafts", "revisions", "preview", "seo"],
+			"urlPattern": "/post/{slug}",
+			"fields": [
+				{ "slug": "title", "label": "Title", "type": "string", "required": true, "searchable": true },
+				{ "slug": "summary", "label": "Description", "type": "text" },
+				{ "slug": "cover", "label": "Photo", "type": "image", "required": true },
+				{ "slug": "link", "label": "Link", "type": "url" },
+				{ "slug": "order", "label": "Order", "type": "integer" },
+				{ "slug": "date", "label": "Date", "type": "datetime" }
+			]
+		},
+		{
+			"slug": "profile",
+			"label": "Profile & website",
+			"labelSingular": "Profile",
+			"supports": ["drafts", "revisions", "preview"],
+			"fields": [
+				{ "slug": "name", "label": "Name", "type": "string", "required": true },
+				{ "slug": "brand", "label": "Monogram", "type": "string" },
+				{ "slug": "handle", "label": "Handle", "type": "string" },
+				{ "slug": "headline", "label": "Headline", "type": "string" },
+				{ "slug": "bio", "label": "Bio", "type": "text" },
+				{ "slug": "note", "label": "Note", "type": "text" },
+				{ "slug": "location", "label": "Location", "type": "string" },
+				{ "slug": "email", "label": "Email", "type": "string" },
+				{ "slug": "whatsapp", "label": "WhatsApp", "type": "string" },
+				{ "slug": "github", "label": "GitHub", "type": "url" },
+				{ "slug": "linkedin", "label": "LinkedIn", "type": "url" },
+				{
+					"slug": "skills",
+					"label": "Skills",
+					"type": "repeater",
+					"validation": {
+						"subFields": [{ "slug": "name", "label": "Skill", "type": "string", "required": true }]
+					}
+				},
+				{ "slug": "avatar", "label": "Avatar", "type": "image" },
+				{ "slug": "cv", "label": "CV", "type": "file" },
+				{ "slug": "about_title", "label": "About title", "type": "string" },
+				{ "slug": "about_body", "label": "About body", "type": "portableText" },
+				{ "slug": "setup_intro", "label": "Setup intro", "type": "portableText" },
+				{ "slug": "setup_cover", "label": "Setup desk photo", "type": "image" },
+				{ "slug": "gallery_intro", "label": "Gallery intro", "type": "portableText" },
+				{ "slug": "footer", "label": "Footer", "type": "string" },
+				{ "slug": "seo_title", "label": "SEO title", "type": "string" },
+				{ "slug": "seo_description", "label": "SEO description", "type": "text" },
+				{
+					"slug": "copy",
+					"label": "UI copy overrides",
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{ "slug": "key", "label": "Key", "type": "string", "required": true },
+							{ "slug": "value", "label": "Value", "type": "text" }
+						]
+					}
+				},
+				{
+					"slug": "sections",
+					"label": "Sections",
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "key",
+								"label": "Section",
+								"type": "select",
+								"required": true,
+								"options": [
+									{ "value": "projects", "label": "Projects" },
+									{ "value": "experience", "label": "Experience" },
+									{ "value": "writing", "label": "Writing" },
+									{ "value": "about", "label": "About" },
+									{ "value": "setup", "label": "Setup" },
+									{ "value": "gallery", "label": "Gallery" }
+								]
+							},
+							{ "slug": "label", "label": "Label", "type": "string", "required": true },
+							{ "slug": "visible", "label": "Visible", "type": "boolean" }
+						]
+					}
+				},
+				{ "slug": "maintenance_enabled", "label": "Maintenance mode", "type": "boolean" },
+				{ "slug": "maintenance_title", "label": "Maintenance title", "type": "string" },
+				{ "slug": "maintenance_body", "label": "Maintenance body", "type": "text" }
+			]
+		}
+	],
+	"taxonomies": [
+		{
+			"name": "tag",
+			"label": "Tags",
+			"labelSingular": "Tag",
+			"hierarchical": false,
+			"collections": ["projects", "experience", "writing", "about"]
+		}
+	]
+}

@@ -1,0 +1,128 @@
+---
+import { ArrowLeft, ArrowUpRight } from "@lucide/astro";
+import { Image, PortableText } from "emdash/ui";
+import { getSeoMeta } from "emdash";
+import Base from "../../layouts/Base.astro";
+import { decodeSlug } from "emdash";
+import {
+	entryTags,
+	formatDate,
+	getCopy,
+	getEntryForPath,
+	getProfile,
+	resolveImageUrl,
+	type SectionKey,
+} from "../../lib/content";
+import { words } from "../../lib/copy";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite("/404");
+
+const resolved = await getEntryForPath(slug);
+if (!resolved) return Astro.rewrite("/404");
+
+const { entry, collection } = resolved;
+const profile = await getProfile();
+const t = words(getCopy(profile));
+const tags = entryTags(entry);
+const cover = entry.data.cover;
+const external = entry.data.repo || entry.data.demo_url || entry.data.link || "";
+const externalLabel = entry.data.repo
+	? t.source
+	: collection === "setup" || collection === "gallery"
+		? t.link
+		: t.liveDemo;
+const backPath =
+	collection === "projects"
+		? "/"
+		: collection === "experience"
+			? "/experience"
+			: collection === "writing"
+				? "/writing"
+				: collection === "about"
+					? "/about"
+					: collection === "setup"
+						? "/setup"
+						: "/gallery";
+const backLabel = t.back;
+
+const seo = getSeoMeta(entry, {
+	siteTitle: profile?.data.name,
+	siteUrl: Astro.url.origin,
+	path: `/post/${slug}`,
+	defaultDescription: entry.data.summary,
+	defaultOgImage: resolveImageUrl(cover, Astro.locals.emdash),
+});
+
+const sectionLabel =
+	t[collection as SectionKey] || collection.charAt(0).toUpperCase() + collection.slice(1);
+---
+
+<Base
+	title={seo.title}
+	pageTitle={seo.ogTitle}
+	description={seo.description}
+	image={seo.ogImage || `/og/${slug}.png`}
+	canonical={seo.canonical}
+	robots={seo.robots}
+	type="article"
+	content={{ collection, id: entry.data.id, slug }}
+>
+	<main id="main" class="page detail">
+		<a class="back-link" href={backPath}>
+			<ArrowLeft size={16} />
+			{backLabel}
+		</a>
+		<div class="detail-meta">
+			{sectionLabel}
+			{entry.data.demo && <span class="demo-label">{t.demo}</span>}
+		</div>
+		<h1>{entry.data.title}</h1>
+		<p class="detail-byline">
+			{t.by}{" "}<strong>{profile?.data.name || "Portfolio"}</strong>
+			{entry.data.date && (
+				<>
+					<span aria-hidden="true"> · </span>{" "}
+					<time datetime={entry.data.date}>{formatDate(entry.data.date)}</time>
+				</>
+			)}
+			{entry.updatedAt && (
+				<>
+					<span aria-hidden="true"> · </span>{" "}
+					{t.updated}{" "} <time datetime={String(entry.updatedAt).slice(0, 10)}>{formatDate(entry.updatedAt)}</time>
+				</>
+			)}
+		</p>
+		{entry.data.summary && <p class="detail-summary">{entry.data.summary}</p>}
+
+		{cover && (
+			<Image
+				image={cover}
+				class="content-cover"
+				alt={cover.alt || entry.data.title}
+				priority
+			/>
+		)}
+
+		{tags.length > 0 && (
+			<div class="entry-tags">
+				{tags.map((tag) => (
+					<span>{tag}</span>
+				))}
+			</div>
+		)}
+
+		<div class="prose">
+			<PortableText value={entry.data.body} />
+		</div>
+
+		{external && (
+			<div class="detail-links">
+				<a class="button" href={external} target="_blank" rel="noreferrer">
+					{externalLabel}
+					<ArrowUpRight size={15} />
+				</a>
+			</div>
+		)}
+	</main>
+</Base>

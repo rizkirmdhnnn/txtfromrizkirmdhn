@@ -1,0 +1,44 @@
+---
+import ProfilePanel from "./ProfilePanel.astro";
+import {
+	getProfileSections,
+	type ProfileEntry,
+	type SectionKey,
+} from "../lib/content";
+import { tabPaths } from "../lib/content";
+
+interface Props {
+	profile: ProfileEntry;
+	active: SectionKey;
+	counts?: Partial<Record<SectionKey, number>>;
+}
+
+const { profile, active, counts = {} } = Astro.props;
+const sections = getProfileSections(profile).filter((section) => section.visible);
+---
+
+<main id="main" class="portfolio-layout">
+	<ProfilePanel profile={profile} />
+
+	<div class="portfolio-content">
+		<nav class="tabs" aria-label="Portfolio categories">
+			{
+				sections.map((section) => (
+					<a
+						href={tabPaths[section.key]}
+						class={active === section.key ? "active" : ""}
+						aria-current={active === section.key ? "page" : undefined}
+					>
+						{section.label}
+						{section.key === "projects" && counts.projects ? (
+							<span>{counts.projects}</span>
+						) : null}
+					</a>
+				))
+			}
+		</nav>
+		<div class="category-content">
+			<slot />
+		</div>
+	</div>
+</main>
